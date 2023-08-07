@@ -1,9 +1,9 @@
-from configuration import config
+from configuration.config import ormDatabase
 
-orm = config.ormDatabase
+class State(ormDatabase.Model):
+    id = ormDatabase.Column(ormDatabase.Integer, primary_key=True)
+    name = ormDatabase.Column(ormDatabase.String(100))
+    abbreviation = ormDatabase.Column(ormDatabase.String(2))
 
-class State(orm.Model):
-    id = orm.Column(orm.Integer, primary_key=True)
-    name = orm.Column(orm.String(100))
-    abbreviation = orm.Column(orm.String(2))
-    state_id = orm.Column(orm.Integer, orm.ForeignKey('state.id'))
+    def __repr__(self):
+        return f"<State(id={self.id}, name={self.name}, abbreviation={self.abbreviation})>"

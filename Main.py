@@ -1,5 +1,6 @@
-from configuration import config
+from flask import Flask
+from configuration.config import app
+from controller.StateController import StateController
 
-app = config.app
-
-app.run()
+if __name__ == '__main__':
+    app.run()
