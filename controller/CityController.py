@@ -9,4 +9,7 @@ class CityController(Resource):
     def get(self):
         return self.service.getCities()
 
+    def post(self, jsonCities):
+        return self.service.saveCities(jsonCities['cities'])
+    
 api.add_resource(CityController, baseUrl)

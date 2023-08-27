@@ -1,10 +1,14 @@
-from . import config
+from configuration.config import ormDatabase
 
-orm = config.ormDatabase
+orm = ormDatabase
 
 class City(orm.Model):
     id = orm.Column(orm.Integer, primary_key=True)
     name = orm.Column(orm.String(200))
-    state_id = config.ormDatabase.Column(config.ormDatabase.Integer, config.ormDatabase.ForeignKey('state.id'))
-    def __init__(self, id):
-        self.id = id
+    state_id = ormDatabase.Column(ormDatabase.Integer, ormDatabase.ForeignKey('state.id'))
+    def __init__(self, name, state_id):
+        self.name = name
+        self.state_id = state_id
+        
+    def __repr__(self):
+        return f"({self.id}, {self.name}, {self.state_id})"
