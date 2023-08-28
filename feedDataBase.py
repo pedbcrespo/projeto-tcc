@@ -19,18 +19,6 @@ def getDistricts(city):
         districts = [{'name': district['Nome'], 'city_id': city['id']} for district in response.json()]
         return districts
 
-def loopGetDistricts(cities):
-    districts = []
-    count = 0
-    for city in cities:
-        districts += getDistricts(city)
-        count += 1
-        os.system('cls')
-        print(f"Lendo bairros das cidades: ")
-        print(f"{count}/{len(cities)} :: {round((count/len(cities))*100, 2)}%")
-    return districts
-
-
 connection = pymysql.connect(host=host,
                              user=user,
                              password=password,
@@ -50,9 +38,15 @@ with connection:
         cursor.execute(sql)
         results = cursor.fetchall()
         cities = [row for row in results]
-        districts = loopGetDistricts(cities)
+        count = 0
+        sql = "INSERT INTO `district` (`name`, `city_id`) VALUES (%s, %s)"
+        for city in cities:
+            districts = getDistricts(city)
+            count += 1
+            values = [(district['name'], district['city_id']) for district in districts]
+            cursor.executemany(sql, values)  # Use executemany para inserir vários registros
+            os.system('cls')
+            print(f"Lendo bairros das cidades: ")
+            print(f"{count}/{len(cities)} :: {round((count/len(cities))*100, 2)}%")
 
-        sql = "INSERT INTO `district` (`name`, `city_id`) VALUES %s"
-        values = ','.join(list(map(lambda district: f"({district['name']}, {district['city_id']})", districts)))
-        cursor.execute(sql, (values))
     connection.commit()
