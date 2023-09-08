@@ -10,15 +10,14 @@ stateService = StateService()
 
 class CityAllController(Resource):
     def get(self):
-        return [city.json() for city in cityService.getAllCities()]
+        return [city for city in cityService.getAllCities()]
 
     def post(self, jsonCities):
-        return [city.json() for city in cityService.saveCities(jsonCities['cities'])]
+        return [city for city in cityService.saveCities(jsonCities['cities'])]
 
 class CityIndividualController(Resource):
     def get(self, uf):
-        state = stateService.getStateByUf(uf)
-        return [city.json() for city in cityService.getCitiesOfState(state)]
+        return [city for city in cityService.getCitiesOfState(uf)]
          
     
 api.add_resource(CityAllController, baseUrl)

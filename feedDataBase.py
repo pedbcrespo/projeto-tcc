@@ -44,7 +44,7 @@ with connection:
             districts = getDistricts(city)
             count += 1
             values = [(district['name'], district['city_id']) for district in districts]
-            cursor.executemany(sql, values)  # Use executemany para inserir vários registros
+            cursor.executemany(sql, values)
             os.system('cls')
             print(f"Lendo bairros das cidades: ")
             print(f"{count}/{len(cities)} :: {round((count/len(cities))*100, 2)}%")
