@@ -4,6 +4,7 @@ from model.District import District
 from configuration.config import ormDatabase
 from configuration.dev_configuration import IBGE_BASE_URL
 from typing import List
+import requests
 
 class CityService:
     def getAllCities(self):
@@ -31,3 +32,6 @@ class CityService:
         districts = District.query.filter(District.city_id == city.id).all()
         city.districts = districts
         return city.json()
+    
+    def getDataOfCity(self, city:City):
+        None
