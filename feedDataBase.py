@@ -6,7 +6,7 @@ import os
 def getCities(state):
     uf = state['abbreviation']
     response = requests.get(f"{IBGE_BASE_URL}/estados/{uf}/municipios")
-    cities = [{'name': city['nome'], 'state_id': state['id']} for city in response.json()]
+    cities = [{'name': city['nome'], 'state_id': state['id'], 'ibge_id': city['id']} for city in response.json()]
     return cities
 
 def getDistricts(city):
@@ -19,13 +19,17 @@ def getDistricts(city):
         districts = [{'name': district['Nome'], 'city_id': city['id']} for district in response.json()]
         return districts
 
-def executa():
+def getConnection():
     connection = pymysql.connect(host=host,
                                 user=user,
                                 password=password,
                                 database=database,
                                 charset='utf8mb4',
                                 cursorclass=pymysql.cursors.DictCursor)
+    return connection
+
+def executa():
+    connection = getConnection()
     with connection:
         print('======================================')
         print('DATA BASE CONNECTION:')
@@ -53,3 +57,22 @@ def executa():
         connection.commit()
         
         
+def updateCities():
+    connection = getConnection()
+    with connection:
+        print('======================================')
+        print('DATA BASE CONNECTION UPDATE:')
+        with connection.cursor() as cursor:
+            sql = "SELECT id, abbreviation FROM state"
+            cursor.execute(sql)
+            results = cursor.fetchall()
+            ufStates = [row for row in results]
+            cities = []
+            for state in ufStates:
+                cities += getCities(state)
+            print(len(cities), cities[0])
+            queryCities = " UNION ALL ".join([f'SELECT {city["ibge_id"]} as ibge_id, "{city["name"]}" as name, {city["state_id"]} as state_id' for city in cities])
+            sql = f"UPDATE city c JOIN ({queryCities}) v SET c.ibge_id = v.ibge_id WHERE c.name = v.name AND c.state_id = v.state_id"
+            cursor.execute(sql)
+            print('QUERY EXECUTADA')
+        connection.commit()

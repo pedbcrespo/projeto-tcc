@@ -1,9 +1,8 @@
 from flask_restful import Resource
 from configuration.config import api
+from configuration.dev_configuration import BASE_URL
 from service.CityService import CityService
 from service.StateService import StateService
-
-baseUrl = '/cities'
 
 cityService = CityService()
 stateService = StateService()
@@ -17,8 +16,8 @@ class CityAllController(Resource):
 
 class CityIndividualController(Resource):
     def get(self, uf):
-        return [city for city in cityService.getCitiesOfState(uf)]
+        return [city for city in cityService.getCities(uf)]
          
     
-api.add_resource(CityAllController, baseUrl)
-api.add_resource(CityIndividualController, f"{baseUrl}/<uf>")
+api.add_resource(CityAllController, BASE_URL)
+api.add_resource(CityIndividualController, f"{BASE_URL}/states/<uf>")
