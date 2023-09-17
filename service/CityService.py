@@ -23,9 +23,6 @@ class CityService:
         ormDatabase.session.commit()
         return [city.json() for city in cities] 
     
-    
-    
-    
     def setDetailsInfo(self, city:City, state:State, dataframe):
         columns = [column for column in dataframe.columns]
         print(columns)
