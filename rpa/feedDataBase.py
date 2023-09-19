@@ -28,7 +28,7 @@ def getConnection():
                                 cursorclass=pymysql.cursors.DictCursor)
     return connection
 
-def executa():
+def insertDistricts():
     connection = getConnection()
     with connection:
         print('======================================')

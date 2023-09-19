@@ -25,7 +25,6 @@ class CityService:
     
     def setDetailsInfo(self, city:City, state:State, dataframe):
         columns = [column for column in dataframe.columns]
-        print(columns)
         rowDf = dataframe[dataframe['codigo'] == f"{city.ibge_id}"]
         districts = District.query.filter(District.city_id == city.id).all()
         city.districts = districts
@@ -63,9 +62,17 @@ class CityService:
         for column in columns:
             if column == 'codigo':
                 continue
-            content = values[index]
-            dictRow[column] = float(content) if '.' in content else int(content)
+            print(column, values[index])
+            dictRow[column] = self.handleContent(values[index], column)
             index += 1
-        print(dictRow)
         return dictRow
             
+    def handleContent(self, content, column) :
+        if content in ['-']:
+            return None
+        operationsDict = {
+            'populacao_residente': lambda ct: ct.replace('.',''),
+        }
+        if column in operationsDict.keys():
+            content = operationsDict[column](content)           
+        return round(float(content), 2) if '.' in content else int(content)
