@@ -62,7 +62,6 @@ class CityService:
         for column in columns:
             if column == 'codigo':
                 continue
-            print(column, values[index])
             dictRow[column] = self.handleContent(values[index], column)
             index += 1
         return dictRow
