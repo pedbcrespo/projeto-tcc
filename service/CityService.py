@@ -51,10 +51,23 @@ class CityService:
             'PIB per capita - R$ [2020]':'pib_per_capta',
             'Unnamed: 13': 'unnamed'
         })
-        dataframe = dataframe.drop(columns=['unnamed', 'municipio', 'prefeito', 'nome_nascente', 'mortalidade_infantil'])       
+        dataframe = dataframe.drop(columns=['unnamed', 'municipio', 'prefeito', 'nome_nascente', 'mortalidade_infantil'])
+        numericColumns = [
+            'area_territorial(km²)',
+            'populacao_residente',
+            'densidade_demografica',
+            'escolaridade',
+            'idh',
+            'receitas_realizadas',
+            'despesas_empenhadas',
+            'pib_per_capta'
+        ]
+        for column in numericColumns:
+            dataframe[column] = pd.to_numeric(dataframe[column], errors='coerce')
+            media = dataframe[column].mean()
+            dataframe[column].fillna(media, inplace=True)
         return dataframe
-    
-    
+        
     def dataframeJson(self, row, columns):
         dictRow = {}
         values = row.values[0]
@@ -62,16 +75,7 @@ class CityService:
         for column in columns:
             if column == 'codigo':
                 continue
-            dictRow[column] = self.handleContent(values[index], column)
+            dictRow[column] = values[index]
             index += 1
         return dictRow
             
-    def handleContent(self, content, column) :
-        if content in ['-']:
-            return None
-        operationsDict = {
-            'populacao_residente': lambda ct: ct.replace('.',''),
-        }
-        if column in operationsDict.keys():
-            content = operationsDict[column](content)           
-        return round(float(content), 2) if '.' in content else int(content)
