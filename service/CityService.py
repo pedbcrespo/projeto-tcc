@@ -1,9 +1,10 @@
 from model.City import City
 from model.State import State
 from model.District import District
-from configuration.config import ormDatabase
+from configuration.config import ormDatabase, statisticsFunction
 from typing import List
 import pandas as pd
+import requests
 
 class CityService:
     def getAllCities(self):
@@ -78,4 +79,23 @@ class CityService:
             dictRow[column] = values[index]
             index += 1
         return dictRow
-            
+    
+    def getEducationDetails(self, city:City):
+        state = State.query.filter(State.id == city.state_id).first()
+        response = requests.get(statisticsFunction(state.abbreviation, city.ibge_id))
+        return {
+            'situacaoFuncionamentoAtividade': response['situacaoFuncionamentoAtividade'],
+            'situacaoFuncionamentoParalisada': response['situacaoFuncionamentoParalisada'],
+            'dependenciaAdministrativaFederal': response['dependenciaAdministrativaFederal'],
+            'dependenciaAdministrativaEstadual': response['dependenciaAdministrativaEstadual'],
+            'dependenciaAdministrativaMunicipal': response['dependenciaAdministrativaMunicipal'],
+            'dependenciaAdministrativaPrivada': response['dependenciaAdministrativaPrivada'],
+            'tipoLocalizacaoRural': response['tipoLocalizacaoRural'],
+            'tipoLocalizacaoUrbana': response['tipoLocalizacaoUrbana'],
+            'regulamentadaSim': response['regulamentadaSim'],
+            'regulamentadaNao': response['regulamentadaNao'],
+            'enemMediaGeral': response['enemMediaGeral'],
+            'formacaoDocente': response['formacaoDocente'],
+        }
+        
+        
