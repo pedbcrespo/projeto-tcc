@@ -1,0 +1,6 @@
+https://qedu.org.br/uf/33-rio-de-janeiro/busca
+https://qedu.org.br/uf/ibge_estado_id_cidade/busca
+https://www.gov.br/empresas-e-negocios/pt-br/mapa-de-empresas/painel-mapa-de-empresas
+https://public.tableau.com/app/profile/mapadeempresas/viz/MapadeEmpresasnoBrasil_15877433181480/VisoGeral
+https://www.ibge.gov.br/cidades-e-estados
+https://qedu.org.br/brasil/busca

@@ -1,7 +1,17 @@
-from configuration.dev_configuration import *
+from configuration.dev_configuration import host, user, password, database, IBGE_BASE_URL, DISTRICTS_API_BASE_URL
 import pymysql.cursors
 import requests
 import os
+
+def getStates():
+    try:
+        response = requests.get(f"{IBGE_BASE_URL}/estados")
+        response.raise_for_status()
+        states = [{'ibge_id': state['id'], 'name': state['nome'], 'abbreviation': state['sigla'], 'region': state['regiao']} for state in response.json()]
+        return states
+    except requests.exceptions.RequestException as e:
+        print(f"Erro na requisição HTTP: {e}")
+        return []
 
 def getCities(state):
     uf = state['abbreviation']
@@ -76,3 +86,18 @@ def updateCities():
             cursor.execute(sql)
             print('QUERY EXECUTADA')
         connection.commit()
+        
+def updateStates():
+    states = getStates()
+    if not states:
+        return
+
+    queryStates = " UNION ALL ".join([f'SELECT {state["ibge_id"]} as ibge_id, "{state["name"]}" as name, "{state["abbreviation"]}" as abbreviation' for state in states])
+    sql = f"UPDATE state s JOIN ({queryStates}) v SET s.ibge_id = v.ibge_id WHERE s.name = v.name"
+    connection = getConnection()
+    with connection:
+        with connection.cursor() as cursor:
+            cursor.execute(sql)
+        connection.commit()
+    print("OK")
+updateStates()
