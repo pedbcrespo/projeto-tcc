@@ -24,7 +24,7 @@ def getStates():
     return execute('SELECT * FROM state')
 
 def getState(abbreviation):
-    state = execute(f"SELECT * FROM state WHERE abbreviation = {abbreviation}")
+    state = execute(f'SELECT * FROM state WHERE abbreviation = "{abbreviation}"')
     return state[0] if state != None else None
 
 def getStatesCity(abbreviation):

@@ -14,3 +14,5 @@
     * Bairros: http://enderecos.metheora.com/Help/Api/GET-api-cidade-id-bairros-q
     * Dados gerais das cidades: https://www.ibge.gov.br/cidades-e-estados.html
     * Dados mais detalhados sobre escolas: http://educacao.dadosabertosbr.org/api
+    * Dados sobre quantidade de escolas: https://qedu.org.br/brasil/busca
+    * Site de venda de casas e apartamentos: https://www.zapimoveis.com.br/

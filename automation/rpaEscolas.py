@@ -1,13 +1,9 @@
 from rpaBase import driver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from database import getStates, getStatesCity
 from unidecode import unidecode
-
-def remove_accent(text):
-    return unidecode(text)
 
 def link(state):
     name = unidecode(state['name']).lower().replace(' ','-')
@@ -34,3 +30,5 @@ def executa():
                 pass 
         print(amountSchools)
     return amountSchools
+
+executa()

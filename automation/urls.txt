@@ -4,3 +4,5 @@ https://www.gov.br/empresas-e-negocios/pt-br/mapa-de-empresas/painel-mapa-de-emp
 https://public.tableau.com/app/profile/mapadeempresas/viz/MapadeEmpresasnoBrasil_15877433181480/VisoGeral
 https://www.ibge.gov.br/cidades-e-estados
 https://qedu.org.br/brasil/busca
+https://www.fipe.org.br/pt-br/indices/fipezap/
+https://www.zapimoveis.com.br/
