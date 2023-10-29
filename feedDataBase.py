@@ -100,4 +100,5 @@ def updateStates():
             cursor.execute(sql)
         connection.commit()
     print("OK")
-updateStates()
+
+

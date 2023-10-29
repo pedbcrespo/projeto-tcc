@@ -5,23 +5,42 @@ from selenium.webdriver.support import expected_conditions as EC
 from database import getStates, getStatesCity, getState
 from unidecode import unidecode
 import functools as ft
+import time
 
-class VivaReal:
+class Site:
+    def handlePrices(self, textPrice):
+        splitedTextPrice = textPrice.replace('R$','').split('.')
+        lastNumber = splitedTextPrice[-1]
+        number = ''.join(splitedTextPrice[:-1])
+        if len(lastNumber) == 2:
+            number += '.' + splitedTextPrice[-1] 
+        else:
+            number += splitedTextPrice[-1]
+        return float(number)
+
+class VivaReal(Site):
     def __init__(self, abbreviation, cityName):
         self.abbreviation = abbreviation.lower()
         self.cityName = unidecode(cityName).lower().replace(' ','-')
         self.url = f"https://www.vivareal.com.br/venda/{self.abbreviation}/{self.cityName}"
     
     def process(self):
+        print(self.url)
         driver.get(self.url)
+        prices = []
+        avg = None
         try:
             listPropertyCardValues = driver.find_elements(By.CLASS_NAME, 'property-card__values')
-            print(listPropertyCardValues)
+            for select in listPropertyCardValues:
+                if select.text.count('R$') == 1:
+                    prices.append(self.handlePrices(select.text))
+            avg = round(ft.reduce(lambda a,b: a+b, prices)/len(prices), 2)
+            print('-------SUCESSO------', avg)
         except:
-            print('-------FALHA------')
-        return None
-
-class ZapiMoveis:
+            print('-------FALHA------', avg)
+        return avg
+            
+class ZapiMoveis(Site):
     def __init__(self, abbreviation, cityName):
         self.abbreviation = abbreviation.lower()
         self.cityName = unidecode(cityName).lower().replace(' ','-')
@@ -35,28 +54,25 @@ class ZapiMoveis:
     def process(self):
         print(self.url)
         prices = []
+        avg = None
         try:
             driver.get(self.url)
             divsListingPrice = driver.find_elements(By.CLASS_NAME, 'listing-price')
             for elem in divsListingPrice:
-                if 'R$' in elem.text:
-                    if elem.text.count('R$') == 1:
-                        prices.append(self.format(elem.text))
-            avg = ft.reduce(lambda a,b: a+b, prices)/len(prices)
+                if elem.text.count('R$') == 1:
+                    prices.append(self.handlePrices(elem.text))
+            avg = round(ft.reduce(lambda a,b: a+b, prices)/len(prices), 2)
             print('-------SUCESSO------', avg)
-            return ft.reduce(lambda a,b: a+b, prices)/len(prices)
         except:
-            print('-------FALHA------')
-        return prices
+            print('-------FALHA------', avg)
+        return avg
 
-class ImovelWeb:
+        
+class ImovelWeb(Site):
     def __init__(self, abbreviation, cityName):
         self.abbreviation = abbreviation.lower()
         self.cityName = unidecode(cityName).lower().replace(' ','-')
         self.url = f"https://www.imovelweb.com.br/imoveis-venda-{self.abbreviation}-{self.cityName}"
-
-linksList = [VivaReal]
-# linksList = [VivaReal, ZapiMoveis, ImovelWeb]
 
 
 def link(state, city):
@@ -64,24 +80,23 @@ def link(state, city):
     name = unidecode(city['name']).lower().replace(' ','-')
     return f"{sigla}+{name}"
 
-def getPrices(state, city):
-    for link in linksList:
+def getPrices(sites, state, city):
+    resultado = None
+    for link in sites:
+        time.sleep(3)
         site = link(state['abbreviation'], city['name'])
-        try:
-            return site.process()
-        except:
-            continue
-    return None
+        resultado = site.process()
+        if resultado != None:
+            break
+    return resultado
 
-def executa():
-    # states = getStates()
-    # for state in states:
-    #     cities = getStatesCity(state['abbreviation'])
-    #     prices = []
-    #     for city in cities:
-    #         prices.append(getPrices(state, city))
+
+def executa(state, city):
+    linksList = [VivaReal, ZapiMoveis]
+    return getPrices(linksList, state, city)
+
+if __name__ == '__main__':
     state = getState('RJ')
-    cities = getStatesCity(state['abbreviation'])
-    getPrices(state, cities[0])
-        
-executa()
+    cities = getStatesCity(state['abbreviation'])     
+    for city in cities:
+        executa(state, city)  
