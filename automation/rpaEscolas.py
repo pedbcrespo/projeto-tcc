@@ -5,15 +5,16 @@ from selenium.webdriver.support import expected_conditions as EC
 from database import getStates, getStatesCity
 from unidecode import unidecode
 
-def link(state):
-    name = unidecode(state['name']).lower().replace(' ','-')
-    return f"{state['ibge_id']}-{name}"
+class RpaSchools:
+    def __init__(self):
+        self.citySchoolsAmount = {}
+        
+    def link(self, state):
+        name = unidecode(state['name']).lower().replace(' ','-')
+        return f"{state['ibge_id']}-{name}"
 
-def executa():
-    states = getStates()
-    amountSchools = []
-    for state in states:
-        stateLink = link(state)
+    def executa(self, state, cityName):
+        stateLink = self.link(state)
         driver.get(f"https://qedu.org.br/uf/{stateLink}/busca")
         sections = driver.find_elements(By.TAG_NAME, 'section')
         for section in sections:
@@ -25,10 +26,8 @@ def executa():
                 if ('escola' in p.text or 'escolas' in p.text) and len(p.text) <= 15:
                     text = p.text.replace('escolas', '')
                     amount = int(text)
-                    amountSchools.append({'city': h1.text, 'amount': amount})
+                    cityName = h1.text
+                    self.citySchoolsAmount[cityName] = amount 
             except:
                 pass 
-        print(amountSchools)
-    return amountSchools
-
-executa()
+        return self.citySchoolsAmount[cityName]

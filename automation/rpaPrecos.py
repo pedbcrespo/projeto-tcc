@@ -83,20 +83,23 @@ def link(state, city):
 def getPrices(sites, state, city):
     resultado = None
     for link in sites:
-        time.sleep(3)
+        time.sleep(2)
         site = link(state['abbreviation'], city['name'])
         resultado = site.process()
         if resultado != None:
             break
     return resultado
 
-
-def executa(state, city):
-    linksList = [VivaReal, ZapiMoveis]
-    return getPrices(linksList, state, city)
+class RpaPrices:
+    def __init__(self):
+        self.linksList = [VivaReal, ZapiMoveis]
+        
+    def executa(self, state, city):
+        return getPrices(self.linksList, state, city)
 
 if __name__ == '__main__':
     state = getState('RJ')
-    cities = getStatesCity(state['abbreviation'])     
+    cities = getStatesCity(state['abbreviation'])   
+    rpa = RpaPrices()  
     for city in cities:
-        executa(state, city)  
+        rpa.executa(state, city)  
