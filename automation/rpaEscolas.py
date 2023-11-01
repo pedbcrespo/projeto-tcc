@@ -9,6 +9,7 @@ import pandas as pd
 class RpaSchools:
     def __init__(self):
         self.citySchoolsAmount = {}
+        print('RPA Escolas iniciado')
         
     def link(self, state):
         name = unidecode(state['name']).lower().replace(' ','-')

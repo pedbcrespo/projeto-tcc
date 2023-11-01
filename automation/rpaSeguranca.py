@@ -33,9 +33,9 @@ class RpaSecurity:
                     cityName = td.text
                 elif td.get_attribute('class') == 'taxa-estimada-de-homicidios footable-visible':
                     rate = float(td.text.replace(',','.'))
-            print(cityName, rate)
             self.citySecurityData.append(CitySecurityRate(abbreviation, cityName, rate))
-
+        print('RPA Seguranca iniciado')
+        
     def calculatingAvarageRate(self, abbreviation, cityName):
         cities = list(filter(lambda city: city.abbreviation == abbreviation, self.citySecurityData))
         rates = list(map(lambda city: city.rate, cities))

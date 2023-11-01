@@ -45,7 +45,7 @@ class ZapiMoveis(Site):
         self.abbreviation = abbreviation.lower()
         self.cityName = unidecode(cityName).lower().replace(' ','-')
         self.url = f"https://www.zapimoveis.com.br/venda/imoveis/{self.abbreviation}+{self.cityName}"
-    
+        
     
     def format(self, strNumber):
         number = int(strNumber.replace('R$','').replace('.',''))
@@ -93,6 +93,7 @@ def getPrices(sites, state, city):
 class RpaPrices:
     def __init__(self):
         self.linksList = [VivaReal, ZapiMoveis]
+        print('RPA Precos iniciado')
         
     def executa(self, state, city):
         return getPrices(self.linksList, state, city)
