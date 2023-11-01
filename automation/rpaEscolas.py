@@ -4,6 +4,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from database import getStates, getStatesCity
 from unidecode import unidecode
+import pandas as pd
 
 class RpaSchools:
     def __init__(self):

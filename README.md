@@ -16,3 +16,8 @@
     * Dados mais detalhados sobre escolas: http://educacao.dadosabertosbr.org/api
     * Dados sobre quantidade de escolas: https://qedu.org.br/brasil/busca
     * Site de venda de casas e apartamentos: https://www.zapimoveis.com.br/
+    * Dados sobre indice de homicidios do ponto de vista internacional: https://homicide.igarape.org.br/?l=es
+    * Dados sobre indice de violencia em municipios do ano de 2019: https://infograficos.gazetadopovo.com.br/seguranca-publica/atlas-da-violencia-2019-por-municipios/
+    * Dados sobre preços de imoveis: https://www.vivareal.com.br/
+    * Dados sobre preços de imoveis: https://www.zapimoveis.com.br/
+    * Dados sbore hospitais de todo o país: https://cnes.datasus.gov.br/pages/estabelecimentos/consulta.jsp?search=CABO%20FRIO

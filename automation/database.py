@@ -33,4 +33,5 @@ def getStatesCity(abbreviation):
         return []
     return execute(f"SELECT * FROM city WHERE state_id = {state['id']}")
 
+
     
