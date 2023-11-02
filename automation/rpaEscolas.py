@@ -35,6 +35,9 @@ class RpaSchools:
                 pass 
         return self.citySchoolsAmount[cityName]
     
-    
+rpa = RpaSchools()
 states = getStates()
-for state
+for state in states:
+    cities = getStatesCity(state['abbreviation'])
+    for city in cities:
+        print(rpa.executa(state, city))

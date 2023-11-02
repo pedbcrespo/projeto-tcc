@@ -24,14 +24,13 @@ class CsvGeneralCity:
             'PIB per capita - R$ [2020]':'pib_per_capta',
             'Unnamed: 13': 'unnamed'
         })
-        dataframe = dataframe.drop(columns=['municipio', 'unnamed', 'prefeito', 'nome_nascente', 'despesas_empenhadas'], errors='ignore')
+        dataframe = dataframe.drop(columns=['municipio', 'unnamed', 'prefeito', 'nome_nascente', 'despesas_empenhadas', 'receitas_realizadas'], errors='ignore')
         numericColumns = [
             'area_territorial(km²)',
             'populacao_residente',
             'densidade_demografica',
             'escolaridade',
             'idh',
-            'receitas_realizadas',
             'pib_per_capta'
         ]
         for column in numericColumns:
@@ -39,7 +38,7 @@ class CsvGeneralCity:
             media = dataframe[column].mean()
             dataframe[column].fillna(media, inplace=True)
             
-        self.selectedColumns = ['codigo', 'area_territorial(km²)', 'populacao_residente', 'densidade_demografica', 'escolaridade', 'idh', 'receitas_realizadas', 'pib_per_capta']
+        self.selectedColumns = ['codigo', 'area_territorial(km²)', 'populacao_residente', 'densidade_demografica', 'escolaridade', 'idh', 'pib_per_capta']
         return dataframe
         
     def dataframeJson(self, row, columns):
