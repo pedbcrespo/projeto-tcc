@@ -15,7 +15,8 @@ class RpaSchools:
         name = unidecode(state['name']).lower().replace(' ','-')
         return f"{state['ibge_id']}-{name}"
 
-    def executa(self, state, cityName):
+    def executa(self, state, city):
+        cityName = city['name']
         stateLink = self.link(state)
         driver.get(f"https://qedu.org.br/uf/{stateLink}/busca")
         sections = driver.find_elements(By.TAG_NAME, 'section')
@@ -33,3 +34,7 @@ class RpaSchools:
             except:
                 pass 
         return self.citySchoolsAmount[cityName]
+    
+    
+states = getStates()
+for state

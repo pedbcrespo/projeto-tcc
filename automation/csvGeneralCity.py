@@ -2,9 +2,12 @@ import pandas as pd
 import database as db
 
 class CsvGeneralCity:
+    def __init__(self):
+        self.selectedColumns = []
+        
     def readingStateCsv(self, uf):
         fileName = f"csvData/{uf}-todos-municipios.csv"
-        dataframe = pd.read_csv(fileName, skiprows=[0], encoding='utf-8')
+        dataframe = pd.read_csv(fileName, skiprows=[0,-1], encoding='utf-8')
         dataframe = dataframe.rename(columns={
             'Munic&iacute;pio [-]': 'municipio',
             'C&oacute;digo [-]': 'codigo',
@@ -21,7 +24,7 @@ class CsvGeneralCity:
             'PIB per capita - R$ [2020]':'pib_per_capta',
             'Unnamed: 13': 'unnamed'
         })
-        dataframe = dataframe.drop(columns=['unnamed', 'prefeito', 'nome_nascente'])
+        dataframe = dataframe.drop(columns=['municipio', 'unnamed', 'prefeito', 'nome_nascente', 'despesas_empenhadas'], errors='ignore')
         numericColumns = [
             'area_territorial(km²)',
             'populacao_residente',
@@ -29,13 +32,14 @@ class CsvGeneralCity:
             'escolaridade',
             'idh',
             'receitas_realizadas',
-            'despesas_empenhadas',
             'pib_per_capta'
         ]
         for column in numericColumns:
             dataframe[column] = pd.to_numeric(dataframe[column], errors='coerce')
             media = dataframe[column].mean()
             dataframe[column].fillna(media, inplace=True)
+            
+        self.selectedColumns = ['codigo', 'area_territorial(km²)', 'populacao_residente', 'densidade_demografica', 'escolaridade', 'idh', 'receitas_realizadas', 'pib_per_capta']
         return dataframe
         
     def dataframeJson(self, row, columns):
@@ -51,14 +55,22 @@ class CsvGeneralCity:
     
     def getDataOfCity(self, uf, ibgeCityId):
         dataframe = self.readingStateCsv(uf)
-        columns = [column for column in dataframe.columns]
-        rowDf = dataframe[dataframe['codigo'] == f"{ibgeCityId}"]
-        return self.dataframeJson(rowDf, columns)
+        row = dataframe[dataframe['codigo'] == f"{ibgeCityId}"]
+        columns = row[self.selectedColumns]
+        return self.dataframeJson(row, columns)
     
-    
-
-state = db.getState('RJ')
-cities = db.getStatesCity(state['abbreviation'])
-
+    def execute(self, state, city):
+        uf = state['abbreviation']
+        ibgeCityId = city['ibge_id']
+        try: 
+            return self.getDataOfCity(uf, ibgeCityId)
+        except:
+            print(f'ERRO AO BUSCAR DADOS DO {state["abbreviation"]} - {city["name"]}')
+            return None
+        
+states = db.getStates()
 csvReader = CsvGeneralCity()
-print(csvReader.getDataOfCity(state['abbreviation'], cities[0]['ibge_id']))
+for state in states:
+    cities = db.getStatesCity(state['abbreviation'])
+    for city in cities:
+        print(csvReader.execute(state, city))
