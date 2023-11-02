@@ -33,5 +33,17 @@ def getStatesCity(abbreviation):
         return []
     return execute(f"SELECT * FROM city WHERE state_id = {state['id']}")
 
+def saveSchoolsInfo(city, amountSchools, scholarityRate):
+    query = f'INSERT INTO info_schools (city_id, amount_schools, scholarity_rate) VALUES ({city["id"]}, {amountSchools}, {scholarityRate})'
+    return execute(query)
 
+def saveSecurityInfo(city, securityRate):
+    query = f'INSERT INTO info_security (city_id, secutiry_rate) VALUES ({city["id"]},{securityRate})'
+    return execute(query)
     
+def savePricesInfo(city, avgHomePrices):
+    query = f'INSERT INTO info_prices (city_id, avg_homes_price) VALUES ({city["id"]},{avgHomePrices})'
+    return execute(query)
+    
+def saveGeneralInfo(city, generalInfo):
+    query = f'INSERT INTO info_general (city_id, pib_per_capta, population, idh, demographic_density)'

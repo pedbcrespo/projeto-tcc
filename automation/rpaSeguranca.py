@@ -42,7 +42,7 @@ class RpaSecurity:
         avarageRate = round(ft.reduce(lambda a, b: a + b, rates)/len(cities), 2)
         return avarageRate
 
-    def executa(self, state, city):
+    def execute(self, state, city):
         abbreviation = state['abbreviation']
         cityName = city['name']
         data = list(filter(lambda dt: dt.cityName == cityName, self.citySecurityData))
@@ -53,4 +53,4 @@ class RpaSecurity:
 state = getState('RJ')
 cities = getStatesCity(state['abbreviation'])  
 rpa = RpaSecurity()
-print(f'MEDIA {cities[0]["name"]}', rpa.executa(state, cities[0]))
+print(f'MEDIA {cities[0]["name"]}', rpa.execute(state, cities[0]))

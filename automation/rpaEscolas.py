@@ -20,34 +20,22 @@ class RpaSchools:
         if numbers == []:
             return 0
         return int(numbers[0])
-    
-    def gettingCityDiv(self, section, cityName):
-        divs = section.find_elements(By.TAG_NAME, 'div')
-        for div in divs:
-            if div.get_attribute('class') != 'flex flex-col font-bold':
-                continue
-            h1 = div.find_element(By.TAG_NAME, 'h1')
-            if h1.text != cityName:
-                return True
-        return False
-
-    def executa(self, state, city):
+        
+    def execute(self, state, city):
         cityName = city['name']
         stateLink = self.link(state)
         try:
             driver.get(f"https://qedu.org.br/uf/{stateLink}/busca")
-            sections = [section for section in driver.find_elements(By.TAG_NAME, 'section')]
-            filteredSections = list(filter(lambda section: self.gettingCityDiv(section, cityName), sections))
-            if filteredSections == []:
-                return None
-            section = filteredSections[0]
-            divs = [div for div in section.find_elements(By.TAG_NAME, 'div')]
-            filtredDiv = list(filter(lambda div: div.get_attribute('class') == 'flex flex-col font-bold', divs))
-            div = filtredDiv[0]
-            p = div.find_element(By.TAG_NAME, 'p')
-            amount = self.handleNumberText(p.text)
-            print(state['abbreviation'], city['name'], amount, 'Escolas')
-            return amount 
+            sections = driver.find_elements(By.XPATH, "//section[not(@*)]")
+            for section in sections:
+                divs = section.find_elements(By.XPATH, "//div[@class='flex flex-col font-bold']")
+                for div in divs:
+                    h1 = div.find_element(By.TAG_NAME, 'h1')
+                    if h1.text == cityName:
+                        p = div.find_element(By.TAG_NAME, 'p')
+                        amount = self.handleNumberText(p.text)
+                        print(state['abbreviation'], city['name'], amount, 'Escolas' if amount>1 else 'Escola')
+                        return amount
         except:
             print(f"ERRO AO BUSCAR QTD ESCOLAS {state['abbreviation']} - {city['name']}")
         return None
@@ -57,4 +45,4 @@ states = getStates()
 for state in states:
     cities = getStatesCity(state['abbreviation'])
     for city in cities:
-        rpa.executa(state, city)
+        rpa.execute(state, city)

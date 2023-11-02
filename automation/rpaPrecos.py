@@ -95,7 +95,7 @@ class RpaPrices:
         self.linksList = [VivaReal, ZapiMoveis]
         print('RPA Precos iniciado')
         
-    def executa(self, state, city):
+    def execute(self, state, city):
         return getPrices(self.linksList, state, city)
 
 if __name__ == '__main__':
@@ -103,4 +103,4 @@ if __name__ == '__main__':
     cities = getStatesCity(state['abbreviation'])   
     rpa = RpaPrices()  
     for city in cities:
-        rpa.executa(state, city)  
+        rpa.execute(state, city)  
