@@ -21,18 +21,21 @@ class RpaSecurity:
             
             xpath = '//*[@id="pvExplorationHost"]/div/div/exploration/div/explore-canvas/div/div[2]/div/div[2]/div[2]/visual-container-repeat/visual-container[11]/transform/div/div[3]/div/div/visual-modern/div/div/div[2]/div[1]'
             div_table = self.wait.until(EC.presence_of_element_located((By.XPATH, xpath)))
+            # presentationRowsXpath = '//*[@id="pvExplorationHost"]/div/div/exploration/div/explore-canvas/div/div[2]/div/div[2]/div[2]/visual-container-repeat/visual-container[11]/transform/div/div[3]/div/div/visual-modern/div/div/div[2]/div[1]/div[2]/div'
             presentationRowsXpath = '//*[@id="pvExplorationHost"]/div/div/exploration/div/explore-canvas/div/div[2]/div/div[2]/div[2]/visual-container-repeat/visual-container[11]/transform/div/div[3]/div/div/visual-modern/div/div/div[2]/div[1]/div[2]/div'
             presentationDiv = div_table.find_element(By.XPATH, presentationRowsXpath)
-            divs = presentationDiv.find_elements(By.CLASS_NAME, 'row')
             index = 0
             securityInfo = []
-            while index < 5570:
+            while data != ['Selecionar', 'Linha', 'TO', 'Xambioá', '4', '3', '2']:
+                divs = presentationDiv.find_elements(By.CLASS_NAME, 'row')
+                data = None
                 for div in divs:
-                    if div.get_attribute('role') == 'row' and index == int(div.get_attribute('row-index')):
-                        data = div.text.split()
-                        print(data)
-                        securityInfo.append(data)
+                    data = div.text.split()
+                    print(data)
+                    securityInfo.append(data)
                     index += 1
+                if index == 5570:
+                    break
                 self.rollDown(scroolBar)
             return securityInfo
         except:
@@ -44,7 +47,7 @@ class RpaSecurity:
 
     def rollDown(self, scroolBar):
         actions = ActionChains(driver)
-        actions.click_and_hold(scroolBar).move_by_offset(0, 500).release().perform()
+        actions.click_and_hold(scroolBar).move_by_offset(0, 28).release().perform()
 
     def execute(self, state, city):
         pass
