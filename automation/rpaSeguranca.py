@@ -2,55 +2,54 @@ from rpaBase import driver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
-from database import getStates, getStatesCity, getState
-import functools as ft
-
-class CitySecurityRate:
-    def __init__(self, abbreviation, cityName, rate):
-        self.abbreviation = abbreviation
-        self.cityName = cityName
-        self.rate = rate
-        
-    def __str__(self):
-        return f'({self.abbreviation}, {self.cityName}, {self.rate})'
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.common.action_chains import ActionChains
+from database import getStates, getStatesCity
+from unidecode import unidecode
 
 class RpaSecurity:
     def __init__(self):
-        self.citySecurityData = []
-        url = 'https://infograficos.gazetadopovo.com.br/seguranca-publica/atlas-da-violencia-2019-por-municipios/'
-        driver.get(url)
-        table_tag = driver.find_element(By.TAG_NAME, 'tbody')
-        t_rows = table_tag.find_elements(By.TAG_NAME, 'tr')
-        abbreviation=''
-        cityName = ''
-        rate = ''
-        for row in t_rows:
-            tds = row.find_elements(By.TAG_NAME, 'td')
-            for td in tds:
-                if td.get_attribute('class') == 'uf footable-visible footable-first-column':
-                    abbreviation = td.text
-                elif td.get_attribute('class') == 'municipio footable-visible':
-                    cityName = td.text
-                elif td.get_attribute('class') == 'taxa-estimada-de-homicidios footable-visible':
-                    rate = float(td.text.replace(',','.'))
-            self.citySecurityData.append(CitySecurityRate(abbreviation, cityName, rate))
-        print('RPA Seguranca iniciado')
+        self.url = 'https://app.powerbi.com/view?r=eyJrIjoiYjhhMDMxMTUtYjE3NC00ZjY5LWI5Y2EtZDljNzBlNDg2ZjVkIiwidCI6ImViMDkwNDIwLTQ0NGMtNDNmNy05MWYyLTRiOGRhNmJmZThlMSJ9'
+    
+    def getData(self):
+        driver.get(self.url)
+        try:
+            self.wait = WebDriverWait(driver, 40)
+            scroolBarContentXpath = '//*[@id="pvExplorationHost"]/div/div/exploration/div/explore-canvas/div/div[2]/div/div[2]/div[2]/visual-container-repeat/visual-container[11]/transform/div/div[3]/div/div/visual-modern/div/div/div[2]/div[4]'
+            scroolBarDiv = self.wait.until(EC.presence_of_element_located((By.XPATH, scroolBarContentXpath)))
+            scroolBar = scroolBarDiv.find_element(By.CSS_SELECTOR, '.scroll-bar-part-bar')
+            
+            xpath = '//*[@id="pvExplorationHost"]/div/div/exploration/div/explore-canvas/div/div[2]/div/div[2]/div[2]/visual-container-repeat/visual-container[11]/transform/div/div[3]/div/div/visual-modern/div/div/div[2]/div[1]'
+            div_table = self.wait.until(EC.presence_of_element_located((By.XPATH, xpath)))
+            presentationRowsXpath = '//*[@id="pvExplorationHost"]/div/div/exploration/div/explore-canvas/div/div[2]/div/div[2]/div[2]/visual-container-repeat/visual-container[11]/transform/div/div[3]/div/div/visual-modern/div/div/div[2]/div[1]/div[2]/div'
+            presentationDiv = div_table.find_element(By.XPATH, presentationRowsXpath)
+            divs = presentationDiv.find_elements(By.CLASS_NAME, 'row')
+            index = 0
+            securityInfo = []
+            while index < 5570:
+                for div in divs:
+                    if div.get_attribute('role') == 'row' and index == int(div.get_attribute('row-index')):
+                        data = div.text.split()
+                        print(data)
+                        securityInfo.append(data)
+                    index += 1
+                self.rollDown(scroolBar)
+            return securityInfo
+        except:
+            print('ERRO AO BUSCAR DADOS DO POWERBI')
         
-    def calculatingAvarageRate(self, abbreviation, cityName):
-        cities = list(filter(lambda city: city.abbreviation == abbreviation, self.citySecurityData))
-        rates = list(map(lambda city: city.rate, cities))
-        avarageRate = round(ft.reduce(lambda a, b: a + b, rates)/len(cities), 2)
-        return avarageRate
+        return []
+        # driver.quit()
+
+
+    def rollDown(self, scroolBar):
+        actions = ActionChains(driver)
+        actions.click_and_hold(scroolBar).move_by_offset(0, 500).release().perform()
 
     def execute(self, state, city):
-        abbreviation = state['abbreviation']
-        cityName = city['name']
-        data = list(filter(lambda dt: dt.cityName == cityName, self.citySecurityData))
-        rate = self.calculatingAvarageRate(abbreviation, cityName)
-        return rate if data == [] else data[0].rate
+        pass
 
 
-state = getState('RJ')
-cities = getStatesCity(state['abbreviation'])  
 rpa = RpaSecurity()
-print(f'MEDIA {cities[0]["name"]}', rpa.execute(state, cities[0]))
+
+rpa.getData()

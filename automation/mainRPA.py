@@ -1,7 +1,7 @@
 import database as db
 from rpaEscolas import RpaSchools
 from rpaPrecos import RpaPrices
-from rpaSeguranca import RpaSecurity
+from automation.rpaSegurancaSite1 import RpaSecurity
 from csvGeneralCity import CsvGeneralCity
 
 states = db.getStates()

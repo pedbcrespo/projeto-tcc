@@ -21,3 +21,4 @@
     * Dados sobre preços de imoveis: https://www.vivareal.com.br/
     * Dados sobre preços de imoveis: https://www.zapimoveis.com.br/
     * Dados sbore hospitais de todo o país: https://cnes.datasus.gov.br/pages/estabelecimentos/consulta.jsp?search=CABO%20FRIO
+    * Dados sobre segurança da sinesp em powerbi: https://app.powerbi.com/view?r=eyJrIjoiYjhhMDMxMTUtYjE3NC00ZjY5LWI5Y2EtZDljNzBlNDg2ZjVkIiwidCI6ImViMDkwNDIwLTQ0NGMtNDNmNy05MWYyLTRiOGRhNmJmZThlMSJ9
