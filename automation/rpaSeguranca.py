@@ -26,9 +26,9 @@ class RpaSecurity:
             presentationDiv = div_table.find_element(By.XPATH, presentationRowsXpath)
             index = 0
             securityInfo = []
+            data = None 
             while data != ['Selecionar', 'Linha', 'TO', 'Xambioá', '4', '3', '2']:
                 divs = presentationDiv.find_elements(By.CLASS_NAME, 'row')
-                data = None
                 for div in divs:
                     data = div.text.split()
                     print(data)
