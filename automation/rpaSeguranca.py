@@ -38,15 +38,31 @@ class RpaSecurity:
         except:
             print('ERRO AO BUSCAR DADOS DO POWERBI')
         self.cleanInfo()
+        self.fixValues()
         print(self.securityInfo[0])
         
     def cleanInfo(self):
         self.securityInfo = list(map(lambda val: val[2:], self.securityInfo))
         
+    def fixValues(self):
+        def lastElement(arr):
+            index = len(arr) -1
+            return None if arr == [] else arr[index]
+        
+        def handleValues(val):
+            names = list(filter(lambda x: not x.isnumeric(), val))
+            numbers = list(filter(lambda x: x not in names, val))
+            abbreviation = names.pop(0)
+            return {'abbreviation': abbreviation, 'name': ''.join(names), 'rate': int(lastElement(numbers))}
+        
+            
+        self.securityInfo = list(map(lambda val: handleValues(val), self.securityInfo))    
+        
+            
         
     def rollDown(self, scroolBar):
         actions = ActionChains(driver)
-        actions.click_and_hold(scroolBar).move_by_offset(0, 2).release().perform()
+        actions.click_and_hold(scroolBar).move_by_offset(0, 70).release().perform()
 
     def execute(self, state, city):
         pass
