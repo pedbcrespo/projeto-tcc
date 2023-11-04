@@ -51,12 +51,12 @@ class RpaSecurity:
     def fixValues(self):
         def lastElement(arr):
             index = len(arr) -1
-            return None if arr == [] else arr[index]
+            return None if arr == [] else int(arr[index])
         def handleValues(val):
             names = list(filter(lambda x: not x.isnumeric(), val))
             numbers = list(filter(lambda x: x not in names, val))
             abbreviation = names.pop(0)
-            return {'abbreviation': abbreviation, 'name': ''.join(names), 'rate': int(lastElement(numbers))}
+            return {'abbreviation': abbreviation, 'name': ''.join(names), 'rate': lastElement(numbers)}
         self.securityInfo = list(map(lambda val: handleValues(val), self.securityInfo))    
         
     def rollDown(self, scroolBar):
@@ -66,13 +66,16 @@ class RpaSecurity:
     def createAvarage(self, state):
         abbreviation = state['abbreviation']
         stateList = list(filter(lambda val: val['abbreviation'] == abbreviation, self.securityInfo))
-        avg_rate = round(ft.reduce(lambda a, b: a+b, list(map(lambda val: val['rate'], stateList)))/len(stateList), 2)
-        return avg_rate
+        rates = list(map(lambda val: val['rate'], stateList))
+        ratesWithOutNone = list(filter(lambda val: val!=None, rates))
+        sumRate = ft.reduce(lambda a,b: a+b, ratesWithOutNone)
+        avg = round(sumRate/len(ratesWithOutNone), 2)
+        return avg
         
     def execute(self, state, city):
         cityName = city['name']
         cityRate = list(filter(lambda data: data['name'] == cityName, self.securityInfo))
-        return self.createAvarage(state) if cityRate == [] else cityRate[0]
+        return {'abbreviation': state['abbreviation'], 'name': cityName, 'rate': self.createAvarage(state)} if cityRate == [] else cityRate[0]
 
 rpa = RpaSecurity()
 states = getStates()
