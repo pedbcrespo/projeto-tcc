@@ -6,7 +6,7 @@ class CsvGeneralCity:
         self.selectedColumns = []
         
     def readingStateCsv(self, uf):
-        fileName = f"csvData/{uf}-todos-municipios.csv"
+        fileName = f"D:/Users/Pedro/Documents/Programacao/Python/projeto-tcc/csvData/{uf}-todos-municipios.csv"
         dataframe = pd.read_csv(fileName, skiprows=[0,-1], encoding='utf-8')
         dataframe = dataframe.rename(columns={
             'Munic&iacute;pio [-]': 'municipio',
@@ -59,7 +59,7 @@ class CsvGeneralCity:
         return self.dataframeJson(row, columns)
     
     def execute(self, state, city):
-        uf = state['abbreviation']
+        uf = state['abbreviation'].lower()
         ibgeCityId = city['ibge_id']
         try: 
             return self.getDataOfCity(uf, ibgeCityId)
@@ -67,9 +67,10 @@ class CsvGeneralCity:
             print(f'ERRO AO BUSCAR DADOS DO {state["abbreviation"]} - {city["name"]}')
             return None
         
-states = db.getStates()
-csvReader = CsvGeneralCity()
-for state in states:
-    cities = db.getStatesCity(state['abbreviation'])
-    for city in cities:
-        print(csvReader.execute(state, city))
+if __name__ == '__main__':
+    states = db.getStates()
+    csvReader = CsvGeneralCity()
+    for state in states:
+        cities = db.getStatesCity(state['abbreviation'])
+        for city in cities:
+            print(csvReader.execute(state, city))

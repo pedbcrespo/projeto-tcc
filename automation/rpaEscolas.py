@@ -39,10 +39,11 @@ class RpaSchools:
         except:
             print(f"ERRO AO BUSCAR QTD ESCOLAS {state['abbreviation']} - {city['name']}")
         return None
-    
-rpa = RpaSchools()
-states = getStates()
-for state in states:
-    cities = getStatesCity(state['abbreviation'])
-    for city in cities:
-        rpa.execute(state, city)
+
+if __name__ == '__main__': 
+    rpa = RpaSchools()
+    states = getStates()
+    for state in states:
+        cities = getStatesCity(state['abbreviation'])
+        for city in cities:
+            rpa.execute(state, city)

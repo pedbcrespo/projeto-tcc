@@ -77,9 +77,10 @@ class RpaSecurity:
         cityRate = list(filter(lambda data: data['name'] == cityName, self.securityInfo))
         return {'abbreviation': state['abbreviation'], 'name': cityName, 'rate': self.createAvarage(state)} if cityRate == [] else cityRate[0]
 
-rpa = RpaSecurity()
-states = getStates()
-for state in states:
-    cities = getStatesCity(state['abbreviation'])
-    for city in cities:
-        print(city['name'], rpa.execute(state, city))
+if __name__ == '__main__':
+    rpa = RpaSecurity()
+    states = getStates()
+    for state in states:
+        cities = getStatesCity(state['abbreviation'])
+        for city in cities:
+            print(city['name'], rpa.execute(state, city))

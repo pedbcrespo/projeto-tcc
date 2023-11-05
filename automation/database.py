@@ -47,3 +47,4 @@ def savePricesInfo(city, avgHomePrices):
     
 def saveGeneralInfo(city, generalInfo):
     query = f'INSERT INTO info_general (city_id, pib_per_capta, population, idh, demographic_density)'
+    return execute(query)
