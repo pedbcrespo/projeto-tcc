@@ -5,6 +5,10 @@ from rpaSeguranca import RpaSecurity
 from csvGeneralCity import CsvGeneralCity
 import os
 
+schoolsInfo = []
+prices = []
+securityRates = []
+
 def clear():
     if os.name == 'posix':
         os.system('clear')
@@ -15,43 +19,49 @@ def schoolsInformations(state, city, general_info):
     print("COLETANDO DADOS DE ESCOLARIDADE")
     rpaSchools = RpaSchools()
     scholarityRate = general_info['escolaridade']
-    amountSchools = rpaSchools.executa(state, city)
-    try:
-        db.saveSchoolsInfo(city, amountSchools, scholarityRate)
-        print("DADOS SALVOS COM SUCESSO")
-    except:
-        print("ERRO AO SALVAR")
+    amountSchools = rpaSchools.execute(state, city)
+    schoolsInfo.append({'city':city, 'amount': amountSchools, 'rate': scholarityRate})
+    # try:
+    #     db.saveSchoolsInfo(city, amountSchools, scholarityRate)
+    #     print("DADOS SALVOS COM SUCESSO")
+    # except:
+    #     print("ERRO AO SALVAR")
     
 def pricesInformation(state, city, general_info):
     print("COLETANDO DADOS DOS PRECOS")
     rpaPrices = RpaPrices()
-    avgHomePrices = rpaPrices.executa(state, city)
-    try:
-        db.savePricesInfo(city, avgHomePrices)
-        print("DADOS SALVOS COM SUCESSO")
-    except:
-        print("ERRO AO SALVAR")
+    avgHomePrices = rpaPrices.execute(state, city)
+    prices.append({'city': city, 'price': avgHomePrices})
+    # try:
+    #     db.savePricesInfo(city, avgHomePrices)
+    #     print("DADOS SALVOS COM SUCESSO")
+    # except:
+    #     print("ERRO AO SALVAR")
 
 def securityInformation(state, city):
     print("COLETANDO DADOS DA SEGURANCA")
     rpaSecurity = RpaSecurity()
-    securityRate = rpaSecurity.executa(state, city)
-    try:
-        db.saveSecurityInfo(city, securityRate)
-        print("DADOS SALVOS COM SUCESSO")
-    except:
-        print("ERRO AO SALVAR")
+    securityRate = rpaSecurity.execute(state, city)
+    securityRates.append({'city':city, 'rate': securityRate})
+    # try:
+    #     db.saveSecurityInfo(city, securityRate)
+    #     print("DADOS SALVOS COM SUCESSO")
+    # except:
+    #     print("ERRO AO SALVAR")
 
 def generalInformation(state, city):
     print("COLETANDO DADOS GERAIS")
     generalCsv = CsvGeneralCity()
     generalInfo = generalCsv.execute(state, city)
-    try:
-        db.saveGeneralInfo(city, generalInfo)
-        print("DADOS SALVOS COM SUCESSO")
-    except:
-        print("ERRO AO SALVAR")
+    # try:
+    #     db.saveGeneralInfo(city, generalInfo)
+    #     print("DADOS SALVOS COM SUCESSO")
+    # except:
+    #     print("ERRO AO SALVAR")
     return generalInfo
+
+def saveAll(schoolsInfo, pricesInfo, securitiesInfo):
+    pass
 
 def execute():
     print("EXECUTANDO RPA")
@@ -61,11 +71,12 @@ def execute():
         for city in cities:
             print(state['abbreviation'], city['name'])
             general_info = generalInformation(state, city)
-            # if general_info == None:
-            #     return None
-            # schoolsInformations(state, city, general_info)
+            if general_info == None:
+                return None
+            schoolsInformations(state, city, general_info)
             # pricesInformation(state, city, general_info)
             # securityInformation(state, city)
+    
 execute()
 
 

@@ -1,4 +1,5 @@
 import pymysql.cursors
+import re
 from config import *
 
 def getConnection():
@@ -20,6 +21,18 @@ def execute(query):
             result = [row for row in results]
     return result
 
+def executeWrite(query):
+    connection = getConnection()
+    with connection:
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+        try:
+            connection.commit()
+            return True
+        except:
+            print(f"ERRO AO EXECUTAR {query}")
+            return False
+
 def getStates():
     return execute('SELECT * FROM state')
 
@@ -35,16 +48,33 @@ def getStatesCity(abbreviation):
 
 def saveSchoolsInfo(city, amountSchools, scholarityRate):
     query = f'INSERT INTO info_schools (city_id, amount_schools, scholarity_rate) VALUES ({city["id"]}, {amountSchools}, {scholarityRate})'
-    return execute(query)
+    executeWrite(query)
+    return amountSchools, scholarityRate
 
 def saveSecurityInfo(city, securityRate):
     query = f'INSERT INTO info_security (city_id, secutiry_rate) VALUES ({city["id"]},{securityRate})'
-    return execute(query)
+    executeWrite(query)
+    return securityRate
     
 def savePricesInfo(city, avgHomePrices):
     query = f'INSERT INTO info_prices (city_id, avg_homes_price) VALUES ({city["id"]},{avgHomePrices})'
-    return execute(query)
+    executeWrite(query)
+    return avgHomePrices
     
 def saveGeneralInfo(city, generalInfo):
-    query = f'INSERT INTO info_general (city_id, pib_per_capta, population, idh, demographic_density)'
-    return execute(query)
+    def convertType(value, typedef, function=None):
+        if value == None or value == '-':
+            return None
+        res = typedef(re.sub(r'[().]', '', f"{value}"))
+        return res if function == None else function(res)
+    
+    pibPerCapta = round(generalInfo['pib_per_capta'], 2)
+    population = convertType(generalInfo['populacao_residente'], int)
+    idh = round(float(generalInfo['idh']), 2)
+    demographicDensity = round(float(generalInfo['densidade_demografica']), 2)
+    print(f'({city["id"]}, {pibPerCapta}, {population}, {idh}, {demographicDensity})', type(idh))
+    query = f'INSERT INTO info_general (city_id, pib_per_capta, population, idh, demographic_density) VALUES ({city["id"]}, {pibPerCapta}, {population}, {idh}, {demographicDensity})'
+    executeWrite(query)
+    return generalInfo
+
+
