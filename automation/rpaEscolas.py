@@ -36,8 +36,8 @@ class RpaSchools:
                         amount = self.handleNumberText(p.text)
                         print(state['abbreviation'], city['name'], amount, 'Escolas' if amount>1 else 'Escola')
                         return amount
-        except:
-            print(f"ERRO AO BUSCAR QTD ESCOLAS {state['abbreviation']} - {city['name']}")
+        except Exception as e:
+            print(f"ERRO AO BUSCAR QTD ESCOLAS {state['abbreviation']} - {city['name']}. {str(e)}")
         return None
 
 if __name__ == '__main__': 

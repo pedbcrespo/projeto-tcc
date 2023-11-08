@@ -1,6 +1,9 @@
 from model.City import City
 from model.State import State
-from model.District import District
+from model.InfoSecurity import InfoSecurity
+from model.InfoSchools import InfoSchools
+from model.InfoGeneral import InfoGeneral
+from model.InfoPrices import InfoPrices
 from configuration.config import ormDatabase, statisticsFunction
 from typing import List
 import pandas as pd
@@ -23,79 +26,15 @@ class CityService:
         ormDatabase.session.add_all(cities)
         ormDatabase.session.commit()
         return [city.json() for city in cities] 
+
+    def getInfo(self, cityId, infoType):
+        info = infoType.query.filter(infoType.city_id == cityId).first()
+        return info.json()
     
-    def setDetailsInfo(self, city:City, state:State, dataframe):
-        columns = [column for column in dataframe.columns]
-        rowDf = dataframe[dataframe['codigo'] == f"{city.ibge_id}"]
-        districts = District.query.filter(District.city_id == city.id).all()
-        city.districts = districts
-        self.dataframeJson(rowDf, columns)
-        city.info = self.dataframeJson(rowDf, columns)
-        return city.json()       
-        
-    def readingStateCsv(self, uf):
-        fileName = f"csvData/{uf}-todos-municipios.csv"
-        dataframe = pd.read_csv(fileName, skiprows=[0], encoding='utf-8')
-        dataframe = dataframe.rename(columns={
-            'Munic&iacute;pio [-]': 'municipio',
-            'C&oacute;digo [-]': 'codigo',
-            'Gent&iacute;lico [-]': 'nome_nascente',
-            'Prefeito [2021]': 'prefeito',
-            '&Aacute;rea Territorial - km&sup2; [2022]': 'area_territorial(km²)',
-            'Popula&ccedil;&atilde;o residente - pessoas [2022]': 'populacao_residente',
-            'Densidade demogr&aacute;fica - hab/km&sup2; [2022]': 'densidade_demografica',
-            'Escolariza&ccedil;&atilde;o &lt;span&gt;6 a 14 anos&lt;/span&gt; - % [2010]': 'escolaridade',
-            'IDHM &lt;span&gt;&Iacute;ndice de desenvolvimento humano municipal&lt;/span&gt; [2010]': 'idh',
-            'Mortalidade infantil - &oacute;bitos por mil nascidos vivos [2020]': 'mortalidade_infantil',
-            'Receitas realizadas - R$ (&times;1000) [2017]': 'receitas_realizadas',
-            'Despesas empenhadas - R$ (&times;1000) [2017]': 'despesas_empenhadas',
-            'PIB per capita - R$ [2020]':'pib_per_capta',
-            'Unnamed: 13': 'unnamed'
-        })
-        dataframe = dataframe.drop(columns=['unnamed', 'municipio', 'prefeito', 'nome_nascente', 'mortalidade_infantil'])
-        numericColumns = [
-            'area_territorial(km²)',
-            'populacao_residente',
-            'densidade_demografica',
-            'escolaridade',
-            'idh',
-            'receitas_realizadas',
-            'despesas_empenhadas',
-            'pib_per_capta'
-        ]
-        for column in numericColumns:
-            dataframe[column] = pd.to_numeric(dataframe[column], errors='coerce')
-            media = dataframe[column].mean()
-            dataframe[column].fillna(media, inplace=True)
-        return dataframe
-        
-    def dataframeJson(self, row, columns):
-        dictRow = {}
-        values = row.values[0]
-        index = 0
-        for column in columns:
-            if column == 'codigo':
-                continue
-            dictRow[column] = values[index]
-            index += 1
-        return dictRow
-    
-    def getEducationDetails(self, city:City):
-        state = State.query.filter(State.id == city.state_id).first()
-        response = requests.get(statisticsFunction(state.abbreviation, city.ibge_id))
-        return {
-            'situacaoFuncionamentoAtividade': response['situacaoFuncionamentoAtividade'],
-            'situacaoFuncionamentoParalisada': response['situacaoFuncionamentoParalisada'],
-            'dependenciaAdministrativaFederal': response['dependenciaAdministrativaFederal'],
-            'dependenciaAdministrativaEstadual': response['dependenciaAdministrativaEstadual'],
-            'dependenciaAdministrativaMunicipal': response['dependenciaAdministrativaMunicipal'],
-            'dependenciaAdministrativaPrivada': response['dependenciaAdministrativaPrivada'],
-            'tipoLocalizacaoRural': response['tipoLocalizacaoRural'],
-            'tipoLocalizacaoUrbana': response['tipoLocalizacaoUrbana'],
-            'regulamentadaSim': response['regulamentadaSim'],
-            'regulamentadaNao': response['regulamentadaNao'],
-            'enemMediaGeral': response['enemMediaGeral'],
-            'formacaoDocente': response['formacaoDocente'],
-        }
-        
-        
+    def getCityInfo(self, cityId):
+        info = {}
+        info.update(self.getInfo(cityId, InfoGeneral))
+        info.update(self.getInfo(cityId, InfoPrices))
+        info.update(self.getInfo(cityId, InfoSecurity))
+        info.update(self.getInfo(cityId, InfoSchools))
+        return info

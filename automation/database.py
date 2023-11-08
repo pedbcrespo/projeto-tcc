@@ -46,20 +46,23 @@ def getStatesCity(abbreviation):
         return []
     return execute(f"SELECT * FROM city WHERE state_id = {state['id']}")
 
-def saveSchoolsInfo(city, amountSchools, scholarityRate):
-    query = f'INSERT INTO info_schools (city_id, amount_schools, scholarity_rate) VALUES ({city["id"]}, {amountSchools}, {scholarityRate})'
+def saveSchoolsInfo(infos):
+    infoQuery = list(map(lambda x: f"({x['city']['id']}, {x['amount']}, {x['rate']})", infos))
+    query = f'INSERT INTO info_schools (city_id, amount_schools, scholarity_rate) VALUES {",".join(infoQuery)}'
     executeWrite(query)
-    return amountSchools, scholarityRate
+    return True
 
-def saveSecurityInfo(city, securityRate):
-    query = f'INSERT INTO info_security (city_id, secutiry_rate) VALUES ({city["id"]},{securityRate})'
+def saveSecurityInfo(infos):
+    infoQuery = list(map(lambda x: f"({x['city']['id']}, {x['rate']})", infos))
+    query = f'INSERT INTO info_security (city_id, secutiry_rate) VALUES {",".join(infoQuery)}'
     executeWrite(query)
-    return securityRate
+    return True
     
-def savePricesInfo(city, avgHomePrices):
-    query = f'INSERT INTO info_prices (city_id, avg_homes_price) VALUES ({city["id"]},{avgHomePrices})'
+def savePricesInfo(infos):
+    infoQuery = list(map(lambda x: f"({x['city']['id']}, {x['price']})", infos))
+    query = f'INSERT INTO info_prices (city_id, avg_homes_price) VALUES {",".join(infoQuery)}'
     executeWrite(query)
-    return avgHomePrices
+    return True
     
 def saveGeneralInfo(city, generalInfo):
     def convertType(value, typedef, function=None):
