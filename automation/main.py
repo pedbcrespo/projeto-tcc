@@ -10,6 +10,7 @@ import os
 def schoolsInformations(states):
     infos = []
     rpaSchools = RpaSchools()
+    data = None
     for state in states:
         cities = db.getStatesCity(state['abbreviation'])
         for city in cities:
@@ -24,6 +25,8 @@ def schoolsInformations(states):
         print("DADOS SALVOS COM SUCESSO")
     except Exception as e:
         print("ERRO AO SALVAR", str(e))
+        print(infos)
+        print(data)
     
 def pricesInformations(states):
     infos = []
@@ -65,27 +68,23 @@ def generalInformation(state, city):
     #     print("ERRO AO SALVAR")
     return generalInfo
 
-def saveAll(schoolsInfo, pricesInfo, securitiesInfo):
-    pass
-
 def execute(abbreviations=None):
     states = []
     if abbreviations == None:
         states = db.getStates()
     else:
         states = [db.getState(abbreviation) for abbreviation in abbreviations]
-    schoolsInformations(states)
-    # pricesInformations(states)
+    # schoolsInformations(states)
+    pricesInformations(states)
     # securityInformations(states)
     return True
 
-# execute(['DF'])
+execute(['DF'])
 # execute(['AC','AL','AM'])
 # execute(['SE','SP','TO'])
 # execute(['PE','PI','PR'])
-execute(['AP','BA','CE'])
-# execute(['RR','RS','SC'])
-# execute(['MT','PA','PB'])
-# execute(['ES','GO','RJ'])
-# execute(['RN','RO','MA'])
-# execute(['MG','MS'])
+# execute(['AP','BA','CE', 'RR'])
+# execute(['PB','ES','GO','RJ','RN','RO','MA','MG','MS'])
+# execute(['RS','SC'])
+# execute(['MT'])
+# execute(['PA'])
