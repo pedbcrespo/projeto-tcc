@@ -3,7 +3,7 @@ from rpaEscolas import RpaSchools
 from rpaPrecos import RpaPrices
 from rpaSeguranca import RpaSecurity
 from csvGeneralCity import CsvGeneralCity
-import threading
+import functools as ft
 import os
 
 
@@ -29,6 +29,19 @@ def schoolsInformations(states):
         print(data)
     
 def pricesInformations(states):
+    
+    def fixNone(val, infos):
+        sameStates = list(filter(lambda x: x['city']['state_id'] == val['city']['state_id'], infos))
+        values = list(filter(lambda x: x['price'] != None, sameStates))
+        numbers = list(map(lambda x: x['price'], values))
+        if numbers == []:
+            return None
+        sum = ft.reduce(lambda a, b: a+b, numbers)
+        avg = round(sum/len(numbers), 2)
+        val['price'] = avg
+        return val
+        
+                
     infos = []
     rpaPrices = RpaPrices()
     for state in states:
@@ -36,12 +49,15 @@ def pricesInformations(states):
         for city in cities:
             print(f"COLETANDO DADOS DOS PRECOS :: {state['abbreviation']} :: {city['name']}")
             avgHomePrices = rpaPrices.execute(state, city)
-            infos.append({'city': city, 'price': avgHomePrices})
+            infos.append({'city': city, 'price': avgHomePrices})  
+    
+    infos = list(map(lambda val: fixNone(val, infos), infos))
     try:
         db.savePricesInfo(infos)
         print("DADOS SALVOS COM SUCESSO")
-    except:
-        print("ERRO AO SALVAR")
+    except Exception as e:
+        print("ERRO AO SALVAR", str(e))
+        print(infos)
 
 def securityInformations(states):
     infos = []
@@ -79,9 +95,9 @@ def execute(abbreviations=None):
     # securityInformations(states)
     return True
 
-execute(['DF'])
+# execute(['DF'])
 # execute(['AC','AL','AM'])
-# execute(['SE','SP','TO'])
+execute(['SE','SP','TO'])
 # execute(['PE','PI','PR'])
 # execute(['AP','BA','CE', 'RR'])
 # execute(['PB','ES','GO','RJ','RN','RO','MA','MG','MS'])
