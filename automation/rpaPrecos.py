@@ -6,6 +6,7 @@ from database import getStates, getStatesCity, getState
 from unidecode import unidecode
 import functools as ft
 import time
+import random
 
 class Site:
     def handlePrices(self, textPrice):
@@ -83,7 +84,7 @@ def link(state, city):
 def getPrices(sites, state, city):
     resultado = None
     for link in sites:
-        time.sleep(2)
+        time.sleep(3)
         site = link(state['abbreviation'], city['name'])
         resultado = site.process()
         if resultado != None:
