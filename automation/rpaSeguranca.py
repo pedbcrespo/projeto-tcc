@@ -83,4 +83,4 @@ if __name__ == '__main__':
     for state in states:
         cities = getStatesCity(state['abbreviation'])
         for city in cities:
-            print(city['name'], rpa.execute(state, city))
+            print(city['name'])

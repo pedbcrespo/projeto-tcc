@@ -9,7 +9,7 @@
     * Certifique-se de que possui o banco de dados MySQL juntamente com o database
     * Para rodar o projeto execute: py main.py
 
-## Os nomes dos estados, cidades e bairros foram buscados das seguintes fontes:
+## Fontes das buscas dos dados:
     * Cidades e Estados: https://servicodados.ibge.gov.br/api/docs/localidades#api-Subdistritos-municipiosMunicipioSubdistritosGet
     * Bairros: http://enderecos.metheora.com/Help/Api/GET-api-cidade-id-bairros-q
     * Dados gerais das cidades: https://www.ibge.gov.br/cidades-e-estados.html
@@ -22,3 +22,7 @@
     * Dados sobre preços de imoveis: https://www.zapimoveis.com.br/
     * Dados sbore hospitais de todo o país: https://cnes.datasus.gov.br/pages/estabelecimentos/consulta.jsp?search=CABO%20FRIO
     * Dados sobre segurança da sinesp em powerbi: https://app.powerbi.com/view?r=eyJrIjoiYjhhMDMxMTUtYjE3NC00ZjY5LWI5Y2EtZDljNzBlNDg2ZjVkIiwidCI6ImViMDkwNDIwLTQ0NGMtNDNmNy05MWYyLTRiOGRhNmJmZThlMSJ9
+    * Tarifas de luz por cidade: https://portalrelatorios.aneel.gov.br/luznatarifa/basestarifas
+    * Explicação sobre as tarifas: https://www.webarcondicionado.com.br/tarifa-de-energia-eletrica-kwh-valores-e-ranking-cidades
+    * Noticia sobre consumo medio de energia eletrica por individuo: https://jornal.usp.br/noticias/serie-energia-brasil-aparece-entre-os-paises-que-mais-consomem-energia/
+    * 

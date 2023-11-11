@@ -19,8 +19,15 @@ class CityService:
         state = State.query.filter(State.abbreviation == uf).first()
         dataframe = self.readingStateCsv(state.abbreviation.lower())
         cities = City.query.filter(City.state_id == state.id).all()
-        cities = [self.setDetailsInfo(city, state, dataframe) for city in cities]
         return [city for city in cities] 
+    
+    def getCityById(self, cityId):
+        city = City.query.filter(City.id == cityId).first()
+        return city.json()
+    
+    def getCityByName(self, cityName):
+        city = City.query.filter(City.name == cityName).first()
+        return city.json()
     
     def saveCities(self, cities:List[City]):
         ormDatabase.session.add_all(cities)

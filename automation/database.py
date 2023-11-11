@@ -54,7 +54,10 @@ def saveSchoolsInfo(infos):
 
 def saveSecurityInfo(infos):
     infoQuery = list(map(lambda x: f"({x['city']['id']}, {x['rate']})", infos))
-    query = f'INSERT INTO info_security (city_id, secutiry_rate) VALUES {",".join(infoQuery)}'
+    print('========================= QUERY =========================')
+    print(",".join(infoQuery))
+    print('=========================================================')
+    query = f'INSERT INTO info_security (city_id, rate) VALUES {",".join(infoQuery)}'
     executeWrite(query)
     return True
     

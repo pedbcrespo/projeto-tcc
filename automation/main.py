@@ -67,12 +67,13 @@ def securityInformations(states):
         for city in cities:
             print(f"COLETANDO DADOS SEGURANCA :: {state['abbreviation']} :: {city['name']}")
             securityRate = rpaSecurity.execute(state, city)
-            infos.append({'city':city, 'rate': securityRate})
+            infos.append({'city':city, 'rate': securityRate['rate']})
     try:
         db.saveSecurityInfo(infos)
         print("DADOS SALVOS COM SUCESSO")
-    except:
-        print("ERRO AO SALVAR")
+    except Exception as e:
+        print("ERRO AO SALVAR", str(e))
+        # print(infos)
 
 def generalInformation(state, city):
     generalCsv = CsvGeneralCity()
@@ -91,9 +92,11 @@ def execute(abbreviations=None):
     else:
         states = [db.getState(abbreviation) for abbreviation in abbreviations]
     # schoolsInformations(states)
-    pricesInformations(states)
-    # securityInformations(states)
+    # pricesInformations(states)
+    securityInformations(states)
     return True
+
+execute()
 
 # execute(['DF'])
 # execute(['AC','AL','AM'])
@@ -107,5 +110,5 @@ def execute(abbreviations=None):
 # execute(['PB','ES'])
 # execute(['GO','RJ'])
 # execute(['RN','RO'])
-execute(['MA','MS'])
+# execute(['MA','MS'])
 # execute(['MG'])

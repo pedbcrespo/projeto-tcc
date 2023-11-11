@@ -18,6 +18,9 @@ class CityIndividualController(Resource):
     def get(self, uf):
         return [city for city in cityService.getCities(uf)]
          
+class InfoCity(Resource):
+    def get(self, cityId):
+        return cityService.getCityInfo(cityId)
     
 api.add_resource(CityAllController, BASE_URL)
 api.add_resource(CityIndividualController, f"{BASE_URL}/states/<uf>")
