@@ -25,4 +25,8 @@
     * Tarifas de luz por cidade: https://portalrelatorios.aneel.gov.br/luznatarifa/basestarifas
     * Explicação sobre as tarifas: https://www.webarcondicionado.com.br/tarifa-de-energia-eletrica-kwh-valores-e-ranking-cidades
     * Noticia sobre consumo medio de energia eletrica por individuo: https://jornal.usp.br/noticias/serie-energia-brasil-aparece-entre-os-paises-que-mais-consomem-energia/
-    * 
+    * Informação sobre custo da agua por região: https://agenciadenoticias.ibge.gov.br/agencia-noticias/2012-agencia-de-noticias/noticias/37054-em-2020-para-cada-r-1-00-gerado-pela-economia-foram-consumidos-6-2-litros-de-agua#:~:text=Exclu%C3%ADda%20a%20atividade%20%C3%81gua%20e,%2C09%2Fm%C2%B3%20em%202020.
+    * Custo da agua no Brasil: https://fusatiambiental.com.br/o-custo-da-agua-no-brasil/
+    * Consumo medio de agua por pessoa no Brasil: https://site.sabesp.com.br/site/interna/Default.aspx?secaoId=140#:~:text=De%20acordo%20com%20a%20Organiza%C3%A7%C3%A3o,mais%20de%20200%20litros%2Fdia.
+    * Noticia sobre preço medio da internet no Brasil: https://gizmodo.uol.com.br/preco-medio-banda-larga-brasil-por-mbps/
+    * Noticia sobre banda media de internet por região no Brasil: https://www.telesintese.com.br/pesquisa-de-campo-levanta-precos-do-acesso-a-internet-brasileira/
