@@ -31,15 +31,3 @@ class CityService:
         ormDatabase.session.add_all(cities)
         ormDatabase.session.commit()
         return [city.json() for city in cities] 
-
-    def getInfo(self, cityId, infoType):
-        info = infoType.query.filter(infoType.city_id == cityId).first()
-        return info.json()
-    
-    def getCityInfo(self, cityId):
-        info = {}
-        info.update(self.getInfo(cityId, InfoGeneral))
-        info.update(self.getInfo(cityId, InfoPrices))
-        info.update(self.getInfo(cityId, InfoSecurity))
-        info.update(self.getInfo(cityId, InfoSchools))
-        return info

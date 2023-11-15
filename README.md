@@ -26,6 +26,7 @@
     * Explicação sobre as tarifas: https://www.webarcondicionado.com.br/tarifa-de-energia-eletrica-kwh-valores-e-ranking-cidades
     * Noticia sobre consumo medio de energia eletrica por individuo: https://jornal.usp.br/noticias/serie-energia-brasil-aparece-entre-os-paises-que-mais-consomem-energia/
     * PDF Com informações sobre consumo de energia eletrica por região: https://www.epe.gov.br/sites-pt/publicacoes-dados-abertos/publicacoes/PublicacoesArquivos/publicacao-160/topico-168/Fact%20Sheet%20-%20Anu%C3%A1rio%20Estat%C3%ADstico%20de%20Energia%20El%C3%A9trica%202022.pdf
+    * Informações sobre o consumo de energia eletrica no Brasil: https://www.epe.gov.br/pt/publicacoes-dados-abertos/publicacoes/anuario-estatistico-de-energia-eletrica
     * Informação sobre custo da agua por região: https://agenciadenoticias.ibge.gov.br/agencia-noticias/2012-agencia-de-noticias/noticias/37054-em-2020-para-cada-r-1-00-gerado-pela-economia-foram-consumidos-6-2-litros-de-agua#:~:text=Exclu%C3%ADda%20a%20atividade%20%C3%81gua%20e,%2C09%2Fm%C2%B3%20em%202020.
     * Custo da agua por litro em cada região no Brasil: https://fusatiambiental.com.br/o-custo-da-agua-no-brasil/
     * Noticia sobre consumo de agua por regiao: https://exame.com/brasil/onde-mais-se-consome-agua-no-brasil/
