@@ -136,7 +136,7 @@ CREATE TABLE `info_light_price` (
   `price_kwh` decimal(6,3) DEFAULT NULL,
   PRIMARY KEY (`state_id`),
   CONSTRAINT `info_light_price_ibfk_1` FOREIGN KEY (`state_id`) REFERENCES `state` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='Preço da energia eletrica em kilo watt hora (kWh) por pessoa';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -229,6 +229,80 @@ INSERT INTO `info_security` VALUES (6074,9.21,'2023-11-11 15:06:19'),(6075,12.00
 UNLOCK TABLES;
 
 --
+-- Table structure for table `info_water_consumer`
+--
+
+DROP TABLE IF EXISTS `info_water_consumer`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `info_water_consumer` (
+  `state_id` bigint NOT NULL,
+  `amount` decimal(5,1) DEFAULT NULL,
+  PRIMARY KEY (`state_id`),
+  CONSTRAINT `info_water_consumer_ibfk_1` FOREIGN KEY (`state_id`) REFERENCES `state` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='Consumo de agua em litros por dia por pessoa';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `info_water_consumer`
+--
+
+LOCK TABLES `info_water_consumer` WRITE;
+/*!40000 ALTER TABLE `info_water_consumer` DISABLE KEYS */;
+INSERT INTO `info_water_consumer` VALUES (109,157.3),(110,146.5),(111,120.9),(112,135.9),(113,155.9),(114,160.5),(115,126.3),(116,141.2),(117,128.6),(118,136.5),(119,109.3),(120,102.4),(121,103.5),(122,153.3),(123,124.0),(124,115.7),(125,159.8),(126,167.8),(127,173.5),(128,176.0),(129,139.3),(130,159.6),(131,151.4),(132,162.2),(133,179.6),(134,135.1),(135,142.0);
+/*!40000 ALTER TABLE `info_water_consumer` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `info_water_price_region`
+--
+
+DROP TABLE IF EXISTS `info_water_price_region`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `info_water_price_region` (
+  `region_id` int NOT NULL,
+  `price` decimal(5,2) DEFAULT NULL,
+  PRIMARY KEY (`region_id`),
+  CONSTRAINT `info_water_price_region_ibfk_1` FOREIGN KEY (`region_id`) REFERENCES `region` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='preço por litro de agua';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `info_water_price_region`
+--
+
+LOCK TABLES `info_water_price_region` WRITE;
+/*!40000 ALTER TABLE `info_water_price_region` DISABLE KEYS */;
+INSERT INTO `info_water_price_region` VALUES (1,1.92),(2,2.13),(3,3.17),(4,3.80),(5,4.71);
+/*!40000 ALTER TABLE `info_water_price_region` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `region`
+--
+
+DROP TABLE IF EXISTS `region`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `region` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `region`
+--
+
+LOCK TABLES `region` WRITE;
+/*!40000 ALTER TABLE `region` DISABLE KEYS */;
+INSERT INTO `region` VALUES (1,'Norte'),(2,'Nordeste'),(3,'Sudeste'),(4,'Sul'),(5,'Centro Oeste');
+/*!40000 ALTER TABLE `region` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `state`
 --
 
@@ -240,7 +314,10 @@ CREATE TABLE `state` (
   `name` varchar(100) NOT NULL,
   `abbreviation` varchar(2) NOT NULL,
   `ibge_id` bigint DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  `region_id` int DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_stateregion_region` (`region_id`),
+  CONSTRAINT `fk_stateregion_region` FOREIGN KEY (`region_id`) REFERENCES `region` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=136 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -250,7 +327,7 @@ CREATE TABLE `state` (
 
 LOCK TABLES `state` WRITE;
 /*!40000 ALTER TABLE `state` DISABLE KEYS */;
-INSERT INTO `state` VALUES (109,'Rondônia','RO',11),(110,'Acre','AC',12),(111,'Amazonas','AM',13),(112,'Roraima','RR',14),(113,'Pará','PA',15),(114,'Amapá','AP',16),(115,'Tocantins','TO',17),(116,'Maranhão','MA',21),(117,'Piauí','PI',22),(118,'Ceará','CE',23),(119,'Rio Grande do Norte','RN',24),(120,'Paraíba','PB',25),(121,'Pernambuco','PE',26),(122,'Alagoas','AL',27),(123,'Sergipe','SE',28),(124,'Bahia','BA',29),(125,'Minas Gerais','MG',31),(126,'Espírito Santo','ES',32),(127,'Rio de Janeiro','RJ',33),(128,'São Paulo','SP',35),(129,'Paraná','PR',41),(130,'Santa Catarina','SC',42),(131,'Rio Grande do Sul','RS',43),(132,'Mato Grosso do Sul','MS',50),(133,'Mato Grosso','MT',51),(134,'Goiás','GO',52),(135,'Distrito Federal','DF',53);
+INSERT INTO `state` VALUES (109,'Rondônia','RO',11,1),(110,'Acre','AC',12,1),(111,'Amazonas','AM',13,1),(112,'Roraima','RR',14,1),(113,'Pará','PA',15,1),(114,'Amapá','AP',16,1),(115,'Tocantins','TO',17,1),(116,'Maranhão','MA',21,2),(117,'Piauí','PI',22,2),(118,'Ceará','CE',23,2),(119,'Rio Grande do Norte','RN',24,2),(120,'Paraíba','PB',25,2),(121,'Pernambuco','PE',26,2),(122,'Alagoas','AL',27,2),(123,'Sergipe','SE',28,2),(124,'Bahia','BA',29,2),(125,'Minas Gerais','MG',31,3),(126,'Espírito Santo','ES',32,3),(127,'Rio de Janeiro','RJ',33,3),(128,'São Paulo','SP',35,3),(129,'Paraná','PR',41,4),(130,'Santa Catarina','SC',42,4),(131,'Rio Grande do Sul','RS',43,4),(132,'Mato Grosso do Sul','MS',50,5),(133,'Mato Grosso','MT',51,5),(134,'Goiás','GO',52,5),(135,'Distrito Federal','DF',53,5);
 /*!40000 ALTER TABLE `state` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -263,4 +340,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-11-14 18:48:09
+-- Dump completed on 2023-11-15 12:22:28

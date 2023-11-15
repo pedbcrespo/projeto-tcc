@@ -6,8 +6,6 @@ from model.InfoGeneral import InfoGeneral
 from model.InfoPrices import InfoPrices
 from configuration.config import ormDatabase, statisticsFunction
 from typing import List
-import pandas as pd
-import requests
 
 class CityService:
     def getAllCities(self):
