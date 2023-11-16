@@ -14,7 +14,8 @@ from typing import List
 
 class InfoService:
     def getRecomendation(self, formAttributes):
-        pass
+        recomendation = []
+        return recomendation
     
     def getInfo(self, cityId, infoType):
         info = infoType.query.filter(infoType.city_id == cityId).first()
