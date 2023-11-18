@@ -2,9 +2,10 @@ import database as db
 from rpaEscolas import RpaSchools
 from rpaPrecos import RpaPrices
 from rpaSeguranca import RpaSecurity
+from rpaInternet import RpaInternet
 from csvGeneralCity import CsvGeneralCity
 import functools as ft
-import os
+import time
 
 
 def schoolsInformations(states):
@@ -85,6 +86,30 @@ def generalInformation(state, city):
     #     print("ERRO AO SALVAR")
     return generalInfo
 
+def internetInformation(states):
+    def fixNoneCases(data, infos):
+        if data['avgPrice'] != None:
+            return data
+        avgPricesCity = list(map(lambda x: x['avgPrice'], infos))
+        avgWithoutNones = list(filter(lambda x: x != None, avgPricesCity))
+        sum = ft.reduce(lambda a, b: a+b, avgWithoutNones)
+        avg = round(sum/len(avgWithoutNones), 2)
+        data['avgPrice'] = avg
+        return data
+
+    infos = []
+    rpaInternet = RpaInternet()
+    for state in states:
+        cities = db.getStatesCity(state['abbreviation'])
+        for city in cities:
+            time.sleep(5)
+            avgPrice = rpaInternet.execute(state, city)
+            info = {'city': city, 'avgPrice': avgPrice}
+            infos.append(info)
+        infos = list(map(lambda info: fixNoneCases(info, infos), infos))
+        db.saveInternetInfo(infos)
+    return True
+
 def execute(abbreviations=None):
     states = []
     if abbreviations == None:
@@ -93,7 +118,8 @@ def execute(abbreviations=None):
         states = [db.getState(abbreviation) for abbreviation in abbreviations]
     # schoolsInformations(states)
     # pricesInformations(states)
-    securityInformations(states)
+    # securityInformations(states)
+    internetInformation(states)
     return True
 
 execute()

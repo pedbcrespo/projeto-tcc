@@ -66,7 +66,13 @@ def savePricesInfo(infos):
     query = f'INSERT INTO info_prices (city_id, avg_price) VALUES {",".join(infoQuery)}'
     executeWrite(query)
     return True
-    
+
+def saveInternetInfo(infos):
+    infoQuery = list(map(lambda x: f"({x['city']['id']}, {x['avgPrice']})", infos))
+    query = f'INSERT INTO info_internet (city_id, avg_price) VALUES {",".join(infoQuery)}'
+    executeWrite(query)
+    return True
+
 def saveGeneralInfo(city, generalInfo):
     def convertType(value, typedef, function=None):
         if value == None or value == '-':

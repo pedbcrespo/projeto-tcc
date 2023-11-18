@@ -1,12 +1,10 @@
 from rpaBase import driver
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from database import getStates, getStatesCity, getState
 from unidecode import unidecode
 import functools as ft
 import time
-import random
 
 class Site:
     def handlePrices(self, textPrice):
