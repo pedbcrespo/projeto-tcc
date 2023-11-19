@@ -96,16 +96,21 @@ def internetInformation(states):
         avg = round(sum/len(avgWithoutNones), 2)
         data['avgPrice'] = avg
         return data
-
     infos = []
     rpaInternet = RpaInternet()
     for state in states:
         cities = db.getStatesCity(state['abbreviation'])
         for city in cities:
-            time.sleep(5)
-            avgPrice = rpaInternet.execute(state, city)
+            for i in [0,1]:
+                try:
+                    avgPrice = rpaInternet.execute(state, city)
+                    break
+                except:
+                    if i<1:
+                        input('Observe o SITE, depois pressione ENTER para tentar novamente')
             info = {'city': city, 'avgPrice': avgPrice}
             infos.append(info)
+            print(city['name'], avgPrice, f"{cities.index(city)+1}/{len(cities)}")
         infos = list(map(lambda info: fixNoneCases(info, infos), infos))
         db.saveInternetInfo(infos)
     return True
@@ -122,19 +127,34 @@ def execute(abbreviations=None):
     internetInformation(states)
     return True
 
-execute()
+
+
+# execute()
 
 # execute(['DF'])
-# execute(['AC','AL','AM'])
+# execute(['AC'])
+# execute(['AL'])
+# execute(['AP'])
+# execute(['AM'])
 # execute(['SE'])
+execute(['ES'])
+# execute(['PE'])
 # execute(['SP'])
-# execute(['PE', 'TO', 'PI','PR'])
-# execute(['AP','BA','CE', 'RR'])
-# execute(['RS','SC'])
+# execute(['TO'])
+# execute(['PI'])
+# execute(['PR'])
+# execute(['BA'])
+# execute(['CE'])
+# execute(['RR'])
+# execute(['RS'])
+# execute(['SC'])
 # execute(['MT'])
 # execute(['PA'])
-# execute(['PB','ES'])
-# execute(['GO','RJ'])
-# execute(['RN','RO'])
-# execute(['MA','MS'])
+# execute(['PB'])
+# execute(['GO'])
+# execute(['RJ'])
+# execute(['RN'])
+# execute(['RO'])
+# execute(['MA'])
+# execute(['MS'])
 # execute(['MG'])

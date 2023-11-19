@@ -32,18 +32,18 @@ class RpaInternet:
     
     def process(self, state, city):
         avgPrice = None
-        try:
-            linkName = self.__settingLinkName__(state, city)
-            driver.get(self.getUrl(linkName))
-            wait = WebDriverWait(driver, 10)
-            xpathListPrices = '//*[@id="comparison_scroll_id"]/div[2]/div[2]'
-            listPrices = wait.until(EC.presence_of_element_located((By.XPATH, xpathListPrices)))
-            divs = listPrices.find_elements(By.TAG_NAME, 'div')
-            prices = list(map(lambda div: self.__getPrice__(div), divs))
-            pricesWithoutNoneValues = list(filter(lambda price: price != None, prices))
-            avgPrice = round(ft.reduce(lambda a,b: a+b, pricesWithoutNoneValues)/len(pricesWithoutNoneValues) ,2)
-        except :
-            print(f'ERRO AO BUSCAR DADOS DE INTERNET: {state["abbreviation"]} - {city["name"]}')
+        print('buscando', state['abbreviation'], city['name'])
+        print('puxando dados do site...')
+        linkName = self.__settingLinkName__(state, city)
+        driver.get(self.getUrl(linkName))
+        wait = WebDriverWait(driver, 5)
+        xpathListPrices = '//*[@id="comparison_scroll_id"]/div[2]/div[2]'
+        listPrices = wait.until(EC.presence_of_element_located((By.XPATH, xpathListPrices)))
+        divs = listPrices.find_elements(By.TAG_NAME, 'div')
+        prices = list(map(lambda div: self.__getPrice__(div), divs))
+        pricesWithoutNoneValues = list(filter(lambda price: price != None, prices))
+        print('precos buscados')
+        avgPrice = round(ft.reduce(lambda a,b: a+b, pricesWithoutNoneValues)/len(pricesWithoutNoneValues) ,2)
         return avgPrice
     
     def execute(self, state, city):

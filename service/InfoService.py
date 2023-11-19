@@ -8,17 +8,21 @@ from model.InfoLightConsume import InfoLightConsume
 from model.InfoLightPrice import InfoLightPrice
 from model.InfoWaterConsumer import InfoWaterConsumer
 from model.InfoWaterPriceRegion import InfoWaterPriceRegion
+from model.InfoInternet import InfoInternet
 from model.FormAtributes import FormAttributes
 
 from configuration.config import ormDatabase, statisticsFunction
 from typing import List
 
 class InfoService:
+    def __init__(self):
+        self.states = State.query.all()
+    
     def getRecomendation(self, formAttributes: FormAttributes):
         recomendation = []
-        homePrices = self.__gettingHomePrices__(formAttributes.priceRate)
+        citiesByHomePrices = self.__gettingHomePrices__(formAttributes.priceRate)
         citiesWithChooseSize = self.__gettingCitiesBySize__(formAttributes.typeCitySize)
-        coustLivinPrices = self.__gettingCoustLiving__(formAttributes.coustLivingPriceRate)
+        citiesByCoustLivinPrices = self.__gettingCoustLiving__(formAttributes.coustLivingPriceRate)
         
         return recomendation
     
@@ -35,17 +39,43 @@ class InfoService:
         return info
     
     def __gettingHomePrices__(self, price):
-        valueAround = price * 0.25
-        prices = InfoPrices.query.filter(InfoPrices.avg_price <= price + valueAround)
-        return prices
+        prices = InfoPrices.query.filter(InfoPrices.avg_price <= price)
+        citiesIds = list(map(lambda infoPrice: infoPrice.city_id, prices))
+        cities = City.query.filter(City.id in citiesIds).all()
+        
+        def unionCityData(infoPrice):
+            city = list(filter(lambda x: x.id == infoPrice.city_id, cities))
+            return {'city': city, 'avgPrice': infoPrice.avg_price}
+        
+        return list(map(lambda infoPrice: unionCityData(infoPrice), prices))
     
     def __gettingCitiesBySize__(self, size):
         typeSizeCities = InfoGeneral.query.filter(InfoGeneral.population >= size['min'] and InfoGeneral.population <= size['max'])
-        return typeSizeCities
+        citiesIds = list(map(lambda x: x.city_id, typeSizeCities))
+        cities = City.query.filter(City.id in citiesIds).all()
+        
+        def unionCityData(infoGeneral):
+            city = list(filter(lambda x: x.id == infoGeneral.city_id, cities))
+            return {'city': city, 'population': infoGeneral.population}
+        
+        return list(map(lambda infoGeneral: unionCityData(infoGeneral), typeSizeCities))
     
     def __gettingCoustLiving__(self, coustLivingPrice):
-        pass
-    
+        for state in self.states:
+            lightPrice = self.__calculatingLightPriceConsumer_(state)
+            waterPrice = self.__calculatingWaterPriceConsumer__(state)
+            cities = City.query.filter(City.state_id == state.id).all()
+            
+            correspondetCoustLivingPriceCities = []
+            for city in cities:
+                internetPrice = InfoInternet.query.filter(InfoInternet.city_id == city.id).first()
+                sumPrices = internetPrice + lightPrice + waterPrice
+                if sumPrices <= coustLivingPrice:
+                    correspondetCoustLivingPriceCities.append({'city': city, 'price': sumPrices})
+        
+        return correspondetCoustLivingPriceCities
+            
+            
     def __calculatingLightPriceConsumer_(self, state):
         stateId = state.id
         yearInHours = 8760
