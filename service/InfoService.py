@@ -23,8 +23,15 @@ class InfoService:
         citiesByHomePrices = self.__gettingHomePrices__(formAttributes.priceRate)
         citiesWithChooseSize = self.__gettingCitiesBySize__(formAttributes.typeCitySize)
         citiesByCoustLivinPrices = self.__gettingCoustLiving__(formAttributes.coustLivingPriceRate)
+      
+        for cityData in citiesByHomePrices:
+            inChoosenSize = list(filter(lambda x: x['city'] == cityData['city'], citiesWithChooseSize))
+            inCoustLiving  = list(filter(lambda x: x['city'] == cityData['city'], citiesByCoustLivinPrices))            
+            if inChoosenSize != [] and inCoustLiving != []:
+                recomendation.append(cityData['city'])
         
         return recomendation
+    
     
     def getInfo(self, cityId, infoType):
         info = infoType.query.filter(infoType.city_id == cityId).first()
@@ -62,7 +69,7 @@ class InfoService:
     
     def __gettingCoustLiving__(self, coustLivingPrice):
         for state in self.states:
-            lightPrice = self.__calculatingLightPriceConsumer_(state)
+            lightPrice = self.__calculatingLightPriceConsumer__(state)
             waterPrice = self.__calculatingWaterPriceConsumer__(state)
             cities = City.query.filter(City.state_id == state.id).all()
             
@@ -76,7 +83,7 @@ class InfoService:
         return correspondetCoustLivingPriceCities
             
             
-    def __calculatingLightPriceConsumer_(self, state):
+    def __calculatingLightPriceConsumer__(self, state):
         stateId = state.id
         yearInHours = 8760
         price = InfoLightPrice.query.filter(InfoLightPrice.state_id == stateId).first()
