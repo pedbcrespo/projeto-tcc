@@ -5,6 +5,7 @@ from rpaSeguranca import RpaSecurity
 from rpaInternet import RpaInternet
 from csvGeneralCity import CsvGeneralCity
 import functools as ft
+import subprocess
 import time
 
 
@@ -101,13 +102,16 @@ def internetInformation(states):
     for state in states:
         cities = db.getStatesCity(state['abbreviation'])
         for city in cities:
+            # time.sleep(15)
             for i in [0,1]:
                 try:
                     avgPrice = rpaInternet.execute(state, city)
                     break
                 except:
+                    avgPrice = None
                     if i<1:
-                        input('Observe o SITE, depois pressione ENTER para tentar novamente')
+                        subprocess.Popen(f'start cmd /K type message.txt', shell=True)
+                        input('Pressione ENTER para tentar novamente')
             info = {'city': city, 'avgPrice': avgPrice}
             infos.append(info)
             print(city['name'], avgPrice, f"{cities.index(city)+1}/{len(cities)}")
@@ -132,29 +136,29 @@ def execute(abbreviations=None):
 # execute()
 
 # execute(['DF'])
-# execute(['AC'])
-# execute(['AL'])
+# execute(['RR'])
 # execute(['AP'])
+# execute(['AC'])
+# execute(['RO'])
 # execute(['AM'])
 # execute(['SE'])
 # execute(['ES'])
 # execute(['RJ'])
+# execute(['AL'])
 # execute(['TO'])
+# execute(['MT'])
+# execute(['PA'])
 # execute(['RN'])
 # execute(['CE'])
 # execute(['PE'])
-execute(['MA'])
-# execute(['SP'])
-# execute(['PI'])
-# execute(['PR'])
-# execute(['BA'])
-# execute(['RR'])
-# execute(['RS'])
-# execute(['SC'])
-# execute(['MT'])
-# execute(['PA'])
+# execute(['MA'])
 # execute(['PB'])
-# execute(['GO'])
-# execute(['RO'])
+# execute(['PI'])
 # execute(['MS'])
+# execute(['GO'])
+# execute(['SC'])
+# execute(['PR'])
+execute(['BA'])
+# execute(['RS'])
+# execute(['SP'])
 # execute(['MG'])

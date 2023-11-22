@@ -42,8 +42,11 @@ class RpaInternet:
         divs = listPrices.find_elements(By.TAG_NAME, 'div')
         prices = list(map(lambda div: self.__getPrice__(div), divs))
         pricesWithoutNoneValues = list(filter(lambda price: price != None, prices))
+        if pricesWithoutNoneValues == []:
+            return None
         print('precos buscados')
         avgPrice = round(ft.reduce(lambda a,b: a+b, pricesWithoutNoneValues)/len(pricesWithoutNoneValues) ,2)
+        driver.delete_all_cookies()
         return avgPrice
     
     def execute(self, state, city):
