@@ -160,5 +160,5 @@ def execute(abbreviations=None):
 # execute(['PR'])
 # execute(['BA'])
 # execute(['RS'])
-execute(['SP'])
-# execute(['MG'])
+# execute(['SP'])
+execute(['MG'])
