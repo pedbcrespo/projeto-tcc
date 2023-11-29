@@ -7,7 +7,7 @@
     * Entre no projeto e instale as dependecias listadas no requirements.txt com o comando: 
         pip install -r requirements.txt
     * Certifique-se de que possui o banco de dados MySQL juntamente com o database
-    * Para rodar o projeto execute: py main.py
+    * Para rodar o projeto execute: python main.py
 
 ## Fontes das buscas dos dados:
     * Cidades e Estados: https://servicodados.ibge.gov.br/api/docs/localidades#api-Subdistritos-municipiosMunicipioSubdistritosGet
