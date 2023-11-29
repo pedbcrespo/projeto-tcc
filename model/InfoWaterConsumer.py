@@ -1,6 +1,8 @@
 from configuration.config import ormDatabase
 
 class InfoWaterConsumer(ormDatabase.Model):
+    __tablename__ = 'info_water_consumer'
+    
     state_id = ormDatabase.Column(ormDatabase.Integer, ormDatabase.ForeignKey('state.id'), primary_key=True)
     amount = ormDatabase.Column(ormDatabase.Float)
 

@@ -1,6 +1,8 @@
 from configuration.config import ormDatabase
 
 class InfoWaterPriceRegion(ormDatabase.Model):
+    __tablename__ = 'info_water_price_region'
+    
     region_id = ormDatabase.Column(ormDatabase.Integer, ormDatabase.ForeignKey('region.id'), primary_key=True)
     price = ormDatabase.Column(ormDatabase.Float)
 

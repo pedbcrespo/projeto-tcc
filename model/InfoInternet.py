@@ -1,6 +1,8 @@
 from configuration.config import ormDatabase as orm
 
 class InfoInternet(orm.Model):
+    __tablename__ = 'info_internet'
+    
     city_id = orm.Column(orm.Integer, orm.ForeignKey('city.id'))
     avg_price = orm.Column(orm.Float)
 

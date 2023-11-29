@@ -1,7 +1,9 @@
 from configuration.config import ormDatabase as orm
 
 class InfoPrices(orm.Model):
-    city_id = orm.Column(orm.Integer, orm.ForeignKey('city.id'))
+    __tablename__ = 'info_prices'
+    
+    city_id = orm.Column(orm.Integer, orm.ForeignKey('city.id'), primary_key=True)
     avg_price = orm.Column(orm.Float)
 
     def __init__(self, cityId):

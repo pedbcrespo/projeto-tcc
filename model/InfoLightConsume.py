@@ -1,6 +1,7 @@
 from configuration.config import ormDatabase as orm
 
 class InfoLightConsume(orm.Model):
+    __tablename__ = 'info_light_consume'
     state_id = orm.Column(orm.Integer, orm.ForeignKey('state.id'), primary_key=True)
     amount = orm.Column(orm.Float)
 

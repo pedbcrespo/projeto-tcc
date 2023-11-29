@@ -1,7 +1,9 @@
 from configuration.config import ormDatabase as orm
 
 class InfoGeneral(orm.Model):
-    city_id = orm.Column(orm.Integer, orm.ForeignKey('city.id'))
+    __tablename__ = 'info_general'
+    
+    city_id = orm.Column(orm.Integer, orm.ForeignKey('city.id'), primary_key=True)
     idh = orm.Column(orm.Float)
     pib_per_capta = orm.Column(orm.Float)
     population = orm.Column(orm.Integer)
