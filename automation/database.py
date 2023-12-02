@@ -48,7 +48,7 @@ def getStatesCity(abbreviation):
 
 def saveSchoolsInfo(infos):
     infoQuery = list(map(lambda x: f"({x['city']['id']}, {x['amount']}, {x['rate']})", infos))
-    query = f'INSERT INTO info_schools (city_id, amount_schools, scholarity_rate) VALUES {",".join(infoQuery)}'
+    query = f'INSERT IGNORE INTO info_schools (city_id, amount_schools, scholarity_rate) VALUES {",".join(infoQuery)}'
     executeWrite(query)
     return True
 

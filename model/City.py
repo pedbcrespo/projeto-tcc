@@ -10,9 +10,10 @@ class City(orm.Model):
     def __init__(self, name, state_id):
         self.name = name
         self.state_id = state_id
-            
+        self.info = {}
+                    
     def __repr__(self):
         return f"({self.id}, {self.name}, {self.state_id})"
     
     def json(self):
-        return {'id': self.id, 'name': self.name, 'state_id':self.state_id, 'ibge_id': self.ibge_id}
+        return {'id': self.id, 'name': self.name, 'state_id':self.state_id, 'ibge_id': self.ibge_id, 'info': self.info}

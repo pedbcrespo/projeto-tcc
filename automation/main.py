@@ -9,7 +9,7 @@ import subprocess
 import time
 
 
-def schoolsInformations(states):
+def schoolsInformations(states):        
     infos = []
     rpaSchools = RpaSchools()
     data = None
@@ -22,13 +22,12 @@ def schoolsInformations(states):
             data = {'city':city, 'amount': amount, 'rate': rate}
             print(f"ESCOLAS {city['name']}:{data['amount']}")
             infos.append(data)
+    infos = list(filter(lambda val: val['amount'] != None and val['rate'] != None, infos))
     try:
         db.saveSchoolsInfo(infos)
         print("DADOS SALVOS COM SUCESSO")
     except Exception as e:
         print("ERRO AO SALVAR", str(e))
-        print(infos)
-        print(data)
     
 def pricesInformations(states):
     
@@ -125,10 +124,10 @@ def execute(abbreviations=None):
         states = db.getStates()
     else:
         states = [db.getState(abbreviation) for abbreviation in abbreviations]
-    # schoolsInformations(states)
+    schoolsInformations(states)
     # pricesInformations(states)
     # securityInformations(states)
-    internetInformation(states)
+    # internetInformation(states)
     return True
 
 
@@ -147,7 +146,7 @@ def execute(abbreviations=None):
 # execute(['RJ'])
 # execute(['AL'])
 # execute(['TO'])
-# execute(['MT'])
+execute(['MT'])
 # execute(['PA'])
 # execute(['RN'])
 # execute(['CE'])
@@ -161,4 +160,4 @@ def execute(abbreviations=None):
 # execute(['BA'])
 # execute(['RS'])
 # execute(['SP'])
-execute(['MG'])
+# execute(['MG'])
