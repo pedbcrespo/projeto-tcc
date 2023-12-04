@@ -11,13 +11,9 @@ from model.InfoWaterPriceRegion import InfoWaterPriceRegion
 from model.InfoInternet import InfoInternet
 from model.FormAtributes import FormAttributes
 
-from configuration.config import ormDatabase, statisticsFunction
 from typing import List
 
-class InfoService:
-    def __init__(self):
-        self.states = State.query.all()
-    
+class InfoService:   
     def getRecomendation(self, formAttributes: FormAttributes):
         recomendation = []
         citiesByHomePrices = self.__gettingHomePrices__(formAttributes.priceRate)
@@ -45,6 +41,9 @@ class InfoService:
         info.update(self.getInfo(cityId, InfoSchools))
         return info
     
+    def __getStates__(self):
+        return State.query.all()
+        
     def __gettingHomePrices__(self, price):
         prices = InfoPrices.query.filter(InfoPrices.avg_price <= price)
         citiesIds = list(map(lambda infoPrice: infoPrice.city_id, prices))
@@ -68,15 +67,16 @@ class InfoService:
         return list(map(lambda infoGeneral: unionCityData(infoGeneral), typeSizeCities))
     
     def __gettingCoustLiving__(self, coustLivingPrice):
-        for state in self.states:
+        for state in self.__getStates__():
             lightPrice = self.__calculatingLightPriceConsumer__(state)
             waterPrice = self.__calculatingWaterPriceConsumer__(state)
+            avgAlimentation = 209.12
             cities = City.query.filter(City.state_id == state.id).all()
             
             correspondetCoustLivingPriceCities = []
             for city in cities:
                 internetPrice = InfoInternet.query.filter(InfoInternet.city_id == city.id).first()
-                sumPrices = internetPrice + lightPrice + waterPrice
+                sumPrices = internetPrice + lightPrice + waterPrice + avgAlimentation
                 if sumPrices <= coustLivingPrice:
                     correspondetCoustLivingPriceCities.append({'city': city, 'price': sumPrices})
         

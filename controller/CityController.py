@@ -21,8 +21,8 @@ class CityIndividualController(Resource):
         return [city for city in cityService.getCities(uf)]
          
 class InfoCityController(Resource):
-    def get(self, cityId):
-        return infoService.getCityInfo(cityId)
+    def get(self, city_id):
+        return infoService.getCityInfo(city_id)
     
 class CompleteCityInfo(Resource):
     def get(self, cityId):

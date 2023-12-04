@@ -17,12 +17,15 @@ def schoolsInformations(states):
         cities = db.getStatesCity(state['abbreviation'])
         for city in cities:
             print(f"COLETANDO DADOS DE ESCOLARIDADE :: {state['abbreviation']} :: {city['name']}")
-            amount = rpaSchools.execute(state, city)
-            rate = generalInformation(state, city)['escolaridade']
-            data = {'city':city, 'amount': amount, 'rate': rate}
-            print(f"ESCOLAS {city['name']}:{data['amount']}")
+            points = generalInformation(state, city)['escolaridade']
+            data = rpaSchools.execute(state, city)
+            if data == None:
+                continue
+            data.update({'city': city, 'points': points})
+            print(f"ESCOLAS {city['name']}:{data['amount']}||{data['rate']}")
             infos.append(data)
-    infos = list(filter(lambda val: val['amount'] != None and val['rate'] != None, infos))
+    print('FIM DA ITERACAO DOS ESTADOS')
+    infos = list(filter(lambda val: val['amount'] != None and val['rate'] != None and val['city'] != None and val['points'] != None, infos))
     try:
         db.saveSchoolsInfo(infos)
         print("DADOS SALVOS COM SUCESSO")
@@ -146,7 +149,7 @@ def execute(abbreviations=None):
 # execute(['RJ'])
 # execute(['AL'])
 # execute(['TO'])
-execute(['MT'])
+# execute(['MT'])
 # execute(['PA'])
 # execute(['RN'])
 # execute(['CE'])
@@ -159,5 +162,5 @@ execute(['MT'])
 # execute(['PR'])
 # execute(['BA'])
 # execute(['RS'])
-# execute(['SP'])
-# execute(['MG'])
+execute(['SP'])
+execute(['MG'])

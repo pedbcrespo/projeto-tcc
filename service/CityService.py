@@ -4,7 +4,7 @@ from model.InfoSecurity import InfoSecurity
 from model.InfoSchools import InfoSchools
 from model.InfoGeneral import InfoGeneral
 from model.InfoPrices import InfoPrices
-from configuration.config import ormDatabase, statisticsFunction
+from configuration.config import ormDatabase
 from typing import List
 
 class CityService:

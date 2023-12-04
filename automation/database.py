@@ -47,8 +47,8 @@ def getStatesCity(abbreviation):
     return execute(f"SELECT * FROM city WHERE state_id = {state['id']}")
 
 def saveSchoolsInfo(infos):
-    infoQuery = list(map(lambda x: f"({x['city']['id']}, {x['amount']}, {x['rate']})", infos))
-    query = f'INSERT IGNORE INTO info_schools (city_id, amount_schools, scholarity_rate) VALUES {",".join(infoQuery)}'
+    infoQuery = list(map(lambda x: f"({x['city']['id']}, {x['amount']}, {x['rate']}, {x['points']})", infos))
+    query = f'INSERT IGNORE INTO info_schools (city_id, amount_schools, scholarity_rate, points) VALUES {",".join(infoQuery)}'
     executeWrite(query)
     return True
 
@@ -57,7 +57,7 @@ def saveSecurityInfo(infos):
     print('========================= QUERY =========================')
     print(",".join(infoQuery))
     print('=========================================================')
-    query = f'INSERT INTO info_security (city_id, rate) VALUES {",".join(infoQuery)}'
+    query = f'INSERT IGNORE INTO info_security (city_id, rate) VALUES {",".join(infoQuery)}'
     executeWrite(query)
     return True
     

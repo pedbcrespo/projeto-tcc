@@ -26,6 +26,8 @@ class RpaSchools:
         stateLink = self.link(state)
         try:
             driver.get(f"https://qedu.org.br/uf/{stateLink}/busca")
+            rateXpath = '/html/body/div[3]/div/div[2]/main/div/div/aside/section[1]/div[1]/h1'
+            rate = driver.find_element(By.XPATH, rateXpath)
             sections = driver.find_elements(By.XPATH, "//section[not(@*)]")
             for section in sections:
                 divs = section.find_elements(By.XPATH, "//div[@class='flex flex-col font-bold']")
@@ -34,8 +36,7 @@ class RpaSchools:
                     if h1.text == cityName:
                         p = div.find_element(By.TAG_NAME, 'p')
                         amount = self.handleNumberText(p.text)
-                        print(state['abbreviation'], city['name'], amount, 'Escolas' if amount>1 else 'Escola')
-                        return amount
+                        return {'amount': amount, 'rate': float(rate.text)}
         except Exception as e:
             print(f"ERRO AO BUSCAR QTD ESCOLAS {state['abbreviation']} - {city['name']}. {str(e)}")
         return None
@@ -46,4 +47,6 @@ if __name__ == '__main__':
     for state in states:
         cities = getStatesCity(state['abbreviation'])
         for city in cities:
-            rpa.execute(state, city)
+            res = rpa.execute(state, city)
+            res.update({'city':city})
+            print(res)

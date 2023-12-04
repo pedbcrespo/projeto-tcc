@@ -2,6 +2,7 @@ from configuration.dev_configuration import host, user, password, database, IBGE
 import pymysql.cursors
 import requests
 import os
+import functools as ft
 
 def getStates():
     try:
@@ -102,3 +103,11 @@ def updateStates():
     print("OK")
 
 
+def getTable(tableName):
+    connection = getConnection()
+    with connection:
+        with connection.cursor() as cursor:
+            sql = f"SELECT * from {tableName}"
+            cursor.execute(sql)
+            results = cursor.fetchall()
+            return [row for row in results]
