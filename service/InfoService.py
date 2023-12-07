@@ -9,6 +9,9 @@ from model.InfoLightPrice import InfoLightPrice
 from model.InfoWaterConsumer import InfoWaterConsumer
 from model.InfoWaterPriceRegion import InfoWaterPriceRegion
 from model.InfoInternet import InfoInternet
+from model.InfoAlimentation import InfoAlimentation
+from model.InfoRecreation import InfoRecreation
+from model.InfoHealthConsumer import InfoHealthConsumer
 from model.FormAtributes import FormAttributes
 
 from typing import List
@@ -73,13 +76,15 @@ class InfoService:
         for state in self.__getStates__():
             lightPrice = self.__calculatingLightPriceConsumer__(state)
             waterPrice = self.__calculatingWaterPriceConsumer__(state)
-            avgAlimentation = 209.12
+            avgAlimentation = InfoAlimentation.query.filter(InfoAlimentation.state_id == state.id).first()
+            avgRecreation = InfoRecreation.query.filter(InfoAlimentation.state_id == state.id).first()
+            avgHealthConsumer = InfoHealthConsumer.query.filter(InfoAlimentation.state_id == state.id).first()
             cities = City.query.filter(City.state_id == state.id).all()
             
             correspondetCoustLivingPriceCities = []
             for city in cities:
                 internetPrice = InfoInternet.query.filter(InfoInternet.city_id == city.id).first()
-                sumPrices = internetPrice + lightPrice + waterPrice + avgAlimentation
+                sumPrices = internetPrice + lightPrice + waterPrice + avgAlimentation + avgRecreation + avgHealthConsumer
                 if sumPrices <= coustLivingPrice:
                     correspondetCoustLivingPriceCities.append({'city': city, 'price': sumPrices})
         
