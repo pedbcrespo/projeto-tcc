@@ -13,6 +13,9 @@ from model.FormAtributes import FormAttributes
 
 from typing import List
 
+AVG_ALIMENTATION_CONSUME = 209.12
+
+
 class InfoService:   
     def getRecomendation(self, formAttributes: FormAttributes):
         recomendation = []
@@ -85,19 +88,15 @@ class InfoService:
             
     def __calculatingLightPriceConsumer__(self, state):
         stateId = state.id
-        yearInHours = 8760
         price = InfoLightPrice.query.filter(InfoLightPrice.state_id == stateId).first()
         consumer = InfoLightConsume.query.filter(InfoLightConsume.state_id == stateId).first()
-        
-        yearConsumerInHours = consumer/yearInHours
-        mounthConsumerInHours = yearConsumerInHours/12
+        mounthConsumerInHours = consumer/12
         return round(mounthConsumerInHours*price, 2)
     
     def __calculatingWaterPriceConsumer__(self, state):
         regionId = state.region_id
         regionPrice = InfoWaterPriceRegion.query.filter(InfoWaterPriceRegion.region_id == regionId).first()
-        dailyConsumer = InfoWaterConsumer.query.filter(InfoWaterConsumer.state_id == state.id).first()
-        mounthCounsumer = dailyConsumer*30
+        mounthCounsumer = InfoWaterConsumer.query.filter(InfoWaterConsumer.state_id == state.id).first()
         return round(mounthCounsumer * regionPrice, 2)
         
         

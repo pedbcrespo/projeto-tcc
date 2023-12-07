@@ -37,3 +37,4 @@
     * Tabelas de IPCA de algumas regioes do pais: https://www.ibge.gov.br/estatisticas/economicas/precos-e-custos/9256-indice-nacional-de-precos-ao-consumidor-amplo.html?=&t=resultados
     * site de comparação de planos de internet por cidade: https://melhorplano.net/internet-banda-larga
     * tabela sobre consumo de alimentação e outros pontos: https://cidades.ibge.gov.br/brasil/pesquisa/46/84498
+    * site que calcula media geral do custo de vido no Brasil: https://www.expatistan.com/pt/custo-de-vida/pais/brasil
