@@ -16,9 +16,6 @@ from model.FormAtributes import FormAttributes
 
 from typing import List
 
-AVG_ALIMENTATION_CONSUME = 209.12
-
-
 class InfoService:   
     def getRecomendation(self, formAttributes: FormAttributes):
         recomendation = []
