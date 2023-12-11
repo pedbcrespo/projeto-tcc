@@ -13,23 +13,12 @@ from model.InfoAlimentation import InfoAlimentation
 from model.InfoRecreation import InfoRecreation
 from model.InfoHealthConsumer import InfoHealthConsumer
 from model.FormAtributes import FormAttributes
-
+import functools as ft
 from typing import List
 
 class InfoService:   
     def getRecomendation(self, formAttributes: FormAttributes):
-        recomendation = []
-        citiesByHomePrices = self.__gettingHomePrices__(formAttributes.priceRate)
-        citiesWithChooseSize = self.__gettingCitiesBySize__(formAttributes.typeCitySize)
-        citiesByCoustLivinPrices = self.__gettingCoustLiving__(formAttributes.coustLivingPriceRate)
-      
-        for cityData in citiesByHomePrices:
-            inChoosenSize = list(filter(lambda x: x['city'] == cityData['city'], citiesWithChooseSize))
-            inCoustLiving  = list(filter(lambda x: x['city'] == cityData['city'], citiesByCoustLivinPrices))            
-            if inChoosenSize != [] and inCoustLiving != []:
-                recomendation.append(cityData['city'])
-        
-        return recomendation
+        pass
     
     
     def getInfo(self, cityId, infoType):
@@ -37,15 +26,34 @@ class InfoService:
         return info.json()
     
     def getCityInfo(self, cityId):
+        city = City.query.filter(City.id == cityId).first()
         info = {}
         info.update(self.getInfo(cityId, InfoGeneral))
         info.update(self.getInfo(cityId, InfoPrices))
         info.update(self.getInfo(cityId, InfoSecurity))
         info.update(self.getInfo(cityId, InfoSchools))
-        return info
+        info.update(self.getCoustLivingPrice(city))
+        cityJson = city.json()
+        cityJson['info'] = info
+        return cityJson
+    
+    def getCoustLivingPrice(self, city):
+        coust = self.__getCityCoustLiving__(city)
+        return {'city_id': city.id, 'avg_coust_living_price': coust}
     
     def __getStates__(self):
         return State.query.all()
+    
+    def __getCityCoustLiving__(self, city:City):
+        cousts = [
+            self.__calculatingLightPriceConsumer__(city.state_id),
+            self.__calculatingWaterPriceConsumer__(city.state_id),
+            (InfoInternet.query.filter(InfoInternet.city_id == city.id).first()).avg_price,
+            (InfoAlimentation.query.filter(InfoAlimentation.state_id == city.state_id).first()).avg_price,
+            (InfoRecreation.query.filter(InfoRecreation.state_id == city.state_id).first()).avg_price,
+            (InfoHealthConsumer.query.filter(InfoHealthConsumer.state_id == city.state_id).first()).avg_price
+        ]
+        return round(ft.reduce(lambda a, b: a+b, cousts), 2) 
         
     def __gettingHomePrices__(self, price):
         prices = InfoPrices.query.filter(InfoPrices.avg_price <= price)
@@ -68,38 +76,19 @@ class InfoService:
             return {'city': city, 'population': infoGeneral.population}
         
         return list(map(lambda infoGeneral: unionCityData(infoGeneral), typeSizeCities))
-    
-    def __gettingCoustLiving__(self, coustLivingPrice):
-        for state in self.__getStates__():
-            lightPrice = self.__calculatingLightPriceConsumer__(state)
-            waterPrice = self.__calculatingWaterPriceConsumer__(state)
-            avgAlimentation = InfoAlimentation.query.filter(InfoAlimentation.state_id == state.id).first()
-            avgRecreation = InfoRecreation.query.filter(InfoAlimentation.state_id == state.id).first()
-            avgHealthConsumer = InfoHealthConsumer.query.filter(InfoAlimentation.state_id == state.id).first()
-            cities = City.query.filter(City.state_id == state.id).all()
-            
-            correspondetCoustLivingPriceCities = []
-            for city in cities:
-                internetPrice = InfoInternet.query.filter(InfoInternet.city_id == city.id).first()
-                sumPrices = internetPrice + lightPrice + waterPrice + avgAlimentation + avgRecreation + avgHealthConsumer
-                if sumPrices <= coustLivingPrice:
-                    correspondetCoustLivingPriceCities.append({'city': city, 'price': sumPrices})
         
-        return correspondetCoustLivingPriceCities
-            
-            
-    def __calculatingLightPriceConsumer__(self, state):
-        stateId = state.id
+    def __calculatingLightPriceConsumer__(self, stateId):
         price = InfoLightPrice.query.filter(InfoLightPrice.state_id == stateId).first()
         consumer = InfoLightConsume.query.filter(InfoLightConsume.state_id == stateId).first()
-        mounthConsumerInHours = consumer/12
-        return round(mounthConsumerInHours*price, 2)
+        mounthConsumerInHours = consumer.amount/12
+        return round(mounthConsumerInHours*price.price_kwh, 2)
     
-    def __calculatingWaterPriceConsumer__(self, state):
+    def __calculatingWaterPriceConsumer__(self, stateId):
+        state = State.query.filter(State.id == stateId).first()
         regionId = state.region_id
         regionPrice = InfoWaterPriceRegion.query.filter(InfoWaterPriceRegion.region_id == regionId).first()
-        mounthCounsumer = InfoWaterConsumer.query.filter(InfoWaterConsumer.state_id == state.id).first()
-        return round(mounthCounsumer * regionPrice, 2)
+        mounthCounsumer = InfoWaterConsumer.query.filter(InfoWaterConsumer.state_id == stateId).first()
+        return round(mounthCounsumer.amount * regionPrice.price, 2)
         
         
         
