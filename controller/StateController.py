@@ -16,4 +16,4 @@ class StateController(Resource):
         return self.service.getStates()
 
 api.add_resource(Initial, "/teste")
-api.add_resource(StateController, f"{BASE_URL}")
+api.add_resource(StateController, f"{BASE_URL}/states")

@@ -21,21 +21,19 @@ class InfoService:
         pass
     
     
-    def getInfo(self, cityId, infoType):
+    def __getInfo__(self, cityId, infoType):
         info = infoType.query.filter(infoType.city_id == cityId).first()
         return info.json()
     
     def getCityInfo(self, cityId):
         city = City.query.filter(City.id == cityId).first()
         info = {}
-        info.update(self.getInfo(cityId, InfoGeneral))
-        info.update(self.getInfo(cityId, InfoPrices))
-        info.update(self.getInfo(cityId, InfoSecurity))
-        info.update(self.getInfo(cityId, InfoSchools))
+        info.update(self.__getInfo__(cityId, InfoGeneral))
+        info.update(self.__getInfo__(cityId, InfoPrices))
+        info.update(self.__getInfo__(cityId, InfoSecurity))
+        info.update(self.__getInfo__(cityId, InfoSchools))
         info.update(self.getCoustLivingPrice(city))
-        cityJson = city.json()
-        cityJson['info'] = info
-        return cityJson
+        return info
     
     def getCoustLivingPrice(self, city):
         coust = self.__getCityCoustLiving__(city)

@@ -29,7 +29,7 @@ class CompleteCityInfo(Resource):
         city = cityService.getCityById(cityId)
         city['info'] = infoService.getCityInfo(cityId)
         return city
-        
-api.add_resource(CityAllController, BASE_URL)
+
+api.add_resource(CityAllController, f"{BASE_URL}/cities")
 api.add_resource(CityIndividualController, f"{BASE_URL}/states/<uf>")
 api.add_resource(InfoCityController, f"{BASE_URL}/city/info/<int:city_id>")

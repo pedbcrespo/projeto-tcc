@@ -1,21 +1,18 @@
 from model.City import City
 from model.State import State
-from model.InfoSecurity import InfoSecurity
-from model.InfoSchools import InfoSchools
-from model.InfoGeneral import InfoGeneral
-from model.InfoPrices import InfoPrices
+from service.InfoService import InfoService
 from configuration.config import ormDatabase
 from typing import List
 
 class CityService:
     def getAllCities(self):
+        infoService = InfoService() 
         cities = City.query.all()
-        cities = [self.setDistricts(city) for city in cities]
-        return [city for city in cities]
+        jsonCities = [city.json() for city in cities]
+        return jsonCities
     
     def getCities(self, uf):
         state = State.query.filter(State.abbreviation == uf).first()
-        dataframe = self.readingStateCsv(state.abbreviation.lower())
         cities = City.query.filter(City.state_id == state.id).all()
         return [city for city in cities] 
     
