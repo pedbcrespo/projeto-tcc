@@ -1,7 +1,6 @@
 from model.State import State
 from typing import List
 from configuration.config import ormDatabase
-import requests
 from configuration.dev_configuration import IBGE_BASE_URL
 
 class StateService:
