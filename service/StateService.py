@@ -9,10 +9,6 @@ class StateService:
         states = State.query.all()
         return [state.json() for state in states]
     
-    def getStateByUf(self, uf):
-        state = State.query.filter(State.abbreviation == uf).first()
-        return state.json()
-    
     def saveStates(self, states:List[State]):
         ormDatabase.session.add_all(states)
         ormDatabase.session.commit()
