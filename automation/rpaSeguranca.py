@@ -5,7 +5,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.action_chains import ActionChains
 from database import getStates, getStatesCity
-from unidecode import unidecode
 import functools as ft
 import os
 

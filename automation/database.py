@@ -33,6 +33,9 @@ def executeWrite(query):
             print(f"ERRO AO EXECUTAR {query}")
             return False
 
+def getAllCities():
+    return execute('SELECT * FROM city')
+
 def getStates():
     return execute('SELECT * FROM state')
 

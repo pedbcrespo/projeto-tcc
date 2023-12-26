@@ -10,24 +10,22 @@ states = getStates()
 
 driver.get("https://public.tableau.com/app/profile/mapadeempresas/viz/MapadeEmpresasnoBrasil_15877433181480/VisoGeral")
 acceptCookiesId = 'onetrust-accept-btn-handler'
-acceptCookiesButton = WebDriverWait(driver, 10).until(
+
+wait = WebDriverWait(driver, 20)
+acceptCookiesButton = wait.until(
         EC.presence_of_element_located((By.ID, acceptCookiesId))
 )
 acceptCookiesButton.click()
+div1class = '_content_919mw_7'
+div2class = '_container_16i18_1'
 
-divRoot = driver.find_element(By.ID, 'root')
-divRootLv1 = divRoot.find_element(By.CLASS_NAME, '_app_919mw_1')
-divRootLv2 = divRootLv1.find_elements(By.CLASS_NAME, '_content_919mw_7')
-divRootLv3 = None
-for i in range(10):
-    try:
-        divRootLv3 =  WebDriverWait(divRootLv2, 10).until(
-            EC.presence_of_element_located(By.CLASS_NAME, '_container_16i18_1')
-        )
-    except:
-        print('AINDA NAO ACHOU')
+div = wait.until(
+    EC.presence_of_element_located((By.CLASS_NAME, 'div2class'))
+)
 
-print(divRootLv3)
+print(div)
+
+# divRoot = driver.find_element(By.ID, 'root')
 
 
 input('')
