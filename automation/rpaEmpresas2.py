@@ -10,16 +10,19 @@ class rpaEmpresas2:
         pyautogui.moveTo(x, y)
         pyautogui.click()
         time.sleep(timeWait)
+    
+    def __moveDoubleClick__(self, x, y, timeWait=0):
+        pyautogui.moveTo(x, y)
+        pyautogui.click()
+        pyautogui.click()
+        time.sleep(timeWait)
 
-    def __unSelect__(self):
-        self.__moveClickAndWait__(37, 649, 1)
-        self.__moveClickAndWait__(268, 621)
 
 
     def execute(self):
         url = "https://public.tableau.com/app/profile/mapadeempresas/viz/MapadeEmpresasnoBrasil_15877433181480/VisoGeral"
         currentMouseX, currentMouseY = pyautogui.position()
-        print(currentMouseX, currentMouseY)
+        print(f"{currentMouseX}, {currentMouseY}")
         # CLICA NO BRAVE
         self.__moveClickAndWait__(698, 1058)
 
@@ -32,12 +35,37 @@ class rpaEmpresas2:
         time.sleep(8)
 
         # CLICA NO "EMPRESAS POR ATIVIDADE..."
-        self.__moveClickAndWait__(557, 319, 10)
+        self.__moveClickAndWait__(557, 319, 8)
 
         # CLICA NO SELECT DE MUNICIPIOS
         self.__moveClickAndWait__(60, 598, 1)
-            
 
+        # REMOVE OPCAO "TODOS"
+        self.__moveClickAndWait__(37, 650, 3)
+        
+        # CLICA NO INPUT TEXTO DE BUSCA DE CIDADE
+        self.__moveClickAndWait__(34, 622)
+
+        for city in self.cities:
+            # DIGITA NOME DA CIDADE
+            pyautogui.write("")
+            pyautogui.write(city['name'])
+            time.sleep(3)
+
+            # CLICA NO CHECKBOX RESULTADO
+            self.__moveClickAndWait__(37, 650)
+            
+            # ESPERA ALGO
+            time.sleep(5)
+
+            # DESSELECIONA O CHECKBOX RESULTADO
+            self.__moveClickAndWait__(37, 650, 5)
+
+            # APAGA O NOME ESCRITO
+            self.__moveClickAndWait__(264, 619, 2)
+
+            # CLICA NO INPUT TEXTO DE BUSCA DE CIDADE
+            self.__moveClickAndWait__(34, 622)
 
 
 if __name__ == '__main__':
