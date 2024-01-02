@@ -1,7 +1,9 @@
+import re
 import pyautogui
 from database import getAllCities
 import time
-
+import os
+# -*- coding: utf-8 -*-
 class rpaEmpresas2:
     def __init__(self):
         self.cities = getAllCities()
@@ -12,6 +14,15 @@ class rpaEmpresas2:
         time.sleep(timeWait)
 
 
+    def __hasAccents__(text):
+        standard = re.compile(r'[\u0300-\u036f\u00b4\u0060\u005e\u007e]')
+        return bool(standard.search(text))
+
+    def __findAccents__(text):
+        standard = re.compile(r'[\u0300-\u036f\u00b4\u0060\u005e\u007e]')
+        foundAccents = standard.findall(text)
+        return foundAccents
+
     def accessSite(self):
         url = "https://public.tableau.com/app/profile/mapadeempresas/viz/MapadeEmpresasnoBrasil_15877433181480/VisoGeral"
         # CLICA NO BRAVE
@@ -21,7 +32,7 @@ class rpaEmpresas2:
         self.__moveClickAndWait__(632, 58)
 
         # DIGITA O SITE E PRESSIONA ENTER
-        pyautogui.write(url)
+        pyautogui.typewrite(url)
         pyautogui.press('enter')
         time.sleep(8)
 
@@ -42,17 +53,17 @@ class rpaEmpresas2:
         # CLICA NO BOTAO DE BAIXAR
         self.__moveClickAndWait__(1739, 273, 3)
         # CLICA NA OPCAO DE BAIXAR DADOS DE TABELA CRUZADOS
-        self.__moveClickAndWait__(937, 717, 1)
+        self.__moveClickAndWait__(937, 717, 2)
+
+        # POSICIONA NO FINAL DA PAGINA
+        self.__moveClickAndWait__(908, 707)
+        pyautogui.press('end')
+
         # SELECIONA A OPCAO CSV
-        self.__moveClickAndWait__(805, 339)
+        self.__moveClickAndWait__(803, 182)
 
         # CLICA NA OPCAO BAIXAR
-        self.__moveClickAndWait__(1144, 383, 3)
-
-        # CLILCA NO PATH AONDE SALVARA O ARQUIVO
-        # self.__moveClickAndWait__(466, 51, 1)
-        # pyautogui.write("C:\\Users\\User\\Documents\\Programacao\\projeto-tcc\\csvData\\enterprises")
-        # pyautogui.press('enter')
+        self.__moveClickAndWait__(1143, 225, 3)
 
         # CLICA NO CAMPO TEXTO PARA SALVAR O ARQUIVO
         self.__moveClickAndWait__(405, 465)
@@ -81,6 +92,10 @@ class rpaEmpresas2:
         # CLICA NO INPUT TEXTO DO NOME
         self.__moveClickAndWait__(45, 623)
 
+    def hasFile(self, cityName):
+        path = f"C:/Users/User/Documents/Programacao/projeto-tcc/csvData/enterprises/{cityName}-empresas.csv"
+        return os.path.exists(path)
+    
     def execute(self):
         currentMouseX, currentMouseY = pyautogui.position()
         print(f"{currentMouseX}, {currentMouseY}")
@@ -88,18 +103,22 @@ class rpaEmpresas2:
         self.prepareToSearch()
 
         for city in self.cities:
+            print('======================')
+            print(city['name'])
+            if self.hasFile(city['name']):
+                print('ARQUIVO EXISTENTE')
+                print('======================')
+                continue
             # DIGITA NOME DA CIDADE
-            pyautogui.write("")
-            pyautogui.write(city['name'])
-            time.sleep(3)
+            pyautogui.typewrite(city['name'])
+            time.sleep(10)
 
             # CLICA NO CHECKBOX RESULTADO
             self.__moveClickAndWait__(37, 650, 5)
 
             self.processToDownload(city['name'])
             self.preparationToNewSearch(city['name'])
-        
-        
+            print('======================')
         
                 
 if __name__ == '__main__':

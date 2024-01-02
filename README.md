@@ -38,3 +38,5 @@
     * site de comparação de planos de internet por cidade: https://melhorplano.net/internet-banda-larga
     * tabela sobre consumo de alimentação e outros pontos: https://cidades.ibge.gov.br/brasil/pesquisa/46/84498
     * site que calcula media geral do custo de vido no Brasil: https://www.expatistan.com/pt/custo-de-vida/pais/brasil
+    * informações sobre empresas no país, com especificação por cidade: https://www.econodata.com.br/empresas/todo-brasil
+    * projeção grafica de empresas no país: https://public.tableau.com/app/profile/mapadeempresas/viz/MapadeEmpresasnoBrasil_15877433181480/VisoGeral
