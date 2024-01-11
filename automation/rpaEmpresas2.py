@@ -5,8 +5,8 @@ import time
 import os
 # -*- coding: utf-8 -*-
 class rpaEmpresas2:
-    def __init__(self):
-        self.cities = getAllCities()
+    # def __init__(self):
+    #     self.cities = getAllCities()
 
     def __moveClickAndWait__(self, x, y, timeWait=0):
         pyautogui.moveTo(x, y)
@@ -99,27 +99,12 @@ class rpaEmpresas2:
     def execute(self):
         currentMouseX, currentMouseY = pyautogui.position()
         print(f"{currentMouseX}, {currentMouseY}")
-        self.accessSite()
-        self.prepareToSearch()
+        self.__moveClickAndWait__(717, 1050)
+        pyautogui.press('f5')
+        time.sleep(45)
+        for i in range(100):
+            self.__moveClickAndWait__(1201, 545, 45)
 
-        for city in self.cities:
-            print('======================')
-            print(city['name'])
-            if self.hasFile(city['name']):
-                print('ARQUIVO EXISTENTE')
-                print('======================')
-                continue
-            # DIGITA NOME DA CIDADE
-            pyautogui.typewrite(city['name'])
-            time.sleep(10)
-
-            # CLICA NO CHECKBOX RESULTADO
-            self.__moveClickAndWait__(37, 650, 5)
-
-            self.processToDownload(city['name'])
-            self.preparationToNewSearch(city['name'])
-            print('======================')
-        
                 
 if __name__ == '__main__':
     rpa = rpaEmpresas2()
