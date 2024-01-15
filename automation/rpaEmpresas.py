@@ -16,7 +16,7 @@ class RpaEmpresas:
         enterprises = []
         abbreviation = state['abbreviation']
         cities = getStatesCity(abbreviation)
-        for city in cities:
+        for city in cities[:1]:
             enterprises.append(self.__getEnterprises__(state, city))
         return enterprises
 
@@ -24,17 +24,13 @@ class RpaEmpresas:
         info = {}
 
         xpathAmount = '//*[@id="__nuxt"]/div/div[1]/div[3]/div[1]/h1/span[1]'
-        xpathEnterprisesTypeListButton = '//*[@id="__nuxt"]/div/div[1]/div[3]/div[1]/div[3]/div[3]/div[3]/div[2]/span[2]'
-        xpathTypesTable = '//*[@id="empresas-abertas-recentemente-section"]/div[2]/div[2]/div/div[1]/table/tbody'
-
+        xpathTopTypes = '//*[@id="__nuxt"]/div/div[1]/div[3]/div[1]/div[3]/div[3]/div[1]'
         driver.get(self.getUrl(state, city))
         wait = WebDriverWait(driver, 10)
         amountTag = wait.until(EC.presence_of_element_located((By.XPATH, xpathAmount)))
-        typeListButton = wait.until(EC.presence_of_element_located((By.XPATH, xpathEnterprisesTypeListButton)))
-        typeListButton.click()
-        typeTable = wait.until(EC.presence_of_element_located((By.XPATH, xpathTypesTable)))
+        topDiv = driver.find_element(By.XPATH, xpathTopTypes)
+        print(topDiv.text)
         info['amount'] = int(amountTag.text.replace('.', ''))
-        print(info['amount'], typeTable) 
         return info
     
     def execute(self):
@@ -42,15 +38,18 @@ class RpaEmpresas:
         xpathCloseAdd = '//*[@id="modal-base-backdrop"]/div/div/div/div/div[1]/img'
         xpathAcceptCookies = '/html/body/div[1]/div/a'
 
+
         driver.get('https://www.econodata.com.br/empresas/')
         wait = WebDriverWait(driver, 20)
         
-        closeButton = wait.until(EC.presence_of_element_located((By.XPATH, xpathCloseAdd)))
-        closeButton.click()
-        
-        acceptCookiesButton = wait.until(EC.presence_of_element_located((By.XPATH, xpathAcceptCookies)))
-        acceptCookiesButton.click()
+        try:
+            closeButton = wait.until(EC.presence_of_element_located((By.XPATH, xpathCloseAdd)))
+            closeButton.click()
+            acceptCookiesButton = wait.until(EC.presence_of_element_located((By.XPATH, xpathAcceptCookies)))
+            acceptCookiesButton.click()
 
+        except:
+            pass
         enterprises = []
         states = getStates()
         for state in states[:1]:

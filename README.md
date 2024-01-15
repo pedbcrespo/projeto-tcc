@@ -39,4 +39,7 @@
     * tabela sobre consumo de alimentação e outros pontos: https://cidades.ibge.gov.br/brasil/pesquisa/46/84498
     * site que calcula media geral do custo de vido no Brasil: https://www.expatistan.com/pt/custo-de-vida/pais/brasil
     * informações sobre empresas no país, com especificação por cidade: https://www.econodata.com.br/empresas/todo-brasil
-    * projeção grafica de empresas no país: https://public.tableau.com/app/profile/mapadeempresas/viz/MapadeEmpresasnoBrasil_15877433181480/VisoGeral
+    * projeção grafica de empresas no país: https://public.tableau.com/app/profile/mapadeempresas/viz/MapadeEmpresasnoBrasil_15877433181480/VisoGeralMapadeEmpresasnoBrasil_15877433181480/VisoGeral
+    * api que busca cnpjs: https://portaldatransparencia.gov.br/pessoa-juridica/busca/resultado?pagina=1&tamanhoPagina=10&
+    * link para baixar csv com todas os cnpjs registrados ate um determinado momento: https://portaldatransparencia.gov.br/download-de-dados/favorecidos-pj
+    * link para busca de cnpj: https://cnpj.biz/
