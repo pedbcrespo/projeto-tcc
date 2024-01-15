@@ -19,6 +19,7 @@ class RpaEmpresas:
         xpathALLInput = '//*[@id="FI_federated.094r6uj0biqiya0zuf7q10pgukt8,none:opcao_mei:nk5201907744645360639_15609509314568364903_(All)"]/div[2]/input'
         xpathNOT_MEIInput = '//*[@id="FI_federated.094r6uj0biqiya0zuf7q10pgukt8,none:opcao_mei:nk5201907744645360639_15609509314568364903_0"]/div[2]/input'
         xpathCitySelect = '//*[@id="tableau_base_widget_LegacyCategoricalQuickFilter_5"]/div/div[3]/span/div[1]'
+        xpathCitySelectALL = '//*[@id="FI_federated.094r6uj0biqiya0zuf7q10pgukt8,none:nom_municipio:nk5201907744645360639_5969980573013623668_(All)"]/div[2]/input'
 
 
         driver.get('https://public.tableau.com/app/profile/mapadeempresas/viz/MapadeEmpresasnoBrasil_15877433181480/VisoGeral')
@@ -33,21 +34,19 @@ class RpaEmpresas:
         span = wait.until(EC.presence_of_element_located((By.XPATH, xpathIframeSpan)))
         span.click()
 
-        divSelect = wait.until(EC.presence_of_element_located((By.XPATH, xpathMEISelect)))
-        divSelect.click()
-        
-        allInput = wait.until(EC.presence_of_element_located((By.XPATH, xpathALLInput)))
-        allInput.click()
+        wait.until(EC.presence_of_element_located((By.XPATH, xpathMEISelect))).click()
+        wait.until(EC.presence_of_element_located((By.XPATH, xpathALLInput))).click()
         time.sleep(2)
 
         notMeiInput = wait.until(EC.presence_of_element_located((By.XPATH, xpathNOT_MEIInput)))
         notMeiInput.click()
-        time.sleep(2)
+        time.sleep(5)
 
-        # citySelectInput = wait.until(EC.presence_of_element_located((By.XPATH, xpathCitySelect)))
-        # citySelectInput.click()
+        webdriver.ActionChains(driver).send_keys(Keys.ESCAPE).perform()
+        wait.until(EC.presence_of_element_located((By.XPATH, xpathCitySelect))).click()
+        wait.until(EC.presence_of_element_located((By.XPATH, xpathCitySelectALL))).click()
 
-        print(notMeiInput)
+
 
 if __name__ == '__main__':
     rpa = RpaEmpresas()
