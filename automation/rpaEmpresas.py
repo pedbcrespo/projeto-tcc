@@ -19,19 +19,17 @@ class RpaEmpresas:
             'citySelectALL' : '//*[@id="FI_federated.094r6uj0biqiya0zuf7q10pgukt8,none:nom_municipio:nk5201907744645360639_5969980573013623668_(All)"]/div[2]/input',
             'citySelectInput' : '//*[@id="tableau_base_widget_LegacyCategoricalQuickFilter_5_textbox"]',
             'citySelectOptions' : '//*[@id="tableau_base_widget_LegacyCategoricalQuickFilter_5_menu"]/div[2]',
-            'citySelectOptions2' : '//*[@id="tab-ui-id-1705328392513"]'
         } 
 
     def __getEnterprises__(self, wait):
         cities = getAllCities()
         wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelect']))).click()
         wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelectALL']))).click()
-        # cityInput = wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelectInput'])))
-        # cityInput.send_keys(city['name'])
-        listOptions = wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelectOptions'])))
-        listDivs = listOptions.find_elements(By.TAG_NAME, 'div')
-        print(len(listDivs))
-        time.sleep(5)
+        citySelectOptions = wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelectOptions'])))
+
+        listCheckbox = citySelectOptions.find_elements(By.XPATH, '//div[@role="checkbox"]')
+        print(listCheckbox)
+
     
     def __notMEIConfig__(self, wait):
         wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['MEISelect']))).click()

@@ -34,7 +34,7 @@ def executeWrite(query):
             return False
 
 def getAllCities():
-    return execute('SELECT * FROM city')
+    return execute('SELECT * FROM city ORDER BY name')
 
 def getStates():
     return execute('SELECT * FROM state')
