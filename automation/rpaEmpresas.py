@@ -24,52 +24,55 @@ class RpaEmpresas:
         self.downloadButton = None 
         self.iframe = None
 
-    def __selectInputCityName__(self, citySelectInput, cityName):
+    def __selectInputCityName__(self, wait, cityName):
+        citySelectInput = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="tableau_base_widget_LegacyCategoricalQuickFilter_5_textbox"]')))
+        print("**ESCREVENDO")
         citySelectInput.send_keys(cityName)
         time.sleep(3)
+        print("**PRESSIONANDO ENTER")
         citySelectInput.send_keys(Keys.ENTER)
         time.sleep(2)
 
     def __getFirstOptionAfterSearch__(self):
-        print('BUSCANDO A LISTA DE OPCOES')
         option = driver.find_element(By.CLASS_NAME, 'facetOverflow')
         tagInput = option.find_element(By.TAG_NAME, 'input')
-        print(tagInput)
         return tagInput
     
+
+    def __getEnterprisesByCity__(self, wait, city):
+        
+        citySelectInput = wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelectInput'])))
+        print("ESCREVENDO NOME DA CIDADE")
+        # self.__selectInputCityName__(citySelectInput, city['name'])
+        self.__selectInputCityName__(wait, city['name'])
+        print("BUSCANDO A PRIMEIRA OPCAO")
+        self.__getFirstOptionAfterSearch__().click()
+        time.sleep(3)
+        print("PROCESSO DE DOWNLOAD")
+        self.__downloadProcess__(city)
+        time.sleep(2)
+        wait = WebDriverWait(driver, 20)
+        print("SELECIONANDO DENOVO O SELECT")
+        wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="tableau_base_widget_LegacyCategoricalQuickFilter_5"]/div/div[3]/span/div[1]'))).click()
+        time.sleep(3)
+        print("SELECIONANDO A CIDADE DENOVO PARA APAGAR")
+        self.__selectInputCityName__(wait, city['name'])
+        print("SELECIONANDO A PRIMEIRA OPCAO")
+        self.__getFirstOptionAfterSearch__().click()
+        print("LIMPANDO A BUSCA")
+        citySelectInput.clear()
+
     def __getEnterprises__(self, wait):
         cities = getAllCities()
-        
-        citySelect = wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelect'])))
-        citySelect.click()
-        citySelectALL = wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelectALL'])))
-        citySelectALL.click()
-        citySelectInput = wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelectInput'])))
+        wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelect']))).click()
+        wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelectALL']))).click()
         count = 1
-        for city in cities[:1]:
+        for city in cities[:5]:
             print(f"================================= {count}")
-            print("ESCREVENDO NOME DA CIDADE")
-            self.__selectInputCityName__(citySelectInput, city['name'])
-            print("BUSCANDO A PRIMEIRA OPCAO")
-            self.__getFirstOptionAfterSearch__().click()
-            time.sleep(3)
-            print("PROCESSO DE DOWNLOAD")
-            self.__downloadProcess__(city)
-
-            wait = WebDriverWait(driver, 20)
-
-            print("SELECIONANDO DENOVO O SELECT")
-            wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="tableau_base_widget_LegacyCategoricalQuickFilter_5"]/div/div[3]/span/div[1]'))).click()
-            time.sleep(2)
-            print("SELECIONANDO A CIDADE DENOVO PARA APAGAR")
-            self.__selectInputCityName__(citySelectInput, city['name'])
-            print("SELECIONANDO A PRIMEIRA OPCAO")
-            self.__getFirstOptionAfterSearch__().click()
-            print("LIMPANDO A BUSCA")
-            citySelectInput.clear()
+            self.__getEnterprisesByCity__(wait, city)
             count += 1
             print(f"=================================")
-
+            time.sleep(2)
     def __downloadProcess__(self, city):
         state = getStateById(city['state_id'])
         driver.switch_to.default_content()
