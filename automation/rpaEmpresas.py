@@ -30,11 +30,13 @@ class RpaEmpresas:
         
         citySelectInput = wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelectInput'])))
         citySelectInput.send_keys(city['name'])
-        time.sleep(2)
+        time.sleep(1)
         citySelectInput.send_keys(Keys.ENTER)
-        time.sleep(3)
-        listOptions = driver.find_element(By.CLASS_NAME, 'facetOverflow')
-        print(listOptions)
+        time.sleep(1)
+        option = driver.find_element(By.CLASS_NAME, 'facetOverflow')
+        tagInput = option.find_element(By.TAG_NAME, 'input')
+        tagInput.click()
+        print(tagInput)
 
 
     def __notMEIConfig__(self, wait):
