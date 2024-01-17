@@ -27,11 +27,11 @@ class RpaEmpresas:
         wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelect']))).click()
         wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelectALL']))).click()
         citySelectInput = wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelectInput'])))
-        for city in cities:
+        for city in cities[:3]:
             citySelectInput.send_keys(city['name'])
-            time.sleep(1)
+            time.sleep(3)
             citySelectInput.send_keys(Keys.ENTER)
-            time.sleep(1)
+            time.sleep(3)
             option = driver.find_element(By.CLASS_NAME, 'facetOverflow')
             tagInput = option.find_element(By.TAG_NAME, 'input')
             tagInput.click()
