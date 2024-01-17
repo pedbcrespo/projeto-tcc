@@ -23,14 +23,20 @@ class RpaEmpresas:
 
     def __getEnterprises__(self, wait):
         cities = getAllCities()
+        city = cities[0]
+        
         wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelect']))).click()
         wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelectALL']))).click()
-        citySelectOptions = wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelectOptions'])))
+        
+        citySelectInput = wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelectInput'])))
+        citySelectInput.send_keys(city['name'])
+        time.sleep(2)
+        citySelectInput.send_keys(Keys.ENTER)
+        time.sleep(3)
+        listOptions = driver.find_element(By.CLASS_NAME, 'facetOverflow')
+        print(listOptions)
 
-        listCheckbox = citySelectOptions.find_elements(By.XPATH, '//div[@role="checkbox"]')
-        print(listCheckbox)
 
-    
     def __notMEIConfig__(self, wait):
         wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['MEISelect']))).click()
         wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['MEIALLInput']))).click()
