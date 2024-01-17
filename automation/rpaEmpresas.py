@@ -49,10 +49,8 @@ class RpaEmpresas:
             self.__selectInputCityName__(citySelectInput, city['name'])
             self.__getFirstOptionAfterSearch__().click()
             time.sleep(3)
-
             self.__downloadProcess__(wait, city)
-
-            citySelect.click()
+            wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelect']))).click()
             time.sleep(2)
             self.__selectInputCityName__(citySelectInput, city['name'])
             self.__getFirstOptionAfterSearch__().click()
