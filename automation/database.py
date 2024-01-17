@@ -39,6 +39,9 @@ def getAllCities():
 def getStates():
     return execute('SELECT * FROM state')
 
+def getStateById(stateId):
+    return execute(f"SELECT * FROM state WHERE id = {stateId}")
+
 def getState(abbreviation):
     state = execute(f'SELECT * FROM state WHERE abbreviation = "{abbreviation}"')
     return state[0] if state != None else None
