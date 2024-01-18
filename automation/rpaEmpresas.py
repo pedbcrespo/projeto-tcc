@@ -43,7 +43,6 @@ class RpaEmpresas:
         
         citySelectInput = wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelectInput'])))
         print("ESCREVENDO NOME DA CIDADE")
-        # self.__selectInputCityName__(citySelectInput, city['name'])
         self.__selectInputCityName__(wait, city['name'])
         print("BUSCANDO A PRIMEIRA OPCAO")
         self.__getFirstOptionAfterSearch__().click()
@@ -73,12 +72,28 @@ class RpaEmpresas:
             count += 1
             print(f"=================================")
             time.sleep(2)
+
+
     def __downloadProcess__(self, city):
         state = getStateById(city['state_id'])
         driver.switch_to.default_content()
         waitLocal = WebDriverWait(driver, 20)
         self.downloadButton.click()
         time.sleep(2)
+
+        downloadIframe = driver.find_element(By.XPATH, '//*[@id="embedded-viz-wrapper"]/iframe')
+        driver.switch_to.frame(downloadIframe)
+
+        button = driver.find_element(By.XPATH, '//*[@id="DownloadDialog-Dialog-Body-Id"]/div/fieldset/button[3]')
+        button.click()
+        time.sleep(2)
+
+        csvOption = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.XPATH, '//*[@id="export-crosstab-options-dialog-Dialog-BodyWrapper-Dialog-Body-Id"]/div/div[2]/div[2]/label[2]')))
+        csvOption.click()
+        time.sleep(2)
+
+
+        driver.switch_to.default_content()
         webdriver.ActionChains(driver).send_keys(Keys.ESCAPE).perform()
         time.sleep(1)
         webdriver.ActionChains(driver).send_keys(Keys.HOME).perform()
