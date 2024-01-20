@@ -5,6 +5,8 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from database import getAllCities, getStateById
 import time
+import os
+import shutil
 
 class RpaEmpresas:
     def __init__(self):
@@ -26,6 +28,49 @@ class RpaEmpresas:
         }
         self.downloadButton = None 
         self.iframe = None
+
+
+    def writeCity(self, cityName, currentFile='readedCities.txt'):
+        try:
+            with open(currentFile, 'a+') as file:
+                file.seek(0, 2)
+                file.write(f"{cityName}\n")
+
+        except IOError as e:
+            print(f"Erro ao tentar abrir o file {currentFile}: {e}")
+
+    def readCities(self, currentFile='readedCities.txt'):
+        try:
+            with open(currentFile, 'r') as arquivo:
+                cities = arquivo.read().splitlines()
+                print(f'Lista de palavras no arquivo "{currentFile}": {cities}')
+                return cities
+
+        except IOError as e:
+            print(f"Erro ao tentar abrir o arquivo {currentFile}: {e}")
+            return None
+
+    def renameAndSave(self, oldPath, currentName, newName, pathFile='/home/pedro/projeto-tcc/csvData/enterprises'):
+        try:
+            oldPathFile = os.path.join(oldPath, currentName)
+            newPathFile = os.path.join(pathFile, newName + '.csv')
+            shutil.move(oldPathFile, newPathFile)
+
+        except FileNotFoundError:
+            print(f'O arquivo "{currentName}" não foi encontrado.')
+
+        except FileExistsError:
+            print(f'Já existe um arquivo com o nome "{newName}.csv" na pasta de destino.')
+
+
+    def renameFiles(self):
+        citiesAlreadyRead = self.readCities()
+        path = '/home/pedro/Downloads'
+        fileName = lambda x: 'Atividade Econômica Classe.csv' if x <= 0 else f"Atividade Econômica Classe ({x}).csv"
+        pos = 0
+        for cityName in citiesAlreadyRead:
+            self.renameAndSave(path, fileName(pos), cityName)
+            pos += 1
 
     def __selectInputCityName__(self, wait, cityName):
         citySelectInput = wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelectInput'])))
@@ -65,16 +110,19 @@ class RpaEmpresas:
 
     def __getEnterprises__(self, wait):
         cities = getAllCities()
+        citiesAlreadyRead = self.readCities()
         wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelect']))).click()
         wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelectALL']))).click()
         count = 1
         for city in cities:
+            if city['name'] in citiesAlreadyRead:
+                continue
             print(f"================================= {count}")
             self.__getEnterprisesByCity__(wait, city)
             count += 1
             print(f"=================================")
+            self.writeCity(city['name'])
             time.sleep(2)
-
 
     def __downloadProcess__(self, city):
         state = getStateById(city['state_id'])
@@ -104,7 +152,6 @@ class RpaEmpresas:
         iframe = waitLocal.until(EC.presence_of_element_located((By.XPATH, self.xpath['iframe'])))
         driver.switch_to.frame(iframe)
         
-
     def __notMEIConfig__(self, wait):
         wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['MEISelect']))).click()
         wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['MEIALLInput']))).click()
@@ -134,4 +181,5 @@ class RpaEmpresas:
 
 if __name__ == '__main__':
     rpa = RpaEmpresas()
-    rpa.execute()
+    # rpa.execute()
+    rpa.renameFiles()
