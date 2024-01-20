@@ -68,7 +68,7 @@ class RpaEmpresas:
         wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelect']))).click()
         wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelectALL']))).click()
         count = 1
-        for city in cities[:2]:
+        for city in cities:
             print(f"================================= {count}")
             self.__getEnterprisesByCity__(wait, city)
             count += 1
