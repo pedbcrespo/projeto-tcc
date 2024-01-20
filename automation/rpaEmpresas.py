@@ -50,7 +50,7 @@ class RpaEmpresas:
             print(f"Erro ao tentar abrir o arquivo {currentFile}: {e}")
             return None
 
-    def renameAndSave(self, oldPath, currentName, newName, pathFile='/home/pedro/projeto-tcc/csvData/enterprises'):
+    def __renameAndSave__(self, oldPath, currentName, newName, pathFile='/home/pedro/projeto-tcc/csvData/enterprises'):
         try:
             oldPathFile = os.path.join(oldPath, currentName)
             newPathFile = os.path.join(pathFile, newName + '.csv')
@@ -62,6 +62,9 @@ class RpaEmpresas:
         except FileExistsError:
             print(f'Já existe um arquivo com o nome "{newName}.csv" na pasta de destino.')
 
+    def __existCsvFile__(self, fileName):
+        completePath = os.path.join('/home/pedro/projeto-tcc/csvData/enterprises', fileName)
+        return os.path.exists(completePath)
 
     def renameFiles(self):
         citiesAlreadyRead = self.readCities()
@@ -69,7 +72,9 @@ class RpaEmpresas:
         fileName = lambda x: 'Atividade Econômica Classe.csv' if x <= 0 else f"Atividade Econômica Classe ({x}).csv"
         pos = 0
         for cityName in citiesAlreadyRead:
-            self.renameAndSave(path, fileName(pos), cityName)
+            if self.__existCsvFile__(cityName):
+                continue
+            self.__renameAndSave__(path, fileName(pos), cityName)
             pos += 1
 
     def __selectInputCityName__(self, wait, cityName):
@@ -122,6 +127,8 @@ class RpaEmpresas:
             count += 1
             print(f"=================================")
             self.writeCity(city['name'])
+            if count == 100:
+                break
             time.sleep(2)
 
     def __downloadProcess__(self, city):
@@ -178,8 +185,8 @@ class RpaEmpresas:
 
         self.__notMEIConfig__(wait)
         self.__getEnterprises__(wait)
+        self.renameFiles()
 
 if __name__ == '__main__':
     rpa = RpaEmpresas()
-    # rpa.execute()
-    rpa.renameFiles()
+    rpa.execute()
