@@ -100,8 +100,6 @@ class RpaEmpresas:
 
         downloadButton = WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.XPATH, '//*[@id="export-crosstab-options-dialog-Dialog-BodyWrapper-Dialog-Body-Id"]/div/div[3]/button')))
         downloadButton.click()
-        time.sleep(3)
-        webdriver.ActionChains(driver).send_keys(Keys.ENTER).perform()
 
         driver.switch_to.default_content()
         webdriver.ActionChains(driver).send_keys(Keys.ESCAPE).perform()
