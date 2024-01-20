@@ -83,10 +83,6 @@ class RpaEmpresas:
         self.downloadButton.click()
         time.sleep(2)
 
-        options = webdriver.ChromeOptions()
-        prefs = {'download.default_directory': '/home/pedro/projeto-tcc/csvData/enterprises'}
-        options.add_experimental_option("prefs",prefs)
-
         downloadIframe = driver.find_element(By.XPATH, self.xpath['iframe'])
         driver.switch_to.frame(downloadIframe)
 
