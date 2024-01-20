@@ -29,7 +29,6 @@ class RpaEmpresas:
         self.downloadButton = None 
         self.iframe = None
 
-
     def writeCity(self, cityName, currentFile='readedCities.txt'):
         try:
             with open(currentFile, 'a+') as file:
@@ -63,19 +62,16 @@ class RpaEmpresas:
             print(f'Já existe um arquivo com o nome "{newName}.csv" na pasta de destino.')
 
     def __existCsvFile__(self, fileName):
-        completePath = os.path.join('/home/pedro/projeto-tcc/csvData/enterprises', fileName)
+        completePath = os.path.join('/home/pedro/projeto-tcc/csvData/enterprises', fileName + '.csv')
         return os.path.exists(completePath)
 
     def renameFiles(self):
         citiesAlreadyRead = self.readCities()
         path = '/home/pedro/Downloads'
         fileName = lambda x: 'Atividade Econômica Classe.csv' if x <= 0 else f"Atividade Econômica Classe ({x}).csv"
-        pos = 0
-        for cityName in citiesAlreadyRead:
-            if self.__existCsvFile__(cityName):
-                continue
-            self.__renameAndSave__(path, fileName(pos), cityName)
-            pos += 1
+        citiesNotInEnterprisesFile = [cityName for cityName in citiesAlreadyRead if not self.__existCsvFile__(cityName)]
+        for pos in range(101):
+            self.__renameAndSave__(path, fileName(pos), citiesNotInEnterprisesFile[pos])
 
     def __selectInputCityName__(self, wait, cityName):
         citySelectInput = wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelectInput'])))
