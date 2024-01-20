@@ -28,6 +28,7 @@ class RpaEmpresas:
         }
         self.downloadButton = None 
         self.iframe = None
+        self.citiesWithNoData = []
 
     def writeCity(self, cityName, currentFile='readedCities.txt'):
         try:
@@ -87,14 +88,18 @@ class RpaEmpresas:
         tagInput = option.find_element(By.TAG_NAME, 'input')
         return tagInput
     
-
     def __getEnterprisesByCity__(self, wait, city):
         citySelectInput = wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelectInput'])))
         print("ESCREVENDO NOME DA CIDADE")
         self.__selectInputCityName__(wait, city['name'])
         print("BUSCANDO A PRIMEIRA OPCAO")
-        self.__getFirstOptionAfterSearch__().click()
-        time.sleep(3)
+        try:
+            self.__getFirstOptionAfterSearch__().click()
+            time.sleep(3)
+        except:
+            self.citiesWithNoData.append(city['name'])
+            citySelectInput.clear()
+            return None    
         print("PROCESSO DE DOWNLOAD")
         self.__downloadProcess__(city)
         time.sleep(2)
@@ -116,7 +121,7 @@ class RpaEmpresas:
         wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelectALL']))).click()
         count = 1
         for city in cities:
-            if city['name'] in citiesAlreadyRead:
+            if city['name'] in citiesAlreadyRead or city['name'] in self.citiesWithNoData:
                 continue
             print(f"================================= {count}")
             self.__getEnterprisesByCity__(wait, city)
