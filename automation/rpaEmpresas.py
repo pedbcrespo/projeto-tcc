@@ -71,7 +71,7 @@ class RpaEmpresas:
         path = '/home/pedro/Downloads'
         fileName = lambda x: 'Atividade Econômica Classe.csv' if x <= 0 else f"Atividade Econômica Classe ({x}).csv"
         citiesNotInEnterprisesFile = [cityName for cityName in citiesAlreadyRead if not self.__existCsvFile__(cityName)]
-        for pos in range(101):
+        for pos in range(100):
             print(pos)
             self.__renameAndSave__(path, fileName(pos), citiesNotInEnterprisesFile[pos])
 
