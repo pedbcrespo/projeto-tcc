@@ -20,12 +20,15 @@ class RpaEmpresas:
             'citySelectInput': '//*[@id="tableau_base_widget_LegacyCategoricalQuickFilter_5_textbox"]',
             'citySelectOptions': '//*[@id="tableau_base_widget_LegacyCategoricalQuickFilter_5_menu"]/div[2]',
             'downloadButton': '//*[@id="root"]/div/div[4]/div[1]/div/div[2]/button[4]',
+            'citySelectBack': '//*[@id="tableau_base_widget_LegacyCategoricalQuickFilter_5"]/div/div[3]/span/div[1]',
+            'crossTabDownloadButton': '//*[@id="DownloadDialog-Dialog-Body-Id"]/div/fieldset/button[3]',
+            'csvOption': '//*[@id="export-crosstab-options-dialog-Dialog-BodyWrapper-Dialog-Body-Id"]/div/div[2]/div[2]/label[2]',
         }
         self.downloadButton = None 
         self.iframe = None
 
     def __selectInputCityName__(self, wait, cityName):
-        citySelectInput = wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="tableau_base_widget_LegacyCategoricalQuickFilter_5_textbox"]')))
+        citySelectInput = wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelectInput'])))
         print("**ESCREVENDO")
         citySelectInput.send_keys(cityName)
         time.sleep(3)
@@ -40,7 +43,6 @@ class RpaEmpresas:
     
 
     def __getEnterprisesByCity__(self, wait, city):
-        
         citySelectInput = wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelectInput'])))
         print("ESCREVENDO NOME DA CIDADE")
         self.__selectInputCityName__(wait, city['name'])
@@ -52,7 +54,7 @@ class RpaEmpresas:
         time.sleep(2)
         wait = WebDriverWait(driver, 20)
         print("SELECIONANDO DENOVO O SELECT")
-        wait.until(EC.presence_of_element_located((By.XPATH, '//*[@id="tableau_base_widget_LegacyCategoricalQuickFilter_5"]/div/div[3]/span/div[1]'))).click()
+        wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelectBack']))).click()
         time.sleep(3)
         print("SELECIONANDO A CIDADE DENOVO PARA APAGAR")
         self.__selectInputCityName__(wait, city['name'])
@@ -66,7 +68,7 @@ class RpaEmpresas:
         wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelect']))).click()
         wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelectALL']))).click()
         count = 1
-        for city in cities[:5]:
+        for city in cities[:2]:
             print(f"================================= {count}")
             self.__getEnterprisesByCity__(wait, city)
             count += 1
@@ -81,17 +83,25 @@ class RpaEmpresas:
         self.downloadButton.click()
         time.sleep(2)
 
-        downloadIframe = driver.find_element(By.XPATH, '//*[@id="embedded-viz-wrapper"]/iframe')
+        options = webdriver.ChromeOptions()
+        prefs = {'download.default_directory': '/home/pedro/projeto-tcc/csvData/enterprises'}
+        options.add_experimental_option("prefs",prefs)
+
+        downloadIframe = driver.find_element(By.XPATH, self.xpath['iframe'])
         driver.switch_to.frame(downloadIframe)
 
-        button = driver.find_element(By.XPATH, '//*[@id="DownloadDialog-Dialog-Body-Id"]/div/fieldset/button[3]')
+        button = driver.find_element(By.XPATH, self.xpath['crossTabDownloadButton'])
         button.click()
         time.sleep(2)
 
-        csvOption = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.XPATH, '//*[@id="export-crosstab-options-dialog-Dialog-BodyWrapper-Dialog-Body-Id"]/div/div[2]/div[2]/label[2]')))
+        csvOption = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.XPATH, self.xpath['csvOption'])))
         csvOption.click()
         time.sleep(2)
 
+        downloadButton = WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.XPATH, '//*[@id="export-crosstab-options-dialog-Dialog-BodyWrapper-Dialog-Body-Id"]/div/div[3]/button')))
+        downloadButton.click()
+        time.sleep(3)
+        webdriver.ActionChains(driver).send_keys(Keys.ENTER).perform()
 
         driver.switch_to.default_content()
         webdriver.ActionChains(driver).send_keys(Keys.ESCAPE).perform()
