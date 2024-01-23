@@ -200,7 +200,6 @@ class RpaEmpresas:
 
         self.__notMEIConfig__(wait)
         self.__getEnterprises__(wait)
-        self.renameFiles(TOTAL_LOOP_ENTERPRISES)
 
 if __name__ == '__main__':
     rpa = RpaEmpresas()
