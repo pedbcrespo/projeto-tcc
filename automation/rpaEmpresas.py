@@ -8,6 +8,8 @@ import time
 import os
 import shutil
 
+TOTAL_LOOP_ENTERPRISES = 100
+
 class RpaEmpresas:
     def __init__(self):
         self.xpath = {
@@ -71,9 +73,11 @@ class RpaEmpresas:
         path = '/home/pedro/Downloads'
         fileName = lambda x: 'Atividade Econômica Classe.csv' if x <= 0 else f"Atividade Econômica Classe ({x}).csv"
         citiesNotInEnterprisesFile = [cityName for cityName in citiesAlreadyRead if not self.__existCsvFile__(cityName)]
-        for pos in range(100):
+        pos = 0
+        while pos < TOTAL_LOOP_ENTERPRISES:
             print(pos)
             self.__renameAndSave__(path, fileName(pos), citiesNotInEnterprisesFile[pos])
+            pos += 1
 
     def __selectInputCityName__(self, wait, cityName):
         citySelectInput = wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelectInput'])))
@@ -115,21 +119,21 @@ class RpaEmpresas:
         print("LIMPANDO A BUSCA")
         citySelectInput.clear()
 
-    def __getEnterprises__(self, wait):
-        cities = getAllCities()
+    def __getEnterprises__(self, wait, cities=[]):
+        cities = getAllCities() if cities == [] else cities
         citiesAlreadyRead = self.readCities()
         wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelect']))).click()
         wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelectALL']))).click()
-        count = 1
+        count = 0
         for city in cities:
             if city['name'] in citiesAlreadyRead or city['name'] in self.citiesWithNoData:
                 continue
-            print(f"================================= {count}")
+            print(f"================================= {count+1}")
             self.__getEnterprisesByCity__(wait, city)
             count += 1
             print(f"=================================")
             self.writeCity(city['name'])
-            if count == 100:
+            if count == TOTAL_LOOP_ENTERPRISES:
                 break
             time.sleep(2)
 
