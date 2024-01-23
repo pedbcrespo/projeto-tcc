@@ -8,7 +8,7 @@ import time
 import os
 import shutil
 
-TOTAL_LOOP_ENTERPRISES = 100
+TOTAL_LOOP_ENTERPRISES = 50
 
 class RpaEmpresas:
     def __init__(self):
@@ -68,16 +68,19 @@ class RpaEmpresas:
         completePath = os.path.join('/home/pedro/projeto-tcc/csvData/enterprises', fileName + '.csv')
         return os.path.exists(completePath)
 
-    def renameFiles(self):
+    def renameFiles(self, total):
         citiesAlreadyRead = self.readCities()
         path = '/home/pedro/Downloads'
         fileName = lambda x: 'Atividade Econômica Classe.csv' if x <= 0 else f"Atividade Econômica Classe ({x}).csv"
         citiesNotInEnterprisesFile = [cityName for cityName in citiesAlreadyRead if not self.__existCsvFile__(cityName)]
         pos = 0
-        while pos < TOTAL_LOOP_ENTERPRISES:
+        while pos < total:
             print(pos)
-            self.__renameAndSave__(path, fileName(pos), citiesNotInEnterprisesFile[pos])
-            pos += 1
+            try:
+                self.__renameAndSave__(path, fileName(pos), citiesNotInEnterprisesFile[pos])
+                pos += 1
+            except:
+                break
 
     def __selectInputCityName__(self, wait, cityName):
         citySelectInput = wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelectInput'])))
@@ -125,16 +128,22 @@ class RpaEmpresas:
         wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelect']))).click()
         wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelectALL']))).click()
         count = 0
+        globalCount = 0
         for city in cities:
             if city['name'] in citiesAlreadyRead or city['name'] in self.citiesWithNoData:
                 continue
             print(f"================================= {count+1}")
             self.__getEnterprisesByCity__(wait, city)
-            count += 1
             print(f"=================================")
             self.writeCity(city['name'])
             if count == TOTAL_LOOP_ENTERPRISES:
+                self.renameFiles(TOTAL_LOOP_ENTERPRISES)
+                count = 0
+                continue
+            if globalCount == TOTAL_LOOP_ENTERPRISES*2:
                 break
+            count += 1
+            globalCount += 1
             time.sleep(2)
 
     def __downloadProcess__(self, city):
@@ -191,7 +200,7 @@ class RpaEmpresas:
 
         self.__notMEIConfig__(wait)
         self.__getEnterprises__(wait)
-        self.renameFiles()
+        self.renameFiles(TOTAL_LOOP_ENTERPRISES)
 
 if __name__ == '__main__':
     rpa = RpaEmpresas()
