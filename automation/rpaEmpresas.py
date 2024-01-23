@@ -74,7 +74,7 @@ class RpaEmpresas:
         fileName = lambda x: 'Atividade Econômica Classe.csv' if x <= 0 else f"Atividade Econômica Classe ({x}).csv"
         citiesNotInEnterprisesFile = [cityName for cityName in citiesAlreadyRead if not self.__existCsvFile__(cityName)]
         pos = 0
-        while pos < total:
+        while pos <= total:
             print(pos)
             try:
                 self.__renameAndSave__(path, fileName(pos), citiesNotInEnterprisesFile[pos])
@@ -123,7 +123,6 @@ class RpaEmpresas:
         citySelectInput.clear()
 
     def __getEnterprises__(self, wait, cities=[]):
-        cities = getAllCities() if cities == [] else cities
         citiesAlreadyRead = self.readCities()
         wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelect']))).click()
         wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelectALL']))).click()
@@ -183,8 +182,14 @@ class RpaEmpresas:
         notMeiInput.click()
         time.sleep(5)
         webdriver.ActionChains(driver).send_keys(Keys.ESCAPE).perform()
-        
+
+    def __getCities__(self):
+        cities = getAllCities()
+        filteredCities = list(filter(lambda city: not self.__existCsvFile__(city['name']), cities))
+        return filteredCities
+
     def execute(self):
+        cities = self.__getCities__()
         driver.get('https://public.tableau.com/app/profile/mapadeempresas/viz/MapadeEmpresasnoBrasil_15877433181480/VisoGeral')
         wait = WebDriverWait(driver, 20)
         try:
@@ -199,7 +204,7 @@ class RpaEmpresas:
         span.click()
 
         self.__notMEIConfig__(wait)
-        self.__getEnterprises__(wait)
+        self.__getEnterprises__(wait, cities)
 
 if __name__ == '__main__':
     rpa = RpaEmpresas()
