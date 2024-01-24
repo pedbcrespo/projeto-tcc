@@ -63,9 +63,9 @@ class RpaEmpresas:
     def __renameAndSave__(self, oldPath, currentName, newName, pathFile='/home/pedro/projeto-tcc/csvData/enterprises'):
         print('RENAME AND SAVE')
         try:
-            print(currentName+'.csv')
+            print(currentName)
             oldPathFile = os.path.join(oldPath, currentName)
-            newPathFile = os.path.join(pathFile, newName)
+            newPathFile = os.path.join(pathFile, newName+'.csv')
             shutil.move(oldPathFile, newPathFile)
 
         except FileNotFoundError:
