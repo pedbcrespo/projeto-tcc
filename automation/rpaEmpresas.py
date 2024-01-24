@@ -65,14 +65,14 @@ class RpaEmpresas:
         try:
             print(currentName+'.csv')
             oldPathFile = os.path.join(oldPath, currentName)
-            newPathFile = os.path.join(pathFile, newName + '.csv')
+            newPathFile = os.path.join(pathFile, newName)
             shutil.move(oldPathFile, newPathFile)
 
         except FileNotFoundError:
             print(f'O arquivo "{currentName}" não foi encontrado.')
 
         except FileExistsError:
-            print(f'Já existe um arquivo com o nome "{newName}.csv" na pasta de destino.')
+            print(f'Já existe um arquivo com o nome "{newName}" na pasta de destino.')
 
     def __existCsvFile__(self, fileName, path='/home/pedro/projeto-tcc/csvData/enterprises'):
         completePath = os.path.join(path, fileName + '.csv')
