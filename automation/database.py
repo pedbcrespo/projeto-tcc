@@ -37,7 +37,7 @@ def getAllCities():
     return execute('SELECT * FROM city ORDER BY name')
 
 def getStates():
-    return execute('SELECT * FROM state')
+    return execute('SELECT * FROM state ORDER BY name')
 
 def getStateById(stateId):
     return execute(f"SELECT * FROM state WHERE id = {stateId}")
@@ -50,7 +50,7 @@ def getStatesCity(abbreviation):
     state = getState(abbreviation)
     if not state:
         return []
-    return execute(f"SELECT * FROM city WHERE state_id = {state['id']}")
+    return execute(f"SELECT * FROM city WHERE state_id = {state['id']} ORDER BY name")
 
 def saveSchoolsInfo(infos):
     infoQuery = list(map(lambda x: f"({x['city']['id']}, {x['amount']}, {x['rate']}, {x['points']})", infos))

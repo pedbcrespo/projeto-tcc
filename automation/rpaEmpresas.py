@@ -3,12 +3,11 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from database import getAllCities, getStateById
+from database import getAllCities, getStates, getStatesCity, getStateById
 import time
 import os
 import shutil
 
-TOTAL_LOOP_ENTERPRISES = 100
 MINIMUN_TO_SAVE = 10
 
 class RpaEmpresas:
@@ -28,6 +27,10 @@ class RpaEmpresas:
             'citySelectBack': '//*[@id="tableau_base_widget_LegacyCategoricalQuickFilter_5"]/div/div[3]/span/div[1]',
             'crossTabDownloadButton': '//*[@id="DownloadDialog-Dialog-Body-Id"]/div/fieldset/button[3]',
             'csvOption': '//*[@id="export-crosstab-options-dialog-Dialog-BodyWrapper-Dialog-Body-Id"]/div/div[2]/div[2]/label[2]',
+            'ufSelect': '//*[@id="tabZoneId685"]',
+            'ufSelectAll': '//*[@id="FI_federated.094r6uj0biqiya0zuf7q10pgukt8,none:sig_uf:nk5201907744645360639_5969980573013623668_(All)"]/div[2]/input',
+            'ufInput': '//*[@id="tableau_base_widget_FilteringSearchWidget_4"]',
+            'ufFirstOptionCheckbox': '//*[@id="SI_federated.094r6uj0biqiya0zuf7q10pgukt8,none:sig_uf:nk5201907744645360639_5969980573013623668_21"]/div[2]/input',
         }
         self.downloadButton = None 
         self.iframe = None
@@ -111,9 +114,9 @@ class RpaEmpresas:
         except:
             self.citiesWithNoData.append(city['name'])
             citySelectInput.clear()
-            return None    
+            return False    
         print("PROCESSO DE DOWNLOAD")
-        self.__downloadProcess__(city)
+        self.__downloadProcess__()
         time.sleep(2)
         wait = WebDriverWait(driver, 20)
         print("SELECIONANDO DENOVO O SELECT")
@@ -125,33 +128,30 @@ class RpaEmpresas:
         self.__getFirstOptionAfterSearch__().click()
         print("LIMPANDO A BUSCA")
         citySelectInput.clear()
+        time.sleep(5)
+        print("FECHANDO O INPUT")
         return True
 
     def __getEnterprises__(self, wait, cities=[]):
         count = 0
-        globalCount = 0
         wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelect']))).click()
         wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelectALL']))).click()
-        for city in cities:
+        for city in cities[:1]:
             print(f"================================= {city['name']} {count+1}")
-            res = self.__getEnterprisesByCity__(wait, city)
+            finishedCorrectly = self.__getEnterprisesByCity__(wait, city)
             count += 1
-            globalCount += 1
             print(f"=================================")
-            if res == None:
+            if not finishedCorrectly:
                 print('**CONTINUE**')
                 continue
             self.writeCity(city['name'])
-            if count == MINIMUN_TO_SAVE:
+            if count == MINIMUN_TO_SAVE or city == cities[-1]:
                 count = 0
-                self.renameFiles(MINIMUN_TO_SAVE)
+                self.renameFiles(count)
                 self.cleanCitiesBuffer()
-            if globalCount == TOTAL_LOOP_ENTERPRISES:
-                break
-            time.sleep(2)
+        time.sleep(5)
 
-    def __downloadProcess__(self, city):
-        state = getStateById(city['state_id'])
+    def __downloadProcess__(self):
         driver.switch_to.default_content()
         waitLocal = WebDriverWait(driver, 20)
         self.downloadButton.click()
@@ -188,13 +188,49 @@ class RpaEmpresas:
         time.sleep(5)
         webdriver.ActionChains(driver).send_keys(Keys.ESCAPE).perform()
 
-    def __getCities__(self):
-        cities = getAllCities()
+    def __getCities__(self, state=None):
+        cities = getAllCities() if state == None else getStatesCity(state['abbreviation'])
         filteredCities = list(filter(lambda city: not self.__existCsvFile__(city['name']), cities))
         return filteredCities
 
+    def __setStateSearch__(self, state):
+        print("COLOCANDO ESTADO: "+state['abbreviation'])
+        div = driver.find_element(By.XPATH, self.xpath['ufInput'])
+        textArea = div.find_element(By.TAG_NAME, 'textarea')
+        textArea.send_keys(state['abbreviation'])
+        time.sleep(2)
+        textArea.send_keys(Keys.ENTER)
+        time.sleep(2)
+        self.__ufFirstOption__()
+        webdriver.ActionChains(driver).send_keys(Keys.ESCAPE).perform()
+
+    def __ufFirstOption__(self):
+        div = driver.find_element(By.CLASS_NAME, 'facetOverflow')
+        input = div.find_element(By.TAG_NAME, 'input')
+        input.click()
+        time.sleep(5)
+
+    def __cleanStateSearch__(self, wait):
+        wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['ufSelect']))).click()
+        time.sleep(2)
+        wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['ufSelectAll']))).click()
+
+    def __removingCurrentStateSerached__(self, wait, state):
+        divGlass = wait.until(EC.presence_of_element_located((By.XPATH, '/html/body/div[6]')))
+        divGlass.send_keys(Keys.ESCAPE)
+        time.sleep(2)
+        wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['ufSelect']))).click()
+        time.sleep(2)
+        div = driver.find_element(By.XPATH, self.xpath['ufInput'])
+        textArea = div.find_element(By.TAG_NAME, 'textarea')
+        textArea.send_keys(state['abbreviation'])
+        time.sleep(2)
+        textArea.send_keys(Keys.ENTER)
+        time.sleep(1)
+        self.__ufFirstOption__()
+        webdriver.ActionChains(driver).send_keys(Keys.ESCAPE).perform()
+
     def execute(self):
-        cities = self.__getCities__()
         driver.get('https://public.tableau.com/app/profile/mapadeempresas/viz/MapadeEmpresasnoBrasil_15877433181480/VisoGeral')
         wait = WebDriverWait(driver, 20)
         try:
@@ -202,14 +238,26 @@ class RpaEmpresas:
             button.click()
         except:
             pass
-        self.downloadButton = wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['downloadButton'])))
-        self.iframe = wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['iframe'])))
-        driver.switch_to.frame(self.iframe)
-        span = wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['iframeSpan'])))
-        span.click()
 
-        self.__notMEIConfig__(wait)
-        self.__getEnterprises__(wait, cities)
+        states = getStates()
+        for state in states[:3]:
+            self.downloadButton = wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['downloadButton'])))
+            self.iframe = wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['iframe'])))
+            driver.switch_to.frame(self.iframe)
+            span = wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['iframeSpan'])))
+            span.click()
+
+            self.__notMEIConfig__(wait)
+            self.__cleanStateSearch__(wait)
+            time.sleep(2)
+            self.__setStateSearch__(state)
+            cities = self.__getCities__(state)
+            self.__getEnterprises__(wait, cities)
+            driver.switch_to.default_content()
+
+            print("++RECARREGA A PAGINA++")
+            driver.refresh()
+            wait = WebDriverWait(driver, 20)
 
 if __name__ == '__main__':
     rpa = RpaEmpresas()
