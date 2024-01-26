@@ -36,16 +36,16 @@ class RpaEmpresas:
         self.iframe = None
         self.citiesWithNoData = []
 
-    def writeCity(self, cityName, currentFile='readedCities.txt'):
+    def writeTxtFile(self, name, currentFile='readedCities.txt'):
         try:
             with open(currentFile, 'a+') as file:
                 file.seek(0, 2)
-                file.write(f"{cityName}\n")
+                file.write(f"{name}\n")
 
         except IOError as e:
             print(f"Erro ao tentar abrir o file {currentFile}: {e}")
 
-    def readCities(self, currentFile='readedCities.txt'):
+    def readTxtFile(self, currentFile='readedCities.txt'):
         try:
             with open(currentFile, 'r') as arquivo:
                 cities = arquivo.read().splitlines()
@@ -82,7 +82,7 @@ class RpaEmpresas:
         return os.path.exists(completePath)
 
     def renameFiles(self, total):
-        citiesAlreadyRead = list(filter(lambda cityName: cityName != '' ,self.readCities()))
+        citiesAlreadyRead = list(filter(lambda cityName: cityName != '' , self.readTxtFile()))
         path = '/home/pedro/Downloads'
         fileName = lambda x: 'Atividade Econômica Classe.csv' if x <= 0 else f"Atividade Econômica Classe ({x}).csv"
         citiesNotInEnterprisesFile = [cityName for cityName in citiesAlreadyRead if not self.__existCsvFile__(cityName)]
@@ -136,7 +136,7 @@ class RpaEmpresas:
         count = 0
         wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelect']))).click()
         wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelectALL']))).click()
-        for city in cities[:1]:
+        for city in cities:
             print(f"================================= {city['name']} {count+1}")
             finishedCorrectly = self.__getEnterprisesByCity__(wait, city)
             count += 1
@@ -144,7 +144,7 @@ class RpaEmpresas:
             if not finishedCorrectly:
                 print('**CONTINUE**')
                 continue
-            self.writeCity(city['name'])
+            self.writeTxtFile(city['name'])
             if count == MINIMUN_TO_SAVE or city == cities[-1]:
                 count = 0
                 self.renameFiles(count)
@@ -193,6 +193,12 @@ class RpaEmpresas:
         filteredCities = list(filter(lambda city: not self.__existCsvFile__(city['name']), cities))
         return filteredCities
 
+    def __getStates__(self):
+        states = getStates()
+        statesAlreadyRead = self.readTxtFile('readedStates.txt')
+        filteredStates = list(filter(lambda state: state['name'] not in statesAlreadyRead, states))
+        return filteredStates
+
     def __setStateSearch__(self, state):
         print("COLOCANDO ESTADO: "+state['abbreviation'])
         div = driver.find_element(By.XPATH, self.xpath['ufInput'])
@@ -239,8 +245,8 @@ class RpaEmpresas:
         except:
             pass
 
-        states = getStates()
-        for state in states[:3]:
+        states = self.__getStates__()
+        for state in states:
             self.downloadButton = wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['downloadButton'])))
             self.iframe = wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['iframe'])))
             driver.switch_to.frame(self.iframe)
@@ -256,6 +262,7 @@ class RpaEmpresas:
             driver.switch_to.default_content()
 
             print("++RECARREGA A PAGINA++")
+            self.writeTxtFile(state['name'], 'readedStates.txt')
             driver.refresh()
             wait = WebDriverWait(driver, 20)
 
