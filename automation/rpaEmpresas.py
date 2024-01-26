@@ -81,13 +81,13 @@ class RpaEmpresas:
         completePath = os.path.join(path, fileName + '.csv')
         return os.path.exists(completePath)
 
-    def renameFiles(self, total):
+    def renameFiles(self, total, state):
         citiesAlreadyRead = list(filter(lambda cityName: cityName != '' , self.readTxtFile()))
         path = '/home/pedro/Downloads'
         fileName = lambda x: 'Atividade Econômica Classe.csv' if x <= 0 else f"Atividade Econômica Classe ({x}).csv"
-        citiesNotInEnterprisesFile = [cityName for cityName in citiesAlreadyRead if not self.__existCsvFile__(cityName)]
+        citiesNotInEnterprisesFile = [cityName for cityName in citiesAlreadyRead if not self.__existCsvFile__(f"{state['abbreviation']}-{cityName}")]
         for pos in range(total):
-            self.__renameAndSave__(path, fileName(pos), citiesNotInEnterprisesFile[pos])
+            self.__renameAndSave__(path, fileName(pos),f"{state['abbreviation']}-{citiesNotInEnterprisesFile[pos]}")
 
     def __selectInputCityName__(self, wait, cityName):
         citySelectInput = wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelectInput'])))
@@ -132,23 +132,23 @@ class RpaEmpresas:
         print("FECHANDO O INPUT")
         return True
 
-    def __getEnterprises__(self, wait, cities=[]):
+    def __getEnterprises__(self, wait, state, cities=[]):
         count = 0
         wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelect']))).click()
         wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelectALL']))).click()
         for city in cities:
             print(f"================================= {city['name']} {count+1}")
             finishedCorrectly = self.__getEnterprisesByCity__(wait, city)
-            count += 1
             print(f"=================================")
             if not finishedCorrectly:
                 print('**CONTINUE**')
                 continue
             self.writeTxtFile(city['name'])
             if count == MINIMUN_TO_SAVE or city == cities[-1]:
+                self.renameFiles(count, state)
                 count = 0
-                self.renameFiles(count)
                 self.cleanCitiesBuffer()
+            count += 1
         time.sleep(5)
 
     def __downloadProcess__(self):
@@ -190,7 +190,7 @@ class RpaEmpresas:
 
     def __getCities__(self, state=None):
         cities = getAllCities() if state == None else getStatesCity(state['abbreviation'])
-        filteredCities = list(filter(lambda city: not self.__existCsvFile__(city['name']), cities))
+        filteredCities = list(filter(lambda city: not self.__existCsvFile__(f"{state['abbreviation']}-{city['name']}"), cities))
         return filteredCities
 
     def __getStates__(self):
@@ -258,7 +258,7 @@ class RpaEmpresas:
             time.sleep(2)
             self.__setStateSearch__(state)
             cities = self.__getCities__(state)
-            self.__getEnterprises__(wait, cities)
+            self.__getEnterprises__(wait, state, cities)
             driver.switch_to.default_content()
 
             print("++RECARREGA A PAGINA++")
