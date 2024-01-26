@@ -87,7 +87,34 @@ class RpaEmpresas:
         fileName = lambda x: 'Atividade Econômica Classe.csv' if x <= 0 else f"Atividade Econômica Classe ({x}).csv"
         citiesNotInEnterprisesFile = [cityName for cityName in citiesAlreadyRead if not self.__existCsvFile__(f"{state['abbreviation']}-{cityName}")]
         for pos in range(total):
-            self.__renameAndSave__(path, fileName(pos),f"{state['abbreviation']}-{citiesNotInEnterprisesFile[pos]}")
+            try:
+                self.__renameAndSave__(path, fileName(pos),f"{state['abbreviation']}-{citiesNotInEnterprisesFile[pos]}")
+            except Exception as error:
+                print("Houve um problema para salvar o file:", fileName(pos))
+                print(error)
+                print("==//CONTINUANDO O PROCESSO\\==")
+        self.__deleteLeftingCsvFiles__(path)
+
+    def __deleteLeftingCsvFiles__(self, pathPasta):
+        try:
+            filesInside = os.listdir(pathPasta)
+            csvFiles = [file for file in filesInside if file.endswith(".csv")]
+            if csvFiles == []:
+                print("Não ha arquivos csv para deletar.")
+                return True
+            for csvFile in csvFiles:
+                completePath = os.path.join(pathPasta, csvFile)
+                os.remove(completePath)
+                print(f"Arquivo {csvFile} deletado com sucesso.")
+            print("Todos os arquivos .csv foram deletados.")
+        except Exception as e:
+            print(f"Ocorreu um erro: {e}")
+            return False
+        return True
+
+    def __countCitiesRead__(self):
+        citiesRead = list(filter(lambda cityName: cityName != '', self.readTxtFile()))
+        return len(citiesRead)
 
     def __selectInputCityName__(self, wait, cityName):
         citySelectInput = wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelectInput'])))
@@ -133,22 +160,25 @@ class RpaEmpresas:
         return True
 
     def __getEnterprises__(self, wait, state, cities=[]):
-        count = 0
+        count = self.__countCitiesRead__()
         wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelect']))).click()
         wait.until(EC.presence_of_element_located((By.XPATH, self.xpath['citySelectALL']))).click()
         for city in cities:
+            if city['name'] in self.readTxtFile():
+                continue
             print(f"================================= {city['name']} {count+1}")
             finishedCorrectly = self.__getEnterprisesByCity__(wait, city)
             print(f"=================================")
             if not finishedCorrectly:
                 print('**CONTINUE**')
                 continue
+            else:
+                count += 1
             self.writeTxtFile(city['name'])
             if count == MINIMUN_TO_SAVE or city == cities[-1]:
                 self.renameFiles(count, state)
                 count = 0
                 self.cleanCitiesBuffer()
-            count += 1
         time.sleep(5)
 
     def __downloadProcess__(self):

@@ -1,4 +1,7 @@
 venv/
+csvData/enterprises
 *.pyc
+automation/readedCities.txt
+automation/readedStates.txt
 automation/driver
 csvData/enterprises_old
