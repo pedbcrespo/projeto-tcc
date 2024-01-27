@@ -1,5 +1,4 @@
 venv/
-csvData/enterprises
 *.pyc
 automation/readedCities.txt
 automation/readedStates.txt
