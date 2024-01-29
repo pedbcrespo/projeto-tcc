@@ -91,7 +91,7 @@ def saveGeneralInfo(city, generalInfo):
     idh = round(float(generalInfo['idh']), 2)
     demographicDensity = round(float(generalInfo['densidade_demografica']), 2)
     print(f'({city["id"]}, {pibPerCapta}, {population}, {idh}, {demographicDensity})', type(idh))
-    query = f'INSERT INTO info_general (city_id, pib_per_capta, population, idh, demographic_density) VALUES ({city["id"]}, {pibPerCapta}, {population}, {idh}, {demographicDensity})'
+    query = f'INSERT INTO info_general (city_id, idhm, population, idh, demographic_density) VALUES ({city["id"]}, {pibPerCapta}, {population}, {idh}, {demographicDensity})'
     executeWrite(query)
     return generalInfo
 

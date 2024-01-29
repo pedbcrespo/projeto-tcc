@@ -82,11 +82,11 @@ def securityInformations(states):
 def generalInformation(state, city):
     generalCsv = CsvGeneralCity()
     generalInfo = generalCsv.execute(state, city)
-    # try:
-    #     db.saveGeneralInfo(city, generalInfo)
-    #     print("DADOS SALVOS COM SUCESSO")
-    # except:
-    #     print("ERRO AO SALVAR")
+    try:
+        db.saveGeneralInfo(city, generalInfo)
+        print("DADOS SALVOS COM SUCESSO")
+    except:
+        print("ERRO AO SALVAR")
     return generalInfo
 
 def internetInformation(states):
@@ -162,5 +162,10 @@ def execute(abbreviations=None):
 # execute(['PR'])
 # execute(['BA'])
 # execute(['RS'])
-execute(['SP'])
-execute(['MG'])
+# execute(['SP'])
+# execute(['MG'])
+
+
+for state in db.getStates():
+    for city in db.getStatesCity(state['abbreviation']):
+        generalInformation(state, city)

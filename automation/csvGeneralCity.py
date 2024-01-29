@@ -6,7 +6,7 @@ class CsvGeneralCity:
         self.selectedColumns = []
         
     def readingStateCsv(self, uf):
-        fileName = f"D:/Users/Pedro/Documents/Programacao/Python/projeto-tcc/csvData/{uf}-todos-municipios.csv"
+        fileName = f"C:/Users/User/Documents/Programacao/projeto-tcc/csvData/generalInfo/{uf}-todos-municipios.csv"
         dataframe = pd.read_csv(fileName, skiprows=[0,-1], encoding='utf-8')
         dataframe = dataframe.rename(columns={
             'Munic&iacute;pio [-]': 'municipio',
