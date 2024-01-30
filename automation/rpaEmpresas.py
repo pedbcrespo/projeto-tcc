@@ -194,9 +194,9 @@ class RpaEmpresas:
         button.click()
         time.sleep(2)
 
-        csvOption = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.XPATH, self.xpath['csvOption'])))
-        csvOption.click()
-        time.sleep(2)
+        # csvOption = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.XPATH, self.xpath['csvOption'])))
+        # csvOption.click()
+        # time.sleep(2)
 
         downloadButton = WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.XPATH, '//*[@id="export-crosstab-options-dialog-Dialog-BodyWrapper-Dialog-Body-Id"]/div/div[3]/button')))
         downloadButton.click()
