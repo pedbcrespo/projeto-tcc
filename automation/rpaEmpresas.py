@@ -68,7 +68,7 @@ class RpaEmpresas:
         try:
             print(currentName)
             oldPathFile = os.path.join(oldPath, currentName)
-            newPathFile = os.path.join(pathFile, newName+'.csv')
+            newPathFile = os.path.join(pathFile, newName+'.xlsx')
             shutil.move(oldPathFile, newPathFile)
 
         except FileNotFoundError:
@@ -78,13 +78,13 @@ class RpaEmpresas:
             print(f'Já existe um arquivo com o nome "{newName}" na pasta de destino.')
 
     def __existCsvFile__(self, fileName, path='/home/pedro/projeto-tcc/csvData/enterprises'):
-        completePath = os.path.join(path, fileName + '.csv')
+        completePath = os.path.join(path, fileName + '.xlsx')
         return os.path.exists(completePath)
 
     def renameFiles(self, total, state):
         citiesAlreadyRead = list(filter(lambda cityName: cityName != '' , self.readTxtFile()))
         path = '/home/pedro/Downloads'
-        fileName = lambda x: 'Atividade Econômica Classe.csv' if x <= 0 else f"Atividade Econômica Classe ({x}).csv"
+        fileName = lambda x: 'Atividade Econômica Classe.xlsx' if x <= 0 else f"Atividade Econômica Classe ({x}).xlsx"
         citiesNotInEnterprisesFile = [cityName for cityName in citiesAlreadyRead if not self.__existCsvFile__(f"{state['abbreviation']}-{cityName}")]
         for pos in range(total):
             try:
@@ -98,7 +98,7 @@ class RpaEmpresas:
     def __deleteLeftingCsvFiles__(self, pathPasta):
         try:
             filesInside = os.listdir(pathPasta)
-            csvFiles = [file for file in filesInside if file.endswith(".csv")]
+            csvFiles = [file for file in filesInside if file.endswith(".xlsx")]
             if csvFiles == []:
                 print("Não ha arquivos csv para deletar.")
                 return True
@@ -106,7 +106,7 @@ class RpaEmpresas:
                 completePath = os.path.join(pathPasta, csvFile)
                 os.remove(completePath)
                 print(f"Arquivo {csvFile} deletado com sucesso.")
-            print("Todos os arquivos .csv foram deletados.")
+            print("Todos os arquivos .xlsx foram deletados.")
         except Exception as e:
             print(f"Ocorreu um erro: {e}")
             return False
