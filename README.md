@@ -43,3 +43,4 @@
     * api que busca cnpjs: https://portaldatransparencia.gov.br/pessoa-juridica/busca/resultado?pagina=1&tamanhoPagina=10&
     * link para baixar csv com todas os cnpjs registrados ate um determinado momento: https://portaldatransparencia.gov.br/download-de-dados/favorecidos-pj
     * link para busca de cnpj: https://cnpj.biz/
+    * site que visualiza indice de saneamento basico por cidade: https://www.aguaesaneamento.org.br/municipios-e-saneamento/explore-compare
