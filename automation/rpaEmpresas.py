@@ -3,9 +3,10 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from database import getAllCities, getStates, getStatesCity, getStateById
+from database import getAllCities, getStates, getStatesCity, getStateById, saveEnterprises
 import time
 import os
+import pandas as pd
 import shutil
 
 MINIMUN_TO_SAVE = 10
@@ -296,6 +297,46 @@ class RpaEmpresas:
             driver.refresh()
             wait = WebDriverWait(driver, 20)
 
+    def __readXLSXFile__(self, fileName):
+        path = '../csvData/enterprises/' + fileName
+        try:
+            dados = pd.read_excel(path, header=None)
+            # print(f"{fileName} lido com sucesso")
+            return dados
+        except FileNotFoundError:
+            print(f"O arquivo '{path}' não foi encontrado.")
+        except Exception as e:
+            print(f"Erro ao ler o arquivo '{path}': {e}")
+
+    def __generateDictEnterprises__(self, city, df):
+        listDataEnterprises = []
+        for row in df.iterrows():
+            data = {
+                'city_id': city['city_id'],
+                'type_description': row[0],
+                'amount': row[1]
+            }
+            listDataEnterprises.append(data)
+        return listDataEnterprises
+
+
+    def save(self):
+        states = getStates()
+        valuesToSave = []
+        for state in states:
+            cities = getStatesCity(state['abbreviation'])
+            for city in cities:
+                fileName = f"{state['abbreviation']}-{city['name']}.xlsx"
+                try:
+                    df = self.__readXLSXFile__(fileName)
+                    valuesToSave += self.__generateDictEnterprises__(city, df)
+                    print('dados lidos: ', len(valuesToSave))
+                except:
+                    pass
+        print(valuesToSave)
+        saveEnterprises(valuesToSave)
+
 if __name__ == '__main__':
     rpa = RpaEmpresas()
-    rpa.execute()
+    # rpa.execute()
+    rpa.save()

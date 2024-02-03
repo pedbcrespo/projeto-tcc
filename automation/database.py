@@ -102,3 +102,8 @@ def saveConsumerData(tableName, values):
     sql = f"INSERT INTO {tableName} (state_id, avg_price) VALUES {querySql}"
     return executeWrite(sql)
     
+def saveEnterprises(values):
+    query = ','.join(list(map(lambda x: f"{x['city_id']}, '{x['type_description']}', {x['amount']}", values)))
+    print(query)
+    sql = f"INSERT INTO info_enterprises (city_id, type_description, amount) VALUES {query}"
+    return executeWrite(sql)
