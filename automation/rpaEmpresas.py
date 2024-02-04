@@ -301,7 +301,7 @@ class RpaEmpresas:
         path = '../csvData/enterprises/' + fileName
         try:
             dados = pd.read_excel(path, header=None)
-            # print(f"{fileName} lido com sucesso")
+            print(f"{fileName} lido com sucesso")
             return dados
         except FileNotFoundError:
             print(f"O arquivo '{path}' não foi encontrado.")
@@ -317,15 +317,16 @@ class RpaEmpresas:
                 'amount': row[1]
             }
             listDataEnterprises.append(data)
+        print(listDataEnterprises)
         return listDataEnterprises
 
 
     def save(self):
         states = getStates()
         valuesToSave = []
-        for state in states:
+        for state in states[:1]:
             cities = getStatesCity(state['abbreviation'])
-            for city in cities:
+            for city in cities[:1]:
                 fileName = f"{state['abbreviation']}-{city['name']}.xlsx"
                 try:
                     df = self.__readXLSXFile__(fileName)
@@ -334,9 +335,8 @@ class RpaEmpresas:
                 except:
                     pass
         print(valuesToSave)
-        saveEnterprises(valuesToSave)
+        # saveEnterprises(valuesToSave)
 
 if __name__ == '__main__':
     rpa = RpaEmpresas()
-    # rpa.execute()
-    rpa.save()
+    rpa.execute()
