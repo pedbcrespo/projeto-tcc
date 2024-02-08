@@ -106,3 +106,8 @@ def saveEnterprises(values):
     query = ','.join(list(map(lambda x: f"({x['city_id']}, '{x['type_description']}', {x['amount']})", values)))
     sql = f"INSERT INTO info_enterprises (city_id, type_description, amount) VALUES {query}"
     return executeWrite(sql)
+
+def saveSanitation(values):
+    query = ','.join(list(map(lambda x: f"({x['city_id']}, '{x['has_municipal_plan']}', {x['population_no_water']}, {x['population_no_sewage']}, {x['population_no_garbage_collection']})", values)))
+    sql = f"INSERT INTO info_sanitation (city_id, has_municipal_plan, population_no_water, population_no_sewage, population_no_garbage_collection) VALUES {query}"
+    return executeWrite(sql)

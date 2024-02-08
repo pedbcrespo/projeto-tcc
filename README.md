@@ -44,3 +44,4 @@
     * link para baixar csv com todas os cnpjs registrados ate um determinado momento: https://portaldatransparencia.gov.br/download-de-dados/favorecidos-pj
     * link para busca de cnpj: https://cnpj.biz/
     * site que visualiza indice de saneamento basico por cidade: https://www.aguaesaneamento.org.br/municipios-e-saneamento/explore-compare
+    * mapa de regiões turisticas no brasil: https://www.mapa.turismo.gov.br/mapa/init.html#/home
