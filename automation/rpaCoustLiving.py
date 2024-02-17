@@ -54,7 +54,7 @@ class RpaCoustLiving:
 
     def __getValuesFromTable__(self, wait, table):
         valueList = []
-        tbody = table.find_element(By.TAG_NAME, 'tbody')
+        tbody = wait.until(EC.presence_of_all_elements_located((By.TAG_NAME, 'tbody')))
         rows = tbody.find_elements(By.TAG_NAME, 'tr')
         for row in rows:
             textValues = row.text.split('R$')
@@ -64,13 +64,13 @@ class RpaCoustLiving:
         return valueList
             
     def __getInfoCity__(self, driver):
-        wait = WebDriverWait(driver, 10)
-        section = wait.until(EC.presence_of_element_located((By.TAG_NAME, 'section')))
-        tables = section.find_elements(By.TAG_NAME, 'table')
+        wait = WebDriverWait(driver, 5)
         valuesList = []
-        for table in tables:
-            valuesList += self.__getValuesFromTable__(wait, table)
-        print(valuesList)
+        try:
+            valuesList += self.__getValuesFromTable__(wait)
+            print(valuesList)
+        except:
+            print('========== Dados nao econtrados ==========')
         return valuesList
     
     def execute(self):
@@ -79,14 +79,10 @@ class RpaCoustLiving:
             for city in self.__getCities__(state):
                 print('==============================')
                 print(state['abbreviation'], city['name'])
-                try:
-                    url = self.__getUrl__(state, city)
-                    driver.get(url)
-                    valuesList += self.__getInfoCity__(state)
-                except:
-                    print('========== Dados nao econtrados ==========')
-                finally:
-                    self.__writeOnTxtFile__('./readedCities.txt', city['name'])
+                url = self.__getUrl__(state, city)
+                driver.get(url)
+                valuesList += self.__getInfoCity__(state)
+                self.__writeOnTxtFile__('./readedCities.txt', city['name'])
             self.__writeOnTxtFile__('./readedStates.txt', state['name'])
 if __name__ == '__main__':
     rpa = RpaCoustLiving()
