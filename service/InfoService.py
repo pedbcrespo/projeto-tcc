@@ -28,11 +28,9 @@ class InfoService:
     
     def getCityInfo(self, cityId):
         city = City.query.filter(City.id == cityId).first()
-        info = {}
-        info.update(self.getGeneralInfo(cityId))
+        info = {'id':city.id, 'city': city.name}
+        info.update(self.getIdh(cityId))
         info.update(self.getPricesInfo(cityId))
-        info.update(self.getSecurityInfo(cityId))
-        info.update(self.getScholarityInfo(cityId))
         info.update(self.getCoustLivingPrice(city))
         return info
     
@@ -52,7 +50,7 @@ class InfoService:
 
     def getCoustLivingPrice(self, city):
         coust = self.__getCityCoustLiving__(city)
-        return {'city_id': city.id, 'avg_coust_living_price': coust}
+        return {'avg_coust_living_price': coust}
     
     def getPricesInfo(self, cityId):
         prices = self.__getInfo__(cityId, InfoPrices)
@@ -72,7 +70,8 @@ class InfoService:
         scholarityRate = self.getScholarityInfo(cityId)
         securityRate = self.getSecurityInfo(cityId)
         sanitationRate = self.getSanitationInfo(cityId)
-
+        idh = (sanitationRate + securityRate + scholarityRate)/3
+        return {'idh': idh * 100}
 
     def __getStates__(self):
         return State.query.all()
