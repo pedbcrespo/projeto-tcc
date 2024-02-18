@@ -3,8 +3,6 @@ from configuration.config import api
 from configuration.dev_configuration import BASE_URL
 from service.StateService import StateService
 
-baseUrl = '/genera-states'
-
 class Initial(Resource):
     def get(self):
         return {"message": "Funcionando"}

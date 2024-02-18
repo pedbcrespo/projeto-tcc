@@ -12,6 +12,7 @@ from model.InfoInternet import InfoInternet
 from model.InfoAlimentation import InfoAlimentation
 from model.InfoRecreation import InfoRecreation
 from model.InfoHealthConsumer import InfoHealthConsumer
+from model.InfoSanitation import InfoSanitation
 from model.FormAtributes import FormAttributes
 import functools as ft
 from typing import List
@@ -28,17 +29,51 @@ class InfoService:
     def getCityInfo(self, cityId):
         city = City.query.filter(City.id == cityId).first()
         info = {}
-        info.update(self.__getInfo__(cityId, InfoGeneral))
-        info.update(self.__getInfo__(cityId, InfoPrices))
-        info.update(self.__getInfo__(cityId, InfoSecurity))
-        info.update(self.__getInfo__(cityId, InfoSchools))
+        info.update(self.getGeneralInfo(cityId))
+        info.update(self.getPricesInfo(cityId))
+        info.update(self.getSecurityInfo(cityId))
+        info.update(self.getScholarityInfo(cityId))
         info.update(self.getCoustLivingPrice(city))
         return info
     
+    def getGeneralInfo(self, cityId):
+        generalInfo = self.__getInfo__(cityId, InfoGeneral)
+        return {'idh': generalInfo['idh'], 'population': generalInfo['population']}
+
+    def getSecurityInfo(self, cityId):
+        secInfo = self.__getInfo__(cityId, InfoSecurity)
+        generalInfo = self.__getInfo__(cityId, InfoGeneral)
+        securityRate = (secInfo['rate']/generalInfo['population'])*1000
+        return {'security_rate': 1 - securityRate}
+
+    def getScholarityInfo(self, cityId):
+        scholarityInfo = self.__getInfo__(cityId, InfoSchools)
+        return {'scholarity_rate': scholarityInfo['scholarity_rate']}
+
     def getCoustLivingPrice(self, city):
         coust = self.__getCityCoustLiving__(city)
         return {'city_id': city.id, 'avg_coust_living_price': coust}
     
+    def getPricesInfo(self, cityId):
+        prices = self.__getInfo__(cityId, InfoPrices)
+        return {'avg_price': prices['avg_price']}
+    
+    def getSanitationInfo(self, cityId):
+        sanitation = self.__getInfo__(cityId, InfoSanitation)
+        inversedRate = 0 
+        for key in sanitation:
+            if sanitation[key] == None:
+                sanitation[key] = 100
+            inversedRate += sanitation[key]/100
+        inversedRate = inversedRate/len(sanitation)
+        return {'sanitation_rate': 1 - inversedRate}
+
+    def getIdh(self, cityId):
+        scholarityRate = self.getScholarityInfo(cityId)
+        securityRate = self.getSecurityInfo(cityId)
+        sanitationRate = self.getSanitationInfo(cityId)
+
+
     def __getStates__(self):
         return State.query.all()
     
