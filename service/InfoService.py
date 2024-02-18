@@ -21,7 +21,6 @@ class InfoService:
     def getRecomendation(self, formAttributes: FormAttributes):
         pass
     
-    
     def __getInfo__(self, cityId, infoType):
         info = infoType.query.filter(infoType.city_id == cityId).first()
         return info.json()
@@ -46,7 +45,7 @@ class InfoService:
 
     def getScholarityInfo(self, cityId):
         scholarityInfo = self.__getInfo__(cityId, InfoSchools)
-        return {'scholarity_rate': scholarityInfo['scholarity_rate']}
+        return {'scholarity_rate': scholarityInfo['scholarity_rate']/10}
 
     def getCoustLivingPrice(self, city):
         coust = self.__getCityCoustLiving__(city)
@@ -60,18 +59,31 @@ class InfoService:
         sanitation = self.__getInfo__(cityId, InfoSanitation)
         inversedRate = 0 
         for key in sanitation:
+            if type(sanitation[key]) == str:
+                continue
             if sanitation[key] == None:
                 sanitation[key] = 100
-            inversedRate += sanitation[key]/100
-        inversedRate = inversedRate/len(sanitation)
+    
+        inversedRate = (
+            sanitation['population_no_water']/100 + 
+            sanitation['population_no_sewage']/100 + 
+            sanitation['population_no_garbage_collection']/100
+        ) / 3
         return {'sanitation_rate': 1 - inversedRate}
 
     def getIdh(self, cityId):
-        scholarityRate = self.getScholarityInfo(cityId)
-        securityRate = self.getSecurityInfo(cityId)
-        sanitationRate = self.getSanitationInfo(cityId)
+        scholarityRate = self.getScholarityInfo(cityId)['scholarity_rate']
+        securityRate = self.getSecurityInfo(cityId)['security_rate']
+        sanitationRate = self.getSanitationInfo(cityId)['sanitation_rate']
         idh = (sanitationRate + securityRate + scholarityRate)/3
-        return {'idh': idh * 100}
+        print('educacao', scholarityRate)
+        print('seguranca', securityRate)
+        print('saneamento', sanitationRate)
+        print('idh', idh)
+        return {'idh': round(idh * 100, 2)}
+
+    def getAvgProfissionalQualification(self, cityId):
+        pass
 
     def __getStates__(self):
         return State.query.all()

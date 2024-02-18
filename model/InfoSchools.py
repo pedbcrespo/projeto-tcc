@@ -11,4 +11,4 @@ class InfoSchools(orm.Model):
         self.city_id = cityId
         
     def json(self):
-        return {'city_id': self.city_id, 'amount_schools': self.amount_schools}
+        return {'city_id': self.city_id, 'amount_schools': self.amount_schools, 'scholarity_rate': self.scholarity_rate}
