@@ -82,15 +82,6 @@ class InfoService:
         print('saneamento', sanitationRate)
         print('idh', idh)
         return {'idh': round(idh, 3)}
-
-    def getAvgProfissionalQualification(self, cityId):
-        enterprisesInfo = InfoEnterprise.query.filter(InfoEnterprise.city_id == cityId).all()
-        jsonEnterprisesInfo = [info.json() for info in enterprisesInfo]
-        
-
-
-    def __getStates__(self):
-        return State.query.all()
     
     def __getCityCoustLiving__(self, city:City):
         cousts = [
