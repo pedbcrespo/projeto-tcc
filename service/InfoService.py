@@ -13,6 +13,7 @@ from model.InfoAlimentation import InfoAlimentation
 from model.InfoRecreation import InfoRecreation
 from model.InfoHealthConsumer import InfoHealthConsumer
 from model.InfoSanitation import InfoSanitation
+from model.InfoEnterprise import InfoEnterprise
 from model.FormAtributes import FormAttributes
 import functools as ft
 from typing import List
@@ -80,10 +81,13 @@ class InfoService:
         print('seguranca', securityRate)
         print('saneamento', sanitationRate)
         print('idh', idh)
-        return {'idh': round(idh * 100, 2)}
+        return {'idh': round(idh, 3)}
 
     def getAvgProfissionalQualification(self, cityId):
-        pass
+        enterprisesInfo = InfoEnterprise.query.filter(InfoEnterprise.city_id == cityId).all()
+        jsonEnterprisesInfo = [info.json() for info in enterprisesInfo]
+        
+
 
     def __getStates__(self):
         return State.query.all()
