@@ -15,6 +15,7 @@ from model.InfoHealthConsumer import InfoHealthConsumer
 from model.InfoSanitation import InfoSanitation
 from model.InfoEnterprise import InfoEnterprise
 from model.FormAtributes import FormAttributes
+from sqlalchemy import desc
 import functools as ft
 from typing import List
 
@@ -32,6 +33,7 @@ class InfoService:
         info.update(self.getIdh(cityId))
         info.update(self.getPricesInfo(cityId))
         info.update(self.getCoustLivingPrice(city))
+        info.update(self.getTop5Enterprises(cityId))
         return info
     
     def getGeneralInfo(self, cityId):
@@ -71,6 +73,11 @@ class InfoService:
             sanitation['population_no_garbage_collection']/100
         ) / 3
         return {'sanitation_rate': 1 - inversedRate}
+
+    def getTop5Enterprises(self, cityId):
+        typeDescriptions = InfoEnterprise.query.filter(InfoEnterprise.city_id == cityId).order_by(desc(InfoEnterprise.amount)).all()
+        justDesc = [info.type_description for info in typeDescriptions]
+        return {'most_current_type_enterprises': justDesc[:5]}
 
     def getIdh(self, cityId):
         scholarityRate = self.getScholarityInfo(cityId)['scholarity_rate']
