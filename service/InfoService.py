@@ -33,7 +33,7 @@ class InfoService:
         info.update(self.getIdh(cityId))
         info.update(self.getPricesInfo(cityId))
         info.update(self.getCoustLivingPrice(city))
-        info.update(self.getTop5Enterprises(cityId))
+        info.update(self.getTopEnterprises(cityId))
         return info
     
     def getGeneralInfo(self, cityId):
@@ -74,20 +74,16 @@ class InfoService:
         ) / 3
         return {'sanitation_rate': 1 - inversedRate}
 
-    def getTop5Enterprises(self, cityId):
+    def getTopEnterprises(self, cityId):
         typeDescriptions = InfoEnterprise.query.filter(InfoEnterprise.city_id == cityId).order_by(desc(InfoEnterprise.amount)).all()
         justDesc = [info.type_description for info in typeDescriptions]
-        return {'most_current_type_enterprises': justDesc[:5]}
+        return {'most_current_type_enterprises': justDesc[:10]}
 
     def getIdh(self, cityId):
         scholarityRate = self.getScholarityInfo(cityId)['scholarity_rate']
         securityRate = self.getSecurityInfo(cityId)['security_rate']
         sanitationRate = self.getSanitationInfo(cityId)['sanitation_rate']
         idh = (sanitationRate + securityRate + scholarityRate)/3
-        print('educacao', scholarityRate)
-        print('seguranca', securityRate)
-        print('saneamento', sanitationRate)
-        print('idh', idh)
         return {'idh': round(idh, 3)}
     
     def __getCityCoustLiving__(self, city:City):
