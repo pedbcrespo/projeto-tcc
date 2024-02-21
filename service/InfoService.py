@@ -96,7 +96,14 @@ class InfoService:
             (InfoHealthConsumer.query.filter(InfoHealthConsumer.state_id == city.state_id).first()).avg_price
         ]
         return round(ft.reduce(lambda a, b: a+b, cousts), 2) 
-        
+    
+    def getEntertainmentEnterprisesAmount(self, cityId):
+        def isEntertainmentEnterprise(enterprise):
+            return True
+    
+        enterprises = InfoEnterprise.query.filter(InfoEnterprise.city_id == cityId).all()
+        filteredEnterprises = list(filter(lambda enterprise: isEntertainmentEnterprise(enterprise), enterprises))
+
     def __gettingHomePrices__(self, price):
         prices = InfoPrices.query.filter(InfoPrices.avg_price <= price)
         citiesIds = list(map(lambda infoPrice: infoPrice.city_id, prices))
