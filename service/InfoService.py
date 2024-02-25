@@ -78,8 +78,10 @@ class InfoService:
 
     def getTopEnterprises(self, cityId):
         typeDescriptions = InfoEnterprise.query.filter(InfoEnterprise.city_id == cityId).order_by(desc(InfoEnterprise.amount)).all()
+        amounts = list(map(lambda enterprise: enterprise.amount, typeDescriptions))
+        amount = ft.reduce(lambda a, b: a+b, amounts)
         justDesc = [info.type_description for info in typeDescriptions]
-        return {'most_current_type_enterprises': justDesc[:10]}
+        return {'enterprises_amount': amount,'most_current_type_enterprises': justDesc[:10]}
 
     def getIdh(self, cityId):
         scholarityRate = self.getScholarityInfo(cityId)['scholarity_rate']
