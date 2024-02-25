@@ -114,7 +114,7 @@ class InfoService:
         filteredEnterprises = list(filter(lambda enterprise: isEntertainmentEnterprise(enterprise), enterprises))
 
         if not filteredEnterprises:
-            return {'recreation': 0}
+            return {'recreation_rate': 0}
 
         amountsEnterprises = list(map(lambda enterprise: enterprise.amount, filteredEnterprises))
         print(amountsEnterprises)
@@ -122,7 +122,7 @@ class InfoService:
         enterprisesAmounts = list(map(lambda enterprise: enterprise.amount, enterprises))
         totalAmount = ft.reduce(lambda a, b: a+b, enterprisesAmounts)
         amount = amountEntertaimentEnterprises / totalAmount
-        return {'recreation': round(amount, 2)*100}
+        return {'recreation_rate': round(amount, 2)*100}
 
     def __gettingHomePrices__(self, price):
         prices = InfoPrices.query.filter(InfoPrices.avg_price <= price)
