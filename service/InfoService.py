@@ -1,3 +1,4 @@
+import unidecode
 from model.City import City
 from model.State import State
 from model.InfoSecurity import InfoSecurity
@@ -34,6 +35,7 @@ class InfoService:
         info.update(self.getPricesInfo(cityId))
         info.update(self.getCoustLivingPrice(city))
         info.update(self.getTopEnterprises(cityId))
+        info.update(self.getEntertainmentEnterprisesAmount(cityId))
         return info
     
     def getGeneralInfo(self, cityId):
@@ -99,10 +101,26 @@ class InfoService:
     
     def getEntertainmentEnterprisesAmount(self, cityId):
         def isEntertainmentEnterprise(enterprise):
-            return True
-    
+            entertaimentWords = ['restaurante', 'lanchonete', 'cinema', 'bares', 'condicionamento fisico', 'passeio', 'turistico']
+            type_description = unidecode.unidecode(enterprise.type_description).lower()
+            for word in entertaimentWords:
+                if word in type_description:
+                    return True
+            return False
+        
         enterprises = InfoEnterprise.query.filter(InfoEnterprise.city_id == cityId).all()
         filteredEnterprises = list(filter(lambda enterprise: isEntertainmentEnterprise(enterprise), enterprises))
+
+        if not filteredEnterprises:
+            return {'recreation': 0}
+
+        amountsEnterprises = list(map(lambda enterprise: enterprise.amount, filteredEnterprises))
+        print(amountsEnterprises)
+        amountEntertaimentEnterprises = ft.reduce(lambda a, b: a+b, amountsEnterprises)
+        enterprisesAmounts = list(map(lambda enterprise: enterprise.amount, enterprises))
+        totalAmount = ft.reduce(lambda a, b: a+b, enterprisesAmounts)
+        amount = amountEntertaimentEnterprises / totalAmount
+        return {'recreation': round(amount, 2)*100}
 
     def __gettingHomePrices__(self, price):
         prices = InfoPrices.query.filter(InfoPrices.avg_price <= price)
