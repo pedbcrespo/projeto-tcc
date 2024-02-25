@@ -10,9 +10,7 @@ from model.InfoLightPrice import InfoLightPrice
 from model.InfoWaterConsumer import InfoWaterConsumer
 from model.InfoWaterPriceRegion import InfoWaterPriceRegion
 from model.InfoInternet import InfoInternet
-from model.InfoAlimentation import InfoAlimentation
-from model.InfoRecreation import InfoRecreation
-from model.InfoHealthConsumer import InfoHealthConsumer
+from model.InfoCoustLiving import InfoCoustLiving
 from model.InfoSanitation import InfoSanitation
 from model.InfoEnterprise import InfoEnterprise
 from model.FormAtributes import FormAttributes
@@ -91,13 +89,16 @@ class InfoService:
         return {'idh': round(idh, 3)}
     
     def __getCityCoustLiving__(self, city:City):
+        coustLiving = InfoCoustLiving.query.filter(InfoCoustLiving.state_id == city.state_id).first()
         cousts = [
             self.__calculatingLightPriceConsumer__(city.state_id),
             self.__calculatingWaterPriceConsumer__(city.state_id),
             (InfoInternet.query.filter(InfoInternet.city_id == city.id).first()).avg_price,
-            (InfoAlimentation.query.filter(InfoAlimentation.state_id == city.state_id).first()).avg_price,
-            (InfoRecreation.query.filter(InfoRecreation.state_id == city.state_id).first()).avg_price,
-            (InfoHealthConsumer.query.filter(InfoHealthConsumer.state_id == city.state_id).first()).avg_price
+            (coustLiving.alimentation),
+            (coustLiving.transport),
+            (coustLiving.health),
+            (coustLiving.hygiene),
+            (coustLiving.recreation),
         ]
         return round(ft.reduce(lambda a, b: a+b, cousts), 2) 
     
@@ -117,7 +118,6 @@ class InfoService:
             return {'recreation_rate': 0}
 
         amountsEnterprises = list(map(lambda enterprise: enterprise.amount, filteredEnterprises))
-        print(amountsEnterprises)
         amountEntertaimentEnterprises = ft.reduce(lambda a, b: a+b, amountsEnterprises)
         enterprisesAmounts = list(map(lambda enterprise: enterprise.amount, enterprises))
         totalAmount = ft.reduce(lambda a, b: a+b, enterprisesAmounts)
