@@ -124,6 +124,9 @@ class InfoService:
         amount = amountEntertaimentEnterprises / totalAmount
         return {'recreation_rate': round(amount, 2)*100}
 
+    def getProfissionalQualificationRate(self, cityId):
+        pass
+
     def __gettingHomePrices__(self, price):
         prices = InfoPrices.query.filter(InfoPrices.avg_price <= price)
         citiesIds = list(map(lambda infoPrice: infoPrice.city_id, prices))
