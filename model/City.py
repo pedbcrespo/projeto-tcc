@@ -16,4 +16,4 @@ class City(orm.Model):
         return f"({self.id}, {self.name}, {self.state_id})"
     
     def json(self):
-        return {'id': self.id, 'name': self.name, 'state_id':self.state_id, 'ibge_id': self.ibge_id, 'info': {}}
+        return {'id': self.id, 'name': self.name, 'state_id':self.state_id, 'ibge_id': self.ibge_id}

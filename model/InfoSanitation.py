@@ -11,6 +11,10 @@ class InfoSanitation(orm.Model):
 
     def __init__(self, cityId):
         self.city_id = cityId
+        self.has_municipal_plan = None
+        self.population_no_water = 100
+        self.population_no_sewage = 100
+        self.population_no_garbage_collection = 100
         
     def json(self):
         return {

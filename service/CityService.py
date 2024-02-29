@@ -9,6 +9,9 @@ class CityService:
         infoService = InfoService() 
         cities = City.query.all()
         jsonCities = [city.json() for city in cities]
+        for city in jsonCities:
+            info = infoService.getCityInfo(city['id'])
+            city.update(info)
         return jsonCities
     
     def getCities(self, uf):

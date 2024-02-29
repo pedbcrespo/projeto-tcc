@@ -28,59 +28,83 @@ class InfoService:
     
     def getCityInfo(self, cityId):
         city = City.query.filter(City.id == cityId).first()
-        info = {'id':city.id, 'city': city.name}
+        info = {}
+        info.update(self.getGeneralInfo(cityId))
+        return info
+    
+    def getDetailsInfo(self, cityId):
+        info = {}
+        city = City.query.filter(City.id == cityId).first()
         info.update(self.getIdh(cityId))
         info.update(self.getPricesInfo(cityId))
         info.update(self.getCoustLivingPrice(city))
         info.update(self.getTopEnterprises(cityId))
         info.update(self.getEntertainmentEnterprisesAmount(cityId))
         info.update(self.getProfissionalQualificationRate(cityId))
-        return info
-    
+
     def getGeneralInfo(self, cityId):
-        generalInfo = self.__getInfo__(cityId, InfoGeneral)
-        return {'idh': generalInfo['idh'], 'population': generalInfo['population']}
+        try:
+            generalInfo = self.__getInfo__(cityId, InfoGeneral)
+        except:
+            generalInfo = {'demographic_density': None, 'population': None}
+        return {'demographic_density': generalInfo['demographic_density'], 'population': generalInfo['population']}
 
     def getSecurityInfo(self, cityId):
-        secInfo = self.__getInfo__(cityId, InfoSecurity)
-        generalInfo = self.__getInfo__(cityId, InfoGeneral)
-        securityRate = (secInfo['rate']/generalInfo['population'])*1000
-        return {'security_rate': 1 - securityRate}
-
+        try:
+            secInfo = self.__getInfo__(cityId, InfoSecurity)
+            generalInfo = self.__getInfo__(cityId, InfoGeneral)
+            securityRate = (secInfo['rate']/generalInfo['population'])*1000
+            return {'security_rate': 1 - securityRate}
+        except:
+            return {'security_rate': None}
+        
     def getScholarityInfo(self, cityId):
-        scholarityInfo = self.__getInfo__(cityId, InfoSchools)
-        return {'scholarity_rate': scholarityInfo['scholarity_rate']/10}
+        try:
+            scholarityInfo = self.__getInfo__(cityId, InfoSchools)
+            return {'scholarity_rate': scholarityInfo['scholarity_rate']/10}
+        except:
+            return {'scholarity_rate': None}
 
     def getCoustLivingPrice(self, city):
         coust = self.__getCityCoustLiving__(city)
         return {'avg_coust_living_price': coust}
     
     def getPricesInfo(self, cityId):
-        prices = self.__getInfo__(cityId, InfoPrices)
-        return {'avg_price': prices['avg_price']}
-    
+        try:
+            prices = self.__getInfo__(cityId, InfoPrices)
+            return {'avg_price': prices['avg_price']}
+        except:
+            return {'avg_price': None}
+        
     def getSanitationInfo(self, cityId):
-        sanitation = self.__getInfo__(cityId, InfoSanitation)
         inversedRate = 0 
-        for key in sanitation:
-            if type(sanitation[key]) == str:
-                continue
-            if sanitation[key] == None:
-                sanitation[key] = 100
-    
+        sanitation = {'population_no_water': 0, 'population_no_sewage': 0, 'population_no_garbage_collection': 0 }
+        try:
+            sanitation = self.__getInfo__(cityId, InfoSanitation)
+            for key in sanitation:
+                if type(sanitation[key]) == str:
+                    continue
+                if sanitation[key] == None:
+                    sanitation[key] = 100
+        except:
+            sanitation = InfoSanitation(cityId).json()
         inversedRate = (
             sanitation['population_no_water']/100 + 
             sanitation['population_no_sewage']/100 + 
             sanitation['population_no_garbage_collection']/100
         ) / 3
         return {'sanitation_rate': 1 - inversedRate}
+        
+
 
     def getTopEnterprises(self, cityId):
         typeDescriptions = InfoEnterprise.query.filter(InfoEnterprise.city_id == cityId).order_by(desc(InfoEnterprise.amount)).all()
         amounts = list(map(lambda enterprise: enterprise.amount, typeDescriptions))
-        amount = ft.reduce(lambda a, b: a+b, amounts)
+        amount = 0 
+        if len(amounts) > 0: 
+            amount = ft.reduce(lambda a, b: a+b, amounts)
         justDesc = [info.type_description for info in typeDescriptions]
-        return {'enterprises_amount': amount,'most_current_type_enterprises': justDesc[:10]}
+        return {'enterprises_amount': amount,'most_current_type_enterprises': justDesc[:5]}
 
     def getIdh(self, cityId):
         scholarityRate = self.getScholarityInfo(cityId)['scholarity_rate']
@@ -128,9 +152,11 @@ class InfoService:
     def getProfissionalQualificationRate(self, cityId):
         general = InfoGeneral.query.filter(InfoGeneral.city_id == cityId).first()
         enterprises = InfoEnterprise.query.filter(InfoEnterprise.city_id == cityId).all()
+        if not enterprises:
+            return {'business_accessibility': 0}
         amountEnterprises = ft.reduce(lambda a,b: a+b, list(map(lambda enterprise: enterprise.amount, enterprises)))
         businessAccessibility = amountEnterprises/general.population
-        return {'business_accessibility': businessAccessibility*100}
+        return {'business_accessibility': round(businessAccessibility*100, 2)}
 
 
     def __gettingHomePrices__(self, price):
