@@ -34,6 +34,7 @@ class InfoService:
         info.update(self.getCoustLivingPrice(city))
         info.update(self.getTopEnterprises(cityId))
         info.update(self.getEntertainmentEnterprisesAmount(cityId))
+        info.update(self.getProfissionalQualificationRate(cityId))
         return info
     
     def getGeneralInfo(self, cityId):
@@ -125,7 +126,12 @@ class InfoService:
         return {'recreation_rate': round(amount, 2)*100}
 
     def getProfissionalQualificationRate(self, cityId):
-        pass
+        general = InfoGeneral.query.filter(InfoGeneral.city_id == cityId).first()
+        enterprises = InfoEnterprise.query.filter(InfoEnterprise.city_id == cityId).all()
+        amountEnterprises = ft.reduce(lambda a,b: a+b, list(map(lambda enterprise: enterprise.amount, enterprises)))
+        businessAccessibility = amountEnterprises/general.population
+        return {'business_accessibility': businessAccessibility*100}
+
 
     def __gettingHomePrices__(self, price):
         prices = InfoPrices.query.filter(InfoPrices.avg_price <= price)

@@ -11,7 +11,7 @@ infoService = InfoService()
 
 class CityAllController(Resource):
     def get(self):
-        return [city for city in cityService.getAllCities()]
+        return cityService.getAllCities()
 
     def post(self, jsonCities):
         return [city for city in cityService.saveCities(jsonCities['cities'])]
