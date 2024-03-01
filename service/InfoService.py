@@ -27,7 +27,6 @@ class InfoService:
         return info.json()
     
     def getCityInfo(self, cityId):
-        city = City.query.filter(City.id == cityId).first()
         info = {}
         info.update(self.getGeneralInfo(cityId))
         return info
@@ -41,7 +40,8 @@ class InfoService:
         info.update(self.getTopEnterprises(cityId))
         info.update(self.getEntertainmentEnterprisesAmount(cityId))
         info.update(self.getProfissionalQualificationRate(cityId))
-
+        return info
+    
     def getGeneralInfo(self, cityId):
         try:
             generalInfo = self.__getInfo__(cityId, InfoGeneral)

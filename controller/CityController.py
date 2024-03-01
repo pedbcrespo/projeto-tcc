@@ -19,7 +19,7 @@ class CityAllController(Resource):
 class CityIndividualController(Resource):
     def get(self, uf):
         return [city for city in cityService.getCities(uf)]
-         
+
 class InfoCityController(Resource):
     def get(self, city_id):
         return infoService.getCityInfo(city_id)

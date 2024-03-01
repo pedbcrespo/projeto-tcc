@@ -5,6 +5,12 @@ from configuration.config import ormDatabase
 from typing import List
 
 class CityService:
+    def __getDetails__(self, city):
+        infoService = InfoService()
+        json = city.json()
+        json.update(infoService.getDetailsInfo(city.id))
+        return json
+    
     def getAllCities(self):
         infoService = InfoService() 
         cities = City.query.all()
@@ -15,17 +21,23 @@ class CityService:
         return jsonCities
     
     def getCities(self, uf):
+        infoService = InfoService() 
         state = State.query.filter(State.abbreviation == uf).first()
         cities = City.query.filter(City.state_id == state.id).all()
-        return [city for city in cities] 
+        jsonCities = []
+        for city in cities:
+            jsonCity = city.json()
+            jsonCity.update(infoService.getDetailsInfo(city.id))
+            jsonCities.append(jsonCity)
+        return jsonCities 
     
     def getCityById(self, cityId):
         city = City.query.filter(City.id == cityId).first()
-        return city.json()
-    
+        return self.__getDetails__(city)
+        
     def getCityByName(self, cityName):
         city = City.query.filter(City.name == cityName).first()
-        return city.json()
+        return self.__getDetails__(city)
     
     def saveCities(self, cities:List[City]):
         ormDatabase.session.add_all(cities)
