@@ -95,8 +95,6 @@ class InfoService:
         ) / 3
         return {'sanitation_rate': 1 - inversedRate}
         
-
-
     def getTopEnterprises(self, cityId):
         typeDescriptions = InfoEnterprise.query.filter(InfoEnterprise.city_id == cityId).order_by(desc(InfoEnterprise.amount)).all()
         amounts = list(map(lambda enterprise: enterprise.amount, typeDescriptions))
@@ -111,7 +109,7 @@ class InfoService:
         securityRate = self.getSecurityInfo(cityId)['security_rate']
         sanitationRate = self.getSanitationInfo(cityId)['sanitation_rate']
         idh = (sanitationRate + securityRate + scholarityRate)/3
-        return {'idh': round(idh, 3)}
+        return {'idh': round(idh, 3), 'scholarity_rate': round(scholarityRate, 2)}
     
     def __getCityCoustLiving__(self, city:City):
         coustLiving = InfoCoustLiving.query.filter(InfoCoustLiving.state_id == city.state_id).first()
