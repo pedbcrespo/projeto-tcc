@@ -3,4 +3,3 @@ venv/
 automation/readedCities.txt
 automation/readedStates.txt
 automation/driver
-csvData/enterprises_old

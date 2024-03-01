@@ -10,9 +10,13 @@ cityService = CityService()
 stateService = StateService()
 infoService = InfoService()
 
+class Initial(Resource):
+    def get(self):
+        return "API TCC"
+
 class RedirectToCities(Resource):
     def get(self):
-        return redirect("/info-api/cities")
+        return redirect(BASE_URL)
 
 class CityAllController(Resource):
     def get(self):
@@ -35,6 +39,7 @@ class CompleteCityInfo(Resource):
         city['info'] = infoService.getCityInfo(cityId)
         return city
 api.add_resource(RedirectToCities, "/")
+api.add_resource(Initial, BASE_URL)
 api.add_resource(CityAllController, f"{BASE_URL}/cities")
 api.add_resource(CityIndividualController, f"{BASE_URL}/states/<uf>")
 api.add_resource(InfoCityController, f"{BASE_URL}/city/info/<int:city_id>")
