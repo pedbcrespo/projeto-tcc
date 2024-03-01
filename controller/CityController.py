@@ -1,4 +1,5 @@
 from flask_restful import Resource
+from flask import redirect
 from configuration.config import api
 from configuration.dev_configuration import BASE_URL
 from service.CityService import CityService
@@ -8,6 +9,10 @@ from service.StateService import StateService
 cityService = CityService()
 stateService = StateService()
 infoService = InfoService()
+
+class RedirectToCities(Resource):
+    def get(self):
+        return redirect("/info-api/cities")
 
 class CityAllController(Resource):
     def get(self):
@@ -29,7 +34,7 @@ class CompleteCityInfo(Resource):
         city = cityService.getCityById(cityId)
         city['info'] = infoService.getCityInfo(cityId)
         return city
-
+api.add_resource(RedirectToCities, "/")
 api.add_resource(CityAllController, f"{BASE_URL}/cities")
 api.add_resource(CityIndividualController, f"{BASE_URL}/states/<uf>")
 api.add_resource(InfoCityController, f"{BASE_URL}/city/info/<int:city_id>")
