@@ -145,7 +145,7 @@ class InfoService:
         enterprisesAmounts = list(map(lambda enterprise: enterprise.amount, enterprises))
         totalAmount = ft.reduce(lambda a, b: a+b, enterprisesAmounts)
         amount = amountEntertaimentEnterprises / totalAmount
-        return {'recreation_rate': round(amount, 2)*100}
+        return {'recreation_rate': round(amount*100, 2)}
 
     def getProfissionalQualificationRate(self, cityId):
         general = InfoGeneral.query.filter(InfoGeneral.city_id == cityId).first()
