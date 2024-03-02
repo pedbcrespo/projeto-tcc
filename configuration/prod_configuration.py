@@ -1,7 +1,7 @@
-user='root'
-password='Tahoq7LqdRLocQUK8F7l'
-host='containers-us-west-172.railway.app'
-port='6696'
+user='pedbcrespo'
+password='pbc1997-01-03'
+host='pedbcrespo.mysql.pythonanywhere-services.com'
+port=''
 database='tcc_project'
 
 IBGE_BASE_URL = 'https://servicodados.ibge.gov.br/api/v1/localidades'
