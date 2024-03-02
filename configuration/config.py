@@ -1,6 +1,5 @@
 from flask import Flask
 from flask_restful import Api
-from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from configuration import dev_configuration as db
 
@@ -10,8 +9,6 @@ conn = "mysql+pymysql://{}:{}@{}/{}".format(db.user, db.password, db.host, db.da
 
 app = Flask('__name__')
 app.config['SQLALCHEMY_DATABASE_URI'] = conn
-app.config['CORS_HEADERS'] = 'Content-Type'
 
 ormDatabase = SQLAlchemy(app)
 api = Api(app)
-CORS(app)
