@@ -46,3 +46,4 @@
     * site que visualiza indice de saneamento basico por cidade: https://www.aguaesaneamento.org.br/municipios-e-saneamento/explore-compare
     * mapa de regiões turisticas no brasil: https://www.mapa.turismo.gov.br/mapa/init.html#/home
     * site que mostra o custo de vida por cidade: http://www.custodevida.com.br/
+    * analise do custo da cesta basica: https://observatorio.puc-campinas.edu.br/custo-da-cesta-basica-e-variacoes-de-precos-fevereiro-2023/

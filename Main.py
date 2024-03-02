@@ -3,5 +3,7 @@ from configuration.config import app
 from controller.StateController import StateController
 from controller.CityController import *
 
+startApp = app
+
 if __name__ == '__main__':
-    app.run()
+    startApp.run()
