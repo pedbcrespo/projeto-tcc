@@ -47,3 +47,4 @@
     * mapa de regiões turisticas no brasil: https://www.mapa.turismo.gov.br/mapa/init.html#/home
     * site que mostra o custo de vida por cidade: http://www.custodevida.com.br/
     * analise do custo da cesta basica: https://observatorio.puc-campinas.edu.br/custo-da-cesta-basica-e-variacoes-de-precos-fevereiro-2023/
+    * analise do custo da cesta basica, valores por região do Brasil: https://www.poder360.com.br/economia/valor-da-cesta-basica-cai-em-todas-as-regioes-diz-abras/
