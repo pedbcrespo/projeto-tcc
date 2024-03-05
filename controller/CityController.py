@@ -22,9 +22,6 @@ class CityAllController(Resource):
     def get(self):
         return cityService.getAllCities()
 
-    def post(self, jsonCities):
-        return [city for city in cityService.saveCities(jsonCities['cities'])]
-
 class CityIndividualController(Resource):
     def get(self, uf):
         return [city for city in cityService.getCities(uf)]
@@ -38,8 +35,15 @@ class CompleteCityInfo(Resource):
         city = cityService.getCityById(cityId)
         city['info'] = infoService.getCityInfo(cityId)
         return city
+    
+class Recomendation(Resource):
+    def post(self, formResult):
+        cities = infoService.getRecomendation(formResult)
+        return cities
+    
 api.add_resource(RedirectToCities, "/")
 api.add_resource(Initial, BASE_URL)
 api.add_resource(CityAllController, f"{BASE_URL}/cities")
 api.add_resource(CityIndividualController, f"{BASE_URL}/state/<uf>")
 api.add_resource(InfoCityController, f"{BASE_URL}/city/info/<int:city_id>")
+api.add_resource(Recomendation, f"{BASE_URL}/city/recomendation")

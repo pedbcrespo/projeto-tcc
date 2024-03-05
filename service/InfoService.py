@@ -19,8 +19,8 @@ import functools as ft
 from typing import List
 
 class InfoService:   
-    def getRecomendation(self, formAttributes: FormAttributes):
-        pass
+    def getRecomendation(self, formResult):
+        return []
     
     def __getInfo__(self, cityId, infoType):
         info = infoType.query.filter(infoType.city_id == cityId).first()
