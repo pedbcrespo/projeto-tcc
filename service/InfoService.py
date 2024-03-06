@@ -17,11 +17,14 @@ from model.FormAtributes import FormAttributes
 from sqlalchemy import desc
 import functools as ft
 from typing import List
+import pandas as pd
 
 class InfoService:   
     def getRecomendation(self, formResult):
-        structureDataBase = list(map(lambda x: {x['title']: x['answer']}, formResult))
-        print(structureDataBase)
+        preDf = {}
+        for data in formResult:
+            preDf[data['title']] = data['answer'] if type(data['answer']) == int else int(data['answer'])
+        print(preDf)
         return []
     
     def __getInfo__(self, cityId, infoType):
