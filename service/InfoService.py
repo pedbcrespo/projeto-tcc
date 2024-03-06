@@ -13,18 +13,17 @@ from model.InfoInternet import InfoInternet
 from model.InfoCoustLiving import InfoCoustLiving
 from model.InfoSanitation import InfoSanitation
 from model.InfoEnterprise import InfoEnterprise
-from model.FormAtributes import FormAttributes
 from sqlalchemy import desc
 import functools as ft
-from typing import List
 import pandas as pd
 
 class InfoService:   
     def getRecomendation(self, formResult):
-        preDf = {}
+        dictData = {}
         for data in formResult:
-            preDf[data['title']] = data['answer'] if type(data['answer']) == int else int(data['answer'])
-        print(preDf)
+            dictData[data['title']] = int(data['answer'])
+        df = pd.DataFrame([dictData])
+        print(df)
         return []
     
     def __getInfo__(self, cityId, infoType):
