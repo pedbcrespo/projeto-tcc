@@ -20,6 +20,8 @@ from typing import List
 
 class InfoService:   
     def getRecomendation(self, formResult):
+        structureDataBase = list(map(lambda x: {x['title']: x['answer']}, formResult))
+        print(structureDataBase)
         return []
     
     def __getInfo__(self, cityId, infoType):
