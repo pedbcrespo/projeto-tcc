@@ -13,11 +13,15 @@ from model.InfoInternet import InfoInternet
 from model.InfoCoustLiving import InfoCoustLiving
 from model.InfoSanitation import InfoSanitation
 from model.InfoEnterprise import InfoEnterprise
+from model.Questions import textQuestions
 from sqlalchemy import desc
 import functools as ft
 import pandas as pd
 
-class InfoService:   
+class InfoService:
+    def getQuestions(self):
+        return textQuestions
+
     def getRecomendation(self, formResult):
         dictData = {}
         for data in formResult:
@@ -25,10 +29,6 @@ class InfoService:
         df = pd.DataFrame([dictData])
         print(df)
         return []
-    
-    def __getInfo__(self, cityId, infoType):
-        info = infoType.query.filter(infoType.city_id == cityId).first()
-        return info.json()
     
     def getCityInfo(self, cityId):
         info = {}
@@ -115,20 +115,6 @@ class InfoService:
         idh = (sanitationRate + securityRate + scholarityRate)/3
         return {'idh': round(idh, 3), 'scholarity_rate': round(scholarityRate, 2)}
     
-    def __getCityCoustLiving__(self, city:City):
-        coustLiving = InfoCoustLiving.query.filter(InfoCoustLiving.state_id == city.state_id).first()
-        cousts = [
-            self.__calculatingLightPriceConsumer__(city.state_id),
-            self.__calculatingWaterPriceConsumer__(city.state_id),
-            (InfoInternet.query.filter(InfoInternet.city_id == city.id).first()).avg_price,
-            (coustLiving.alimentation),
-            (coustLiving.transport),
-            (coustLiving.health),
-            (coustLiving.hygiene),
-            (coustLiving.recreation),
-        ]
-        return round(ft.reduce(lambda a, b: a+b, cousts), 2) 
-    
     def getEntertainmentEnterprisesAmount(self, cityId):
         def isEntertainmentEnterprise(enterprise):
             entertaimentWords = ['restaurante', 'lanchonete', 'cinema', 'bares', 'condicionamento fisico', 'passeio', 'turistico']
@@ -196,5 +182,20 @@ class InfoService:
         mounthCounsumer = InfoWaterConsumer.query.filter(InfoWaterConsumer.state_id == stateId).first()
         return round(mounthCounsumer.amount * regionPrice.price, 2)
         
-        
-        
+    def __getCityCoustLiving__(self, city:City):
+        coustLiving = InfoCoustLiving.query.filter(InfoCoustLiving.state_id == city.state_id).first()
+        cousts = [
+            self.__calculatingLightPriceConsumer__(city.state_id),
+            self.__calculatingWaterPriceConsumer__(city.state_id),
+            (InfoInternet.query.filter(InfoInternet.city_id == city.id).first()).avg_price,
+            (coustLiving.alimentation),
+            (coustLiving.transport),
+            (coustLiving.health),
+            (coustLiving.hygiene),
+            (coustLiving.recreation),
+        ]
+        return round(ft.reduce(lambda a, b: a+b, cousts), 2)
+    
+    def __getInfo__(self, cityId, infoType):
+        info = infoType.query.filter(infoType.city_id == cityId).first()
+        return info.json()
