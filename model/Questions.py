@@ -20,16 +20,8 @@ class AttributesPoints:
     
     def add(self, increaseAtt, val):
         decreaseAtt, valToSub = self.__relationIncreaseDecrease__(increaseAtt, val)
-        self.attributes[increaseAtt] += val if self.attributes[increaseAtt] + val <= 5 else 5
-        self.attributes[decreaseAtt] -= valToSub if self.attributes[decreaseAtt] - valToSub >= 1 else 1
-
-textQuestions = [
-    "Voce tem habito de passear e visitar lugares novos.",
-    "Voce valoriza morar mais proximo do centro da cidade.",
-    "Voce procura por novas oportunidades de trabalho.",
-    "O conforto do lar é mais importante que opções de serviços da cidade.",
-    "Voce costuma sair muito e ficar ate altas horas da noite fora de casa."
-]
+        self.attributes[increaseAtt] += val 
+        self.attributes[decreaseAtt] = self.attributes[decreaseAtt] - valToSub if self.attributes[decreaseAtt] - valToSub >= 1 else 1
 
 attributes = {
     'LIVING_QUALITY': 'livingQuality',
