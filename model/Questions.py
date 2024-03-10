@@ -15,16 +15,13 @@ class AttributesPoints:
             'COUST': {'decrease': 'LIVING_QUALITY', 'percent': 0.5},
         }
         decrease = relation[attribute]['decrease']
-        valueToSub = val * relation[attribute]['percent']
+        valueToSub = round(val * relation[attribute]['percent'])
         return decrease, valueToSub
     
     def add(self, increaseAtt, val):
         decreaseAtt, valToSub = self.__relationIncreaseDecrease__(increaseAtt, val)
         self.attributes[increaseAtt] += val if self.attributes[increaseAtt] + val <= 5 else 5
         self.attributes[decreaseAtt] -= valToSub if self.attributes[decreaseAtt] - valToSub >= 1 else 1
-
-    def get(self):
-        return self.livingQuality, self.employability, self.leisure, self.coust
 
 textQuestions = [
     "Voce tem habito de passear e visitar lugares novos.",
@@ -44,34 +41,34 @@ attributes = {
 questions = [
     {
         'title': "Você tem habito de passear e visitar lugares novos.",
-        'attribute': attributes['LEISURE']
+        'attribute': 'LEISURE'
     },
     {
         'title': "A qualidade de vida é mais importante do que a distancia ate o centro urbano.",
-        'attribute': attributes['LIVING_QUALITY']
+        'attribute': 'LIVING_QUALITY'
     },
     {
         'title': "Ter onde trabalhar é mais importante que sair com os amigos e familia",
-        'attribute': attributes['EMPLOYABILITY']
+        'attribute': 'EMPLOYABILITY'
     },
     {
         'title': "O tamanho do lar não é tão relevante quanto a praticidade do local aonde mora.",
-        'attribute': attributes['COUST']
+        'attribute': 'COUST'
     },
     {
         'title': "Locais movimentados e interessantes do que a variedade de vagas de trabalho na cidade.",
-        'attribute': attributes['LEISURE']
+        'attribute': 'LEISURE'
     },
     {
         'title': "Você tem como prioridade gastar mais por mais praticidade e conforto.",
-        'attribute': attributes['LIVING_QUALITY']
+        'attribute': 'LIVING_QUALITY'
     },
     {
         'title': "Você se considera um profissional de alta qualificação",
-        'attribute': attributes['EMPLOYABILITY']
+        'attribute': 'EMPLOYABILITY'
     },
     {
         'title': "Voce prefere grandes centros urbanos á pequenas ou medias cidades",
-        'attribute': attributes['COUST']
+        'attribute': 'COUST'
     },
 ]

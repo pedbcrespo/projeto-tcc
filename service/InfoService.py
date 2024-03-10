@@ -23,10 +23,11 @@ class InfoService:
         return questions
 
     def getRecomendation(self, formResult):
-        dictData = {}
+        print('FORM RESULT', formResult)    
+        attributesPoints = AttributesPoints()
         for data in formResult:
-            dictData[data['title']] = int(data['answer'])
-        df = pd.DataFrame([dictData])
+            attributesPoints.add(data['attribute'], data['answer'])
+        df = pd.DataFrame([attributesPoints.attributes])
         print(df)
         return []
     
