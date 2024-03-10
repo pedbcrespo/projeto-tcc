@@ -1,4 +1,4 @@
-class attributesPoints:
+class AttributesPoints:
     def __init__(self):
         self.attributes = {
             'LIVING_QUALITY': 1,
@@ -7,9 +7,21 @@ class attributesPoints:
             'COUST': 1,
         }
 
-    def add(self, increaseAtt, increaseVal, decreaseAtt, decreaseVal):
-        self.attributes[increaseAtt] += increaseAtt if self.attributes[increaseAtt] + increaseVal <= 5 else 5
-        self.attributes[decreaseAtt] -= decreaseVal if self.attributes[increaseAtt] - increaseVal >= 1 else 1
+    def __relationIncreaseDecrease__(self, attribute, val):
+        relation = {
+            'LIVING_QUALITY': {'decrease': 'COUST', 'percent': 0.5},
+            'EMPLOYABILITY': {'decrease': 'LEISURE', 'percent': 0.5},
+            'LEISURE': {'decrease': 'EMPLOYABILITY', 'percent': 0.5},
+            'COUST': {'decrease': 'LIVING_QUALITY', 'percent': 0.5},
+        }
+        decrease = relation[attribute]['decrease']
+        valueToSub = val * relation[attribute]['percent']
+        return decrease, valueToSub
+    
+    def add(self, increaseAtt, val):
+        decreaseAtt, valToSub = self.__relationIncreaseDecrease__(increaseAtt, val)
+        self.attributes[increaseAtt] += val if self.attributes[increaseAtt] + val <= 5 else 5
+        self.attributes[decreaseAtt] -= valToSub if self.attributes[decreaseAtt] - valToSub >= 1 else 1
 
     def get(self):
         return self.livingQuality, self.employability, self.leisure, self.coust
@@ -31,35 +43,35 @@ attributes = {
 
 questions = [
     {
-        'question': "Você tem habito de passear e visitar lugares novos.",
-        'attributes': attributes['LEISURE']
+        'title': "Você tem habito de passear e visitar lugares novos.",
+        'attribute': attributes['LEISURE']
     },
     {
-        'question': "Vale mais a pena viver proximo aos centros urbanos do que nos subúrbio",
-        'attributes': attributes['LIVING_QUALITY']
+        'title': "A qualidade de vida é mais importante do que a distancia ate o centro urbano.",
+        'attribute': attributes['LIVING_QUALITY']
     },
     {
-        'question': "Você procura por novas oportunidades de trabalho.",
-        'attributes': attributes['EMPLOYABILITY']
+        'title': "Ter onde trabalhar é mais importante que sair com os amigos e familia",
+        'attribute': attributes['EMPLOYABILITY']
     },
     {
-        'question': "Não é tão importante o tamanho do lar, contanto que esteja no seu alcance financeiramente.",
-        'attributes': attributes['COUST']
+        'title': "O tamanho do lar não é tão relevante quanto a praticidade do local aonde mora.",
+        'attribute': attributes['COUST']
     },
     {
-        'question': "Locais movimentados e interessantes são melhores do que o silencio do seu lar.",
-        'attributes': attributes['LEISURE']
+        'title': "Locais movimentados e interessantes do que a variedade de vagas de trabalho na cidade.",
+        'attribute': attributes['LEISURE']
     },
     {
-        'question': "",
-        'attributes': attributes['LIVING_QUALITY']
+        'title': "Você tem como prioridade gastar mais por mais praticidade e conforto.",
+        'attribute': attributes['LIVING_QUALITY']
     },
     {
-        'question': "Você se considera um profissional de alta qualificação",
-        'attributes': attributes['EMPLOYABILITY']
+        'title': "Você se considera um profissional de alta qualificação",
+        'attribute': attributes['EMPLOYABILITY']
     },
     {
-        'question': "Voce prefere grandes centros urbanos á pequenas ou medias cidades",
-        'attributes': attributes['COUST']
+        'title': "Voce prefere grandes centros urbanos á pequenas ou medias cidades",
+        'attribute': attributes['COUST']
     },
 ]

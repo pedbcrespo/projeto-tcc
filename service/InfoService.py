@@ -13,14 +13,14 @@ from model.InfoInternet import InfoInternet
 from model.InfoCoustLiving import InfoCoustLiving
 from model.InfoSanitation import InfoSanitation
 from model.InfoEnterprise import InfoEnterprise
-from model.Questions import textQuestions
+from model.Questions import AttributesPoints, questions
 from sqlalchemy import desc
 import functools as ft
 import pandas as pd
 
 class InfoService:
     def getQuestions(self):
-        return textQuestions
+        return questions
 
     def getRecomendation(self, formResult):
         dictData = {}
