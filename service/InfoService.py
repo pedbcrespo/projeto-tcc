@@ -28,7 +28,7 @@ class InfoService:
         for data in formResult:
             attributesPoints.add(data['attribute'], data['answer'])
         df = pd.DataFrame([attributesPoints.attributes])
-        print(df)
+        print(attributesPoints.attributes)
         return []
     
     def getCityInfo(self, cityId):
