@@ -23,6 +23,9 @@ class AttributesPoints:
         self.attributes[increaseAtt] += val 
         self.attributes[decreaseAtt] = self.attributes[decreaseAtt] - valToSub if self.attributes[decreaseAtt] - valToSub >= 1 else 1
 
+    def getList(self):
+        return [{"key": key, "value": self.attributes[key]} for key in self.attributes]
+    
 attributes = {
     'LIVING_QUALITY': 'livingQuality',
     'EMPLOYABILITY': 'employability',

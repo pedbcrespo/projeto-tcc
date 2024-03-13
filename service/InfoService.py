@@ -22,13 +22,10 @@ class InfoService:
     def getQuestions(self):
         return questions
 
-    def getRecomendation(self, formResult):
-        print('FORM RESULT', formResult)    
-        attributesPoints = AttributesPoints()
-        for data in formResult:
-            attributesPoints.add(data['attribute'], data['answer'])
-        df = pd.DataFrame([attributesPoints.attributes])
-        print(attributesPoints.attributes)
+    def getRecomendation(self, formResult): 
+        attributesPoints, df = self.__calculateAttributes__(formResult)
+        listAttributes = sorted(attributesPoints.getList(), key=lambda att: att['value'])
+        print(df)
         return []
     
     def getCityInfo(self, cityId):
@@ -147,6 +144,12 @@ class InfoService:
         businessAccessibility = amountEnterprises/general.population
         return {'business_accessibility': round(businessAccessibility*100, 2)}
 
+    def __calculateAttributes__(self, formResult):
+        attributesPoints = AttributesPoints()
+        for data in formResult:
+            attributesPoints.add(data['attribute'], data['answer'])
+        df = pd.DataFrame([attributesPoints.attributes])
+        return attributesPoints, df
 
     def __gettingHomePrices__(self, price):
         prices = InfoPrices.query.filter(InfoPrices.avg_price <= price)
