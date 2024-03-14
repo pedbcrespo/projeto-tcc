@@ -25,8 +25,28 @@ class InfoService:
     def getRecomendation(self, formResult): 
         attributesPoints, df = self.__calculateAttributes__(formResult)
         listAttributes = sorted(attributesPoints.getList(), key=lambda att: att['value'])
-        print(df)
-        return []
+        sortedAttributes = list(map(lambda att: att['key'], listAttributes))
+
+        attributesHandleRelated = {
+            'LIVING_QUALITY': self.__getBetterIdh__,
+            'EMPLOYABILITY': self.__getBetterBusinessSAccessibility__,
+            'LEISURE': self.__getBetterEntertainment__,
+            'COUST': self.__getBetterCoust__,
+        }
+        cities = City.query.all()
+        recomendations = []
+        for att in sortedAttributes:
+            cities = attributesHandleRelated[att](cities)
+            recomendations.append(cities)
+        
+        print(recomendations)
+        infos = []
+        for city in cities:
+            dictCity = city.json()
+            dictCity.update(self.getCityInfo(city.id))
+            dictCity.update(self.getDetailsInfo(city.id))
+            infos.append(dictCity)
+        return infos
     
     def getCityInfo(self, cityId):
         info = {}
@@ -40,7 +60,7 @@ class InfoService:
         info.update(self.getPricesInfo(cityId))
         info.update(self.getCoustLivingPrice(city))
         info.update(self.getTopEnterprises(cityId))
-        info.update(self.getEntertainmentEnterprisesAmount(cityId))
+        info.update(self.getEntertainmentRate(cityId))
         info.update(self.getProfissionalQualificationRate(cityId))
         return info
     
@@ -113,7 +133,7 @@ class InfoService:
         idh = (sanitationRate + securityRate + scholarityRate)/3
         return {'idh': round(idh, 3), 'scholarity_rate': round(scholarityRate, 2)}
     
-    def getEntertainmentEnterprisesAmount(self, cityId):
+    def getEntertainmentRate(self, cityId):
         def isEntertainmentEnterprise(enterprise):
             entertaimentWords = ['restaurante', 'lanchonete', 'cinema', 'bares', 'condicionamento fisico', 'passeio', 'turistico']
             type_description = unidecode.unidecode(enterprise.type_description).lower()
@@ -151,7 +171,7 @@ class InfoService:
         df = pd.DataFrame([attributesPoints.attributes])
         return attributesPoints, df
 
-    def __gettingHomePrices__(self, price):
+    def __getHomePrices__(self, price):
         prices = InfoPrices.query.filter(InfoPrices.avg_price <= price)
         citiesIds = list(map(lambda infoPrice: infoPrice.city_id, prices))
         cities = City.query.filter(City.id in citiesIds).all()
@@ -186,7 +206,7 @@ class InfoService:
         mounthCounsumer = InfoWaterConsumer.query.filter(InfoWaterConsumer.state_id == stateId).first()
         return round(mounthCounsumer.amount * regionPrice.price, 2)
         
-    def __getCityCoustLiving__(self, city:City):
+    def __getCityCoustLiving__(self, city):
         coustLiving = InfoCoustLiving.query.filter(InfoCoustLiving.state_id == city.state_id).first()
         cousts = [
             self.__calculatingLightPriceConsumer__(city.state_id),
@@ -200,6 +220,32 @@ class InfoService:
         ]
         return round(ft.reduce(lambda a, b: a+b, cousts), 2)
     
+    def __getTotalCoust__(self, cityId):
+        city = City.query.filter(City.id == cityId).first()
+        coustLiving = self.__getCityCoustLiving__(city)
+        avgHomesPrice = InfoPrices.query.filter(InfoPrices.city_id == cityId).first()
+        return {'total': round(avgHomesPrice + coustLiving, 2)}
+
     def __getInfo__(self, cityId, infoType):
         info = infoType.query.filter(infoType.city_id == cityId).first()
         return info.json()
+    
+    def __getBetter__(self, cities, methodsComparation, keyComparation):
+        if cities == None:
+            cities = City.query.all()
+        for city in cities:
+            city.infoValue = methodsComparation(city.id)
+        cities = sorted(cities, key=lambda city: city.infoValue[keyComparation])
+        return cities if len(cities) == 10 else cities[:10]
+
+    def __getBetterIdh__(self, cities=None):
+        return self.__getBetter__(cities, self.getIdh, 'idh')
+    
+    def __getBetterBusinessSAccessibility__(self, cities=None):
+        return self.__getBetter__(cities, self.getProfissionalQualificationRate, 'business_accessibility')
+    
+    def __getBetterEntertainment__(self, cities=None):
+        return self.__getBetter__(cities, self.getEntertainmentRate, 'recreation_rate')
+    
+    def __getBetterCoust__(self, cities=None):
+        return self.__getBetter__(cities, self.__getTotalCoust__, 'total')
