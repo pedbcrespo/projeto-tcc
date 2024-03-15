@@ -51,7 +51,7 @@ questions = [
         'attribute': 'COUST'
     },
     {
-        'title': "Locais movimentados e interessantes do que a variedade de vagas de trabalho na cidade.",
+        'title': "Você prefere locais movimentados e interessantes do que a variedade de vagas de trabalho na cidade.",
         'attribute': 'LEISURE'
     },
     {
