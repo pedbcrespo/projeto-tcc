@@ -68,7 +68,7 @@ class InfoService:
         try:
             generalInfo = self.__getInfo__(cityId, InfoGeneral)
         except:
-            generalInfo = {'demographic_density': None, 'population': None}
+            generalInfo = {'demographic_density': 0, 'population': 0}
         return {'demographic_density': generalInfo['demographic_density'], 'population': generalInfo['population']}
 
     def getSecurityInfo(self, cityId):
@@ -78,14 +78,14 @@ class InfoService:
             securityRate = (secInfo['rate']/generalInfo['population'])*1000
             return {'security_rate': 1 - securityRate}
         except:
-            return {'security_rate': None}
+            return {'security_rate': 0}
         
     def getScholarityInfo(self, cityId):
         try:
             scholarityInfo = self.__getInfo__(cityId, InfoSchools)
             return {'scholarity_rate': scholarityInfo['scholarity_rate']/10}
         except:
-            return {'scholarity_rate': None}
+            return {'scholarity_rate': 0}
 
     def getCoustLivingPrice(self, city):
         coust = self.__getCityCoustLiving__(city)
@@ -96,7 +96,7 @@ class InfoService:
             prices = self.__getInfo__(cityId, InfoPrices)
             return {'avg_price': prices['avg_price']}
         except:
-            return {'avg_price': None}
+            return {'avg_price': 0}
         
     def getSanitationInfo(self, cityId):
         inversedRate = 0 
@@ -223,7 +223,8 @@ class InfoService:
     def __getTotalCoust__(self, cityId):
         city = City.query.filter(City.id == cityId).first()
         coustLiving = self.__getCityCoustLiving__(city)
-        avgHomesPrice = InfoPrices.query.filter(InfoPrices.city_id == cityId).first()
+        infoPrice = InfoPrices.query.filter(InfoPrices.city_id == cityId).first()
+        avgHomesPrice = 0 if infoPrice == None else infoPrice.avg_price
         return {'total': round(avgHomesPrice + coustLiving, 2)}
 
     def __getInfo__(self, cityId, infoType):
@@ -231,10 +232,13 @@ class InfoService:
         return info.json()
     
     def __getBetter__(self, cities, methodsComparation, keyComparation):
+        print('==================== analizando: ', keyComparation)
         if cities == None:
             cities = City.query.all()
         for city in cities:
+            print(city.name)
             city.infoValue = methodsComparation(city.id)
+        print('======================================')
         cities = sorted(cities, key=lambda city: city.infoValue[keyComparation])
         return cities if len(cities) == 10 else cities[:10]
 
