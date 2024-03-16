@@ -162,11 +162,13 @@ class InfoService:
 
     def getProfissionalQualificationRate(self, cityId):
         general = InfoGeneral.query.filter(InfoGeneral.city_id == cityId).first()
+        population = general.population
         enterprises = InfoEnterprise.query.filter(InfoEnterprise.city_id == cityId).all()
         if not enterprises:
             return {'business_accessibility': 0}
         amountEnterprises = ft.reduce(lambda a,b: a+b, list(map(lambda enterprise: enterprise.amount, enterprises)))
-        businessAccessibility = amountEnterprises/general.population
+        print('id', cityId, 'population', population)
+        businessAccessibility = amountEnterprises/population
         return {'business_accessibility': round(businessAccessibility*100, 2)}
 
     def __calculateAttributes__(self, formResult):
