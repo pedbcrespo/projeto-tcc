@@ -26,26 +26,30 @@ class InfoService:
         attributesPoints, df = self.__calculateAttributes__(formResult)
         listAttributes = sorted(attributesPoints.getList(), key=lambda att: att['value'])
         sortedAttributes = list(map(lambda att: att['key'], listAttributes))
-
         attributesHandleRelated = {
             'LIVING_QUALITY': self.__getBetterIdh__,
             'EMPLOYABILITY': self.__getBetterBusinessSAccessibility__,
             'LEISURE': self.__getBetterEntertainment__,
             'COUST': self.__getBetterCoust__,
         }
+        attributesKey = {
+            'LIVING_QUALITY': 'idh',
+            'EMPLOYABILITY': 'business_accessibility',
+            'LEISURE' : 'recreation_rate',
+            'COUST': 'total'
+        }
         cities = City.query.all()
         recomendations = []
         for att in sortedAttributes:
             cities = attributesHandleRelated[att](cities)
             recomendations.append(cities)
-        
-        print(recomendations)
         infos = []
         for city in cities:
             dictCity = city.json()
             dictCity.update(self.getCityInfo(city.id))
             dictCity.update(self.getDetailsInfo(city.id))
             infos.append(dictCity)
+        print(cities, cities[0].infoValue)
         return infos
     
     def getCityInfo(self, cityId):
@@ -75,7 +79,8 @@ class InfoService:
         try:
             secInfo = self.__getInfo__(cityId, InfoSecurity)
             generalInfo = self.__getInfo__(cityId, InfoGeneral)
-            securityRate = (secInfo['rate']/generalInfo['population'])*1000
+            securityRate = round(secInfo['rate']/generalInfo['population'], 3)
+            print('security_rate', securityRate, 'rate', secInfo['rate'])
             return {'security_rate': 1 - securityRate}
         except:
             return {'security_rate': 0}
@@ -131,7 +136,7 @@ class InfoService:
         securityRate = self.getSecurityInfo(cityId)['security_rate']
         sanitationRate = self.getSanitationInfo(cityId)['sanitation_rate']
         idh = (sanitationRate + securityRate + scholarityRate)/3
-        return {'idh': round(idh, 3), 'scholarity_rate': round(scholarityRate, 2)}
+        return {'idh': round(idh, 3), 'scholarity_rate': round(scholarityRate, 2), 'securityRate': securityRate, 'sanitationRate': sanitationRate}
     
     def getEntertainmentRate(self, cityId):
         def isEntertainmentEnterprise(enterprise):
@@ -231,25 +236,27 @@ class InfoService:
         info = infoType.query.filter(infoType.city_id == cityId).first()
         return info.json()
     
-    def __getBetter__(self, cities, methodsComparation, keyComparation):
+    def __getBetter__(self, cities, methodsComparation, keyComparation, qtd, reverse=False):
         print('==================== analizando: ', keyComparation)
         if cities == None:
             cities = City.query.all()
         for city in cities:
             print(city.name)
-            city.infoValue = methodsComparation(city.id)
+            if not hasattr(city, 'infoValue'):
+                city.infoValue = {}
+            city.infoValue.update(methodsComparation(city.id))
         print('======================================')
         cities = sorted(cities, key=lambda city: city.infoValue[keyComparation])
-        return cities if len(cities) == 10 else cities[:10]
+        return cities if len(cities) == qtd else cities[:qtd]
 
-    def __getBetterIdh__(self, cities=None):
-        return self.__getBetter__(cities, self.getIdh, 'idh')
+    def __getBetterIdh__(self, cities=None, qtd=10):
+        return self.__getBetter__(cities, self.getIdh, 'idh', qtd)
     
-    def __getBetterBusinessSAccessibility__(self, cities=None):
-        return self.__getBetter__(cities, self.getProfissionalQualificationRate, 'business_accessibility')
+    def __getBetterBusinessSAccessibility__(self, cities=None, qtd=10):
+        return self.__getBetter__(cities, self.getProfissionalQualificationRate, 'business_accessibility', qtd)
     
-    def __getBetterEntertainment__(self, cities=None):
-        return self.__getBetter__(cities, self.getEntertainmentRate, 'recreation_rate')
+    def __getBetterEntertainment__(self, cities=None, qtd=10):
+        return self.__getBetter__(cities, self.getEntertainmentRate, 'recreation_rate', qtd)
     
-    def __getBetterCoust__(self, cities=None):
-        return self.__getBetter__(cities, self.__getTotalCoust__, 'total')
+    def __getBetterCoust__(self, cities=None, qtd=10):
+        return self.__getBetter__(cities, self.__getTotalCoust__, 'total', qtd, True)
