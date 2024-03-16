@@ -39,17 +39,23 @@ class InfoService:
             'COUST': 'total'
         }
         cities = City.query.all()
-        recomendations = []
+        
         for att in sortedAttributes:
             cities = attributesHandleRelated[att](cities)
-            recomendations.append(cities)
+
+        def handleSortedCity(city):
+            listAtt = [city.infoValue[attributesKey[att]] for att in sortedAttributes]
+            return tuple(listAtt)
+        
+        sortedCities = sorted(cities, key=lambda city: handleSortedCity(city))
+
         infos = []
-        for city in cities:
+        for city in sortedCities:
             dictCity = city.json()
             dictCity.update(self.getCityInfo(city.id))
             dictCity.update(self.getDetailsInfo(city.id))
             infos.append(dictCity)
-        print(cities, cities[0].infoValue)
+        print(sortedCities, sortedCities[0].infoValue)
         return infos
     
     def getCityInfo(self, cityId):
