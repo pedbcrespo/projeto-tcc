@@ -1,3 +1,4 @@
+import json
 import unidecode
 from model.City import City
 from model.State import State
@@ -39,7 +40,7 @@ class InfoService:
             'COUST': 'total'
         }
         cities = City.query.all()
-        
+        print(sortedAttributes)
         for att in sortedAttributes:
             print('================================')
             print('analisando: ', att)
@@ -171,6 +172,8 @@ class InfoService:
     def getProfissionalQualificationRate(self, cityId):
         general = InfoGeneral.query.filter(InfoGeneral.city_id == cityId).first()
         population = general.population
+        if population == None:
+            population = self.__getAvgPopulation__(cityId)
         enterprises = InfoEnterprise.query.filter(InfoEnterprise.city_id == cityId).all()
         if not enterprises:
             return {'business_accessibility': 0}
@@ -266,3 +269,17 @@ class InfoService:
     
     def __getBetterCoust__(self, cities=None, qtd=10):
         return self.__getBetter__(cities, self.__getTotalCoust__, 'total', qtd, False)
+    
+    def __getAvgPopulation__(self, cityId):
+        city = City.query.filter(City.id == cityId).first()
+        state = State.query.filter(State.id == city.state_id).first()
+        try:
+            with open('service\population_state.json', 'r') as file:
+                avgPopulation = json.load(file)
+                return avgPopulation[state.abbreviation]
+        except FileNotFoundError:
+            print("Arquivo não encontrado.")
+            return None
+        except json.JSONDecodeError:
+            print("Erro ao decodificar o arquivo JSON.")
+            return None
