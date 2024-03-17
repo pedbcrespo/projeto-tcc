@@ -59,7 +59,7 @@ class InfoService:
             dictCity.update(self.getCityInfo(city.id))
             dictCity.update(self.getDetailsInfo(city.id))
             infos.append(dictCity)
-        print(sortedCities, sortedCities[0].infoValue)
+        print(sortedCities, infos[0])
         return infos
     
     def getCityInfo(self, cityId):
@@ -171,9 +171,11 @@ class InfoService:
 
     def getProfissionalQualificationRate(self, cityId):
         general = InfoGeneral.query.filter(InfoGeneral.city_id == cityId).first()
-        population = general.population
-        if population == None:
-            population = self.__getAvgPopulation__(cityId)
+        population = self.__getAvgPopulation__(cityId)
+        try:
+            population = general.population
+        except:
+            print('CIDADE: ', cityId, 'populacao nao encontrada.')
         enterprises = InfoEnterprise.query.filter(InfoEnterprise.city_id == cityId).all()
         if not enterprises:
             return {'business_accessibility': 0}
