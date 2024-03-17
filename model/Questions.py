@@ -39,7 +39,7 @@ questions = [
         'attribute': 'LEISURE'
     },
     {
-        'title': "A qualidade de vida é mais importante do que a distancia ate o centro urbano.",
+        'title': "É de sua preferencia viver mais proximo do centro.",
         'attribute': 'LIVING_QUALITY'
     },
     {
@@ -47,23 +47,39 @@ questions = [
         'attribute': 'EMPLOYABILITY'
     },
     {
-        'title': "O tamanho do lar não é tão relevante quanto a praticidade do local aonde mora.",
+        'title': "Você não se importa com o quão espaçoso é o seu lar.",
         'attribute': 'COUST'
     },
     {
-        'title': "Você prefere locais movimentados e interessantes do que a variedade de vagas de trabalho na cidade.",
+        'title': "Você prefere morar proximo de locais mais movimentados e interessantes de se visitar.",
         'attribute': 'LEISURE'
     },
     {
-        'title': "Você tem como prioridade gastar mais por mais praticidade e conforto.",
+        'title': "Você frequentemente gasta com produtos e serviços que tornam sua vida mais facil ou pratica.",
         'attribute': 'LIVING_QUALITY'
     },
     {
-        'title': "Você se considera um profissional de alta qualificação",
+        'title': "Estar proximo de possiveis oportunidades de emprego é uma de suas prioridades.",
         'attribute': 'EMPLOYABILITY'
     },
     {
         'title': "Voce prefere grandes centros urbanos á pequenas ou medias cidades",
+        'attribute': 'COUST'
+    },
+    {
+        'title': "Você frequentemente sai para ir em eventos de sua cidade.",
+        'attribute': 'LEISURE'
+    },
+    {
+        'title': "Prefere uma vida equilibrada, valoriza a qualidade de vida.",
+        'attribute': 'LIVING_QUALITY'
+    },
+    {
+        'title': "Frequentemente tem o habito de procurar por vagas de trabalho nas proximidades de onde mora.",
+        'attribute': 'EMPLOYABILITY'
+    },
+    {
+        'title': "Você não se incomoda com a localidade no qual vive contanto que sobre mais dinheiro no final do mês para gastar com o que quer.",
         'attribute': 'COUST'
     },
 ]
