@@ -41,7 +41,10 @@ class InfoService:
         cities = City.query.all()
         
         for att in sortedAttributes:
+            print('================================')
+            print('analisando: ', att)
             cities = attributesHandleRelated[att](cities)
+            print('================================')
 
         def handleSortedCity(city):
             listAtt = [city.infoValue[attributesKey[att]] for att in sortedAttributes]
@@ -86,7 +89,6 @@ class InfoService:
             secInfo = self.__getInfo__(cityId, InfoSecurity)
             generalInfo = self.__getInfo__(cityId, InfoGeneral)
             securityRate = round(secInfo['rate']/generalInfo['population'], 3)
-            print('security_rate', securityRate, 'rate', secInfo['rate'])
             return {'security_rate': 1 - securityRate}
         except:
             return {'security_rate': 0}
@@ -173,7 +175,6 @@ class InfoService:
         if not enterprises:
             return {'business_accessibility': 0}
         amountEnterprises = ft.reduce(lambda a,b: a+b, list(map(lambda enterprise: enterprise.amount, enterprises)))
-        print('id', cityId, 'population', population)
         businessAccessibility = amountEnterprises/population
         return {'business_accessibility': round(businessAccessibility*100, 2)}
 
@@ -244,17 +245,14 @@ class InfoService:
         info = infoType.query.filter(infoType.city_id == cityId).first()
         return info.json()
     
-    def __getBetter__(self, cities, methodsComparation, keyComparation, qtd, reverse=False):
-        print('==================== analizando: ', keyComparation)
+    def __getBetter__(self, cities, methodsComparation, keyComparation, qtd, reverse=True):
         if cities == None:
             cities = City.query.all()
         for city in cities:
-            print(city.name)
             if not hasattr(city, 'infoValue'):
                 city.infoValue = {}
             city.infoValue.update(methodsComparation(city.id))
-        print('======================================')
-        cities = sorted(cities, key=lambda city: city.infoValue[keyComparation])
+        cities = sorted(cities, key=lambda city: city.infoValue[keyComparation], reverse=reverse)
         return cities if len(cities) == qtd else cities[:qtd]
 
     def __getBetterIdh__(self, cities=None, qtd=10):
@@ -267,4 +265,4 @@ class InfoService:
         return self.__getBetter__(cities, self.getEntertainmentRate, 'recreation_rate', qtd)
     
     def __getBetterCoust__(self, cities=None, qtd=10):
-        return self.__getBetter__(cities, self.__getTotalCoust__, 'total', qtd, True)
+        return self.__getBetter__(cities, self.__getTotalCoust__, 'total', qtd, False)
