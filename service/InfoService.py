@@ -171,11 +171,9 @@ class InfoService:
 
     def getProfissionalQualificationRate(self, cityId):
         general = InfoGeneral.query.filter(InfoGeneral.city_id == cityId).first()
-        population = self.__getAvgPopulation__(cityId)
-        try:
-            population = general.population
-        except:
-            print('CIDADE: ', cityId, 'populacao nao encontrada.')
+        population = general.population
+        city = City.query.filter(City.id == cityId).first()
+        print('CIDADE: ', cityId, city.name, 'populacao nao encontrada.')
         enterprises = InfoEnterprise.query.filter(InfoEnterprise.city_id == cityId).all()
         if not enterprises:
             return {'business_accessibility': 0}
@@ -186,7 +184,7 @@ class InfoService:
     def __calculateAttributes__(self, formResult):
         attributesPoints = AttributesPoints()
         for data in formResult:
-            attributesPoints.add(data['attribute'], data['answer'])
+            attributesPoints.add(data['increase'], data['decrease'], data['answer'])
         df = pd.DataFrame([attributesPoints.attributes])
         return attributesPoints, df
 
@@ -271,17 +269,3 @@ class InfoService:
     
     def __getBetterCoust__(self, cities=None, qtd=10):
         return self.__getBetter__(cities, self.__getTotalCoust__, 'total', qtd, False)
-    
-    def __getAvgPopulation__(self, cityId):
-        city = City.query.filter(City.id == cityId).first()
-        state = State.query.filter(State.id == city.state_id).first()
-        try:
-            with open('service\population_state.json', 'r') as file:
-                avgPopulation = json.load(file)
-                return avgPopulation[state.abbreviation]
-        except FileNotFoundError:
-            print("Arquivo não encontrado.")
-            return None
-        except json.JSONDecodeError:
-            print("Erro ao decodificar o arquivo JSON.")
-            return None

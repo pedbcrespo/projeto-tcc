@@ -1,7 +1,6 @@
 from model.Demand import Demand
 from model.City import City
 from model.DemandLocation import DemandLocation
-from request.DemandRequest import DemandRequest
 from service.DistrictService import DistrictService
 from configuration.config import ormDatabase
 
@@ -28,7 +27,3 @@ class DemandService:
         self.__save(demand)
         return demand.json()
     
-    def saveLocationDemand(self, demandRequest:DemandRequest):
-        demandLocation = demandRequest.getDemandLocation()
-        self._save(demandLocation)
-        return demandLocation.json()
