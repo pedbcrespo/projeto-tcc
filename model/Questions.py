@@ -18,7 +18,7 @@ class AttributesPoints:
 
     def add(self, increase, decrease, val):
         for key in increase:
-            self.attributes[key] += val
+            self.attributes[key] += (val - increase.index(key))
         for key in decrease:
             decreasePoints = decrease.index(key)
             self.attributes[key] -= decreasePoints
@@ -38,15 +38,15 @@ def generateQuestion(title, increase, decrease=[]):
 
 questions = [
     generateQuestion("É de sua preferencia viver mais proximo do centro.", ['LIVING_QUALITY', 'LEISURE'], ['COUST']),
-    generateQuestion("Ter onde trabalhar é mais importante que sair com os amigos ou familia", ['EMPLOYABILITY', 'COUST'], ['LEISURE']),
+    generateQuestion("Ter onde trabalhar é mais importante que sair com os amigos ou familia", ['EMPLOYABILITY', 'COUST'], ['LEISURE', 'LIVING_QUALITY']),
     generateQuestion("Você tem habito de passear e visitar lugares novos.", ['LEISURE'], ['COUST']),
-    generateQuestion("Você não se importa com o quão espaçoso é o seu lar.", ['COUST'], ['LIVING_QUALITY']),
+    generateQuestion("Você não se importa com o quão espaçoso é o seu lar.", ['COUST']),
     generateQuestion("Você prefere morar proximo de locais mais movimentados e interessantes de se visitar.", ['LEISURE'], ['LIVING_QUALITY', 'COUST', 'EMPLOYABILITY']),
     generateQuestion("Você frequentemente gasta com produtos e serviços que tornam sua vida mais facil ou pratica.", ['LIVING_QUALITY'], ['COUST']),
     generateQuestion("Estar proximo de possiveis oportunidades de emprego é uma de suas prioridades.", ['EMPLOYABILITY'], ['LEISURE']),
     generateQuestion("Voce prefere pequenas ou medias cidades ao invés de grandes metrópoles.", ['COUST'], ['LIVING_QUALITY']),
     generateQuestion("Você frequentemente sai para ir em eventos de sua cidade.", ['LEISURE', 'LIVING_QUALITY'], ['COUST', 'EMPLOYABILITY']),
-    generateQuestion("Prefere uma vida equilibrada, valoriza a qualidade de vida.", ['LIVING_QUALITY'], ['COUST']),
+    generateQuestion("Prefere uma vida equilibrada, valoriza a qualidade de vida.", ['LIVING_QUALITY', 'LEISURE'], ['COUST']),
     generateQuestion("Frequentemente tem o habito de procurar por vagas de trabalho nas proximidades de onde mora.", ['EMPLOYABILITY'], ['LEISURE']),
     generateQuestion("Você não se incomoda com a localidade no qual vive contanto que sobre mais dinheiro no final do mês para gastar com o que quer.", ['COUST', 'LEISURE'], ['LIVING_QUALITY']),
 ]

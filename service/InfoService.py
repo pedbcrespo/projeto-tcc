@@ -40,12 +40,14 @@ class InfoService:
             'COUST': 'total'
         }
         cities = City.query.all()
+        print(formResult)
+        print('================================')
         print(sortedAttributes)
         for att in sortedAttributes:
             print('================================')
             print('analisando: ', att)
             cities = attributesHandleRelated[att](cities)
-            print('================================')
+        print('================================')
 
         def handleSortedCity(city):
             listAtt = [city.infoValue[attributesKey[att]] for att in sortedAttributes]
@@ -172,8 +174,6 @@ class InfoService:
     def getProfissionalQualificationRate(self, cityId):
         general = InfoGeneral.query.filter(InfoGeneral.city_id == cityId).first()
         population = general.population
-        city = City.query.filter(City.id == cityId).first()
-        print('CIDADE: ', cityId, city.name, 'populacao nao encontrada.')
         enterprises = InfoEnterprise.query.filter(InfoEnterprise.city_id == cityId).all()
         if not enterprises:
             return {'business_accessibility': 0}
