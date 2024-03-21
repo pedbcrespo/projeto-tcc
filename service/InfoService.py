@@ -26,7 +26,7 @@ class InfoService:
     def getRecomendation(self, formResult):
         attributesPoints, df = self.__calculateAttributes__(formResult)
         print('Attributes points:', attributesPoints)
-        listAttributes = sorted(attributesPoints.getList(), key=lambda att: att['value'])
+        listAttributes = sorted(attributesPoints.getList(), key=lambda att: att['value'], reverse=True)
         sortedAttributes = list(map(lambda att: att['key'], listAttributes))
         attributesHandleRelated = {
             'LIVING_QUALITY': self.__getBetterIdh__,
