@@ -28,7 +28,11 @@ class AttributesPoints:
     def getList(self):
         return [{"key": key, "value": self.attributes[key]} for key in self.attributes]
 
+    def __costCalculation__(self, costPoints):
+        pass
 
+    def __str__(self):
+        return f"({self.attributes})"
 def generateQuestion(title, increase, decrease=[]):
     return  {
         'title': title,

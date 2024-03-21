@@ -23,8 +23,9 @@ class InfoService:
     def getQuestions(self):
         return questions
 
-    def getRecomendation(self, formResult): 
+    def getRecomendation(self, formResult):
         attributesPoints, df = self.__calculateAttributes__(formResult)
+        print('Attributes points:', attributesPoints)
         listAttributes = sorted(attributesPoints.getList(), key=lambda att: att['value'])
         sortedAttributes = list(map(lambda att: att['key'], listAttributes))
         attributesHandleRelated = {
@@ -173,7 +174,6 @@ class InfoService:
         general = InfoGeneral.query.filter(InfoGeneral.city_id == cityId).first()
         population = general.population
         city = City.query.filter(City.id == cityId).first()
-        print('CIDADE: ', cityId, city.name, 'populacao nao encontrada.')
         enterprises = InfoEnterprise.query.filter(InfoEnterprise.city_id == cityId).all()
         if not enterprises:
             return {'business_accessibility': 0}
