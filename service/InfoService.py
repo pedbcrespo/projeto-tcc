@@ -15,6 +15,7 @@ from model.InfoCoustLiving import InfoCoustLiving
 from model.InfoSanitation import InfoSanitation
 from model.InfoEnterprise import InfoEnterprise
 from model.Questions import AttributesPoints, questions
+from model.FormResult import FormResult
 from sqlalchemy import desc
 import functools as ft
 import pandas as pd
@@ -24,6 +25,7 @@ class InfoService:
         return questions
 
     def getRecomendation(self, formResult):
+        formResultObj = FormResult(formResult)
         attributesPoints, df = self.__calculateAttributes__(formResult)
         print('Attributes points:', attributesPoints)
         listAttributes = sorted(attributesPoints.getList(), key=lambda att: att['value'], reverse=True)
