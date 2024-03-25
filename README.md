@@ -9,6 +9,30 @@
     * Certifique-se de que possui o banco de dados MySQL juntamente com o database
     * Para rodar o projeto execute: python main.py
 
+## Endpoints:
+    * /info-api/questions => retorna as questões do QUIZ.
+    * /info-api/city/recomendation => retorna uma lista de cidades recomendadas, total de 10
+
+## Models mais usados:
+    * Question: {
+        "title": String,
+        "increase": Array<String>,
+        "decrease": Array<String>
+    }
+
+    * FormResult: {
+        "title": String,
+        "increase": Array<String>,
+        "decrease": Array<String>,
+        "answer": Integer,
+        "hoursLightEstiamte": Integer,
+        "ltWaterConsume": Integer,
+        "alimentation": Integer,
+        "hygiene": Integer,
+        "transportation": Integer,
+        "health": Integer,
+        "recreation": Integer,
+    }
 ## Fontes das buscas dos dados:
     * Cidades e Estados: https://servicodados.ibge.gov.br/api/docs/localidades#api-Subdistritos-municipiosMunicipioSubdistritosGet
     * Bairros: http://enderecos.metheora.com/Help/Api/GET-api-cidade-id-bairros-q
