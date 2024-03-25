@@ -33,6 +33,7 @@
         "health": Integer,
         "recreation": Integer,
     }
+    
 ## Fontes das buscas dos dados:
     * Cidades e Estados: https://servicodados.ibge.gov.br/api/docs/localidades#api-Subdistritos-municipiosMunicipioSubdistritosGet
     * Bairros: http://enderecos.metheora.com/Help/Api/GET-api-cidade-id-bairros-q
