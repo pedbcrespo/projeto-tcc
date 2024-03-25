@@ -25,7 +25,8 @@ class InfoService:
         return questions
 
     def getRecomendation(self, formResult):
-        formResultObj = FormResult(formResult)
+        # formResultObj = FormResult(formResult)
+        print(formResult)
         attributesPoints, df = self.__calculateAttributes__(formResult)
         print('Attributes points:', attributesPoints)
         listAttributes = sorted(attributesPoints.getList(), key=lambda att: att['value'], reverse=True)
@@ -34,13 +35,13 @@ class InfoService:
             'LIVING_QUALITY': self.__getBetterIdh__,
             'EMPLOYABILITY': self.__getBetterBusinessSAccessibility__,
             'LEISURE': self.__getBetterEntertainment__,
-            'COUST': self.__getBetterCoust__,
+            'COST': self.__getBetterCoust__,
         }
         attributesKey = {
             'LIVING_QUALITY': 'idh',
             'EMPLOYABILITY': 'business_accessibility',
             'LEISURE' : 'recreation_rate',
-            'COUST': 'total'
+            'COST': 'total'
         }
         cities = City.query.all()
         print(formResult)

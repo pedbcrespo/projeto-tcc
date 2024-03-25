@@ -11,3 +11,7 @@ class FormResult:
         self.transportation = formResult['transportation']
         self.health = formResult['health']
         self.recreation = formResult['recreation']
+
+
+    def __str__(self):
+        return f"({self.title}, {self.increase}, {self.decrease}, {self.answer}, {self.hoursLightEstiamte}, {self.ltWaterConsume}, {self.alimentation}, {self.hygiene}, {self.health}, {self.transportation})"
