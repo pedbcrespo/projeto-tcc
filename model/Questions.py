@@ -8,7 +8,7 @@ class AttributesPoints:
             'LEISURE': 1,
             'COST': 1,
         }
-    
+
         self.attributesEquilavence = {
             'LIVING_QUALITY': 'livingQuality',
             'EMPLOYABILITY': 'employability',
@@ -16,6 +16,8 @@ class AttributesPoints:
             'COST': 'coust',
         }
 
+        self.limitCoustLiving = None
+        
     def add(self, increase, decrease, val):
         for key in increase:
             self.attributes[key] += (val - increase.index(key))

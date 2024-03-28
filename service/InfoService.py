@@ -185,10 +185,16 @@ class InfoService:
         businessAccessibility = amountEnterprises/population
         return {'business_accessibility': round(businessAccessibility*100, 2)}
 
-    def __calculateAttributes__(self, formResult):
+    def __calculateAttributes__(self, listFormResult):
         attributesPoints = AttributesPoints()
-        for data in formResult:
+        totalCostLiving = 0
+        for data in listFormResult:
             attributesPoints.add(data.increase, data.decrease, data.answer)
+
+        for att in listFormResult[0].costLivingAttJson():
+            totalCostLiving += self.__calculateFormResultCostLiving__(listFormResult, att)
+        
+        attributesPoints.limitCoustLiving = totalCostLiving
         return attributesPoints
 
     def __calculateFormResultCostLiving__(self, formResult, att):
