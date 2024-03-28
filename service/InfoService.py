@@ -25,9 +25,9 @@ class InfoService:
         return questions
 
     def getRecomendation(self, formResult):
-        # formResultObj = FormResult(formResult)
         print(formResult)
-        attributesPoints, df = self.__calculateAttributes__(formResult)
+        listformResultObj = list(map(lambda res: FormResult(res), formResult))
+        attributesPoints = self.__calculateAttributes__(listformResultObj)
         print('Attributes points:', attributesPoints)
         listAttributes = sorted(attributesPoints.getList(), key=lambda att: att['value'], reverse=True)
         sortedAttributes = list(map(lambda att: att['key'], listAttributes))
@@ -188,9 +188,14 @@ class InfoService:
     def __calculateAttributes__(self, formResult):
         attributesPoints = AttributesPoints()
         for data in formResult:
-            attributesPoints.add(data['increase'], data['decrease'], data['answer'])
-        df = pd.DataFrame([attributesPoints.attributes])
-        return attributesPoints, df
+            attributesPoints.add(data.increase, data.decrease, data.answer)
+        return attributesPoints
+
+    def __calculateFormResultCostLiving__(self, formResult, att):
+        allValues = list(map(lambda res: res.costLivingAttJson()[att], formResult))
+        amountNonZeroesRes = list(filter(lambda res: res.costLivingAttJson()[att] != 0))
+        total = ft.reduce(lambda a, b: a+ b, allValues)
+        return total/len(amountNonZeroesRes)
 
     def __getHomePrices__(self, price):
         prices = InfoPrices.query.filter(InfoPrices.avg_price <= price)
