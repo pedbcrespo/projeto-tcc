@@ -15,7 +15,8 @@ class AttributesPoints:
             'LEISURE': 'leisure',
             'COST': 'coust',
         }
-
+        self.pricesLight = []
+        self.pricesWater = []
         self.limitCoustLiving = None
         
     def add(self, increase, decrease, val):

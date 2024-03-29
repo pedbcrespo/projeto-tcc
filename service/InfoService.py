@@ -43,7 +43,7 @@ class InfoService:
             'LEISURE' : 'recreation_rate',
             'COST': 'total'
         }
-        cities = City.query.all()
+        cities = self.__getCitiesToRecomendation__(self, attributesPoints)
         print(formResult)
         print('================================')
         print(sortedAttributes)
@@ -185,17 +185,39 @@ class InfoService:
         businessAccessibility = amountEnterprises/population
         return {'business_accessibility': round(businessAccessibility*100, 2)}
 
+    def __getCitiesToRecomendation__(self, attributesPoints):
+        cities = City.query.all()
+
+
     def __calculateAttributes__(self, listFormResult):
         attributesPoints = AttributesPoints()
         totalCostLiving = 0
+        totalLightHours = 0
+        totalLtWater = 0
+
         for data in listFormResult:
             attributesPoints.add(data.increase, data.decrease, data.answer)
 
         for att in listFormResult[0].costLivingAttJson():
-            totalCostLiving += self.__calculateFormResultCostLiving__(listFormResult, att)
-        
+            if att == 'hoursLightEstiamte':
+                totalLightHours += self.__calculateFormResultCostLiving__(listFormResult, att)
+            elif att == 'ltWaterConsume':
+                totalLtWater += self.__calculateFormResultCostLiving__(listFormResult, att)
+            else:
+                totalCostLiving += self.__calculateFormResultCostLiving__(listFormResult, att)
+
+        attributesPoints.pricesLight = self.__calculateClientLightPrice__(totalLightHours)
+        attributesPoints.pricesWater = self.__calculateClientWaterPrice__(totalLtWater)
         attributesPoints.limitCoustLiving = totalCostLiving
         return attributesPoints
+
+    def __calculateClientLightPrice__(self, totalHours):
+        statesPrice = InfoLightPrice.query.all()
+        return [{'state_id': statePrice.state_id, 'price':round(totalHours * statePrice.price_kwh, 2)} for statePrice in statesPrice]
+
+    def __calculateClientWaterPrice__(self, totalLtWater):
+        regionPrices = InfoWaterPriceRegion.query.all()
+        return [{'region_id': regionPrice.region_id, 'price': round(regionPrice.price * totalLtWater, 2)} for regionPrice in regionPrices]
 
     def __calculateFormResultCostLiving__(self, formResult, att):
         allValues = list(map(lambda res: res.costLivingAttJson()[att], formResult))
