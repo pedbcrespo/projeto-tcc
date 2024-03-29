@@ -17,7 +17,8 @@
     * Question: {
         "title": String,
         "increase": Array<String>,
-        "decrease": Array<String>
+        "decrease": Array<String>,
+        "subAttributes": Array<String>,
     }
 
     * FormResult: {

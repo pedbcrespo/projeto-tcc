@@ -194,6 +194,26 @@ class InfoService:
 
     def __getCitiesToRecomendation__(self, attributesPoints):
         cities = City.query.all()
+        with self.__createSession__() as session:
+            query = session.query(
+                City.id.label('city_id'),
+                State.id.label('state_id'),
+                (
+                    func.round(InfoWaterPriceRegion.price * InfoWaterConsumer.amount, 2) +
+                    func.round((InfoLightConsume.amount / 12) * InfoLightPrice.price_kwh, 2) +
+                    (InfoCoustLiving.alimentation + InfoCoustLiving.transport + InfoCoustLiving.health + InfoCoustLiving.hygiene + InfoCoustLiving.recreation + InfoInternet.avg_price)
+                ).label('can_living')
+            ).join(State, State.id == City.state_id
+            ).join(InfoWaterPriceRegion, State.region_id == InfoWaterPriceRegion.region_id
+            ).join(InfoWaterConsumer, InfoWaterConsumer.state_id == State.id
+            ).join(InfoLightPrice, InfoLightPrice.state_id == State.id
+            ).join(InfoLightConsume, InfoLightConsume.state_id == State.id
+            ).join(InfoCoustLiving, InfoCoustLiving.state_id == State.id
+            ).join(InfoInternet, InfoInternet.city_id == City.id)
+            results = query.all()
+            filteredResults = list(filter(lambda result: result[2] <= attributesPoints.getTotal(), results))
+            filteredResultsCityIds = list(map(lambda result: result[0], filteredResults))
+            cities = list(filter(lambda city: city.id in filteredResultsCityIds, cities))
         return cities
 
     def __calculateAttributes__(self, listFormResult):
