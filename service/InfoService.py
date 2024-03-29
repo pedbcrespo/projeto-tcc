@@ -16,7 +16,9 @@ from model.InfoSanitation import InfoSanitation
 from model.InfoEnterprise import InfoEnterprise
 from model.Questions import AttributesPoints, questions
 from model.FormResult import FormResult
-from sqlalchemy import desc
+from sqlalchemy import desc, create_engine, func
+from sqlalchemy.orm import sessionmaker
+from configuration.config import conn
 import functools as ft
 import pandas as pd
 
@@ -43,7 +45,7 @@ class InfoService:
             'LEISURE' : 'recreation_rate',
             'COST': 'total'
         }
-        cities = self.__getCitiesToRecomendation__(self, attributesPoints)
+        cities = self.__getCitiesToRecomendation__(attributesPoints)
         print(formResult)
         print('================================')
         print(sortedAttributes)
@@ -185,9 +187,14 @@ class InfoService:
         businessAccessibility = amountEnterprises/population
         return {'business_accessibility': round(businessAccessibility*100, 2)}
 
+    def __createSession__(self):
+        engine = create_engine(conn)
+        Session = sessionmaker(bind=engine)
+        return Session()
+
     def __getCitiesToRecomendation__(self, attributesPoints):
         cities = City.query.all()
-
+        return cities
 
     def __calculateAttributes__(self, listFormResult):
         attributesPoints = AttributesPoints()
@@ -221,9 +228,9 @@ class InfoService:
 
     def __calculateFormResultCostLiving__(self, formResult, att):
         allValues = list(map(lambda res: res.costLivingAttJson()[att], formResult))
-        amountNonZeroesRes = list(filter(lambda res: res.costLivingAttJson()[att] != 0))
+        amountNonZeroesRes = list(filter(lambda res: res.costLivingAttJson()[att] != 0, formResult))
         total = ft.reduce(lambda a, b: a+ b, allValues)
-        return total/len(amountNonZeroesRes)
+        return 0 if len(amountNonZeroesRes) == 0 else total/len(amountNonZeroesRes)
 
     def __getHomePrices__(self, price):
         prices = InfoPrices.query.filter(InfoPrices.avg_price <= price)
@@ -248,10 +255,18 @@ class InfoService:
         return list(map(lambda infoGeneral: unionCityData(infoGeneral), typeSizeCities))
         
     def __calculatingLightPriceConsumer__(self, stateId):
-        price = InfoLightPrice.query.filter(InfoLightPrice.state_id == stateId).first()
-        consumer = InfoLightConsume.query.filter(InfoLightConsume.state_id == stateId).first()
-        mounthConsumerInHours = consumer.amount/12
-        return round(mounthConsumerInHours*price.price_kwh, 2)
+        with self.__createSession__() as session:
+            query = session.query(
+                InfoLightConsume.state_id,
+                func.round((InfoLightConsume.amount / 12) * InfoLightPrice.price_kwh, 2).label('amount_month')
+            ).join(
+                InfoLightPrice,
+                InfoLightConsume.state_id == InfoLightPrice.state_id
+            )
+            allAmountMonths = query.all()
+            result = list(filter(lambda data: data[0] == stateId, allAmountMonths))[0]
+            print('calc RES', result[1])
+            return float(result[1])
     
     def __calculatingWaterPriceConsumer__(self, stateId):
         state = State.query.filter(State.id == stateId).first()
