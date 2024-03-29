@@ -258,22 +258,30 @@ class InfoService:
         with self.__createSession__() as session:
             query = session.query(
                 InfoLightConsume.state_id,
-                func.round((InfoLightConsume.amount / 12) * InfoLightPrice.price_kwh, 2).label('amount_month')
+                func.round((InfoLightConsume.amount / 12) * InfoLightPrice.price_kwh, 2)
             ).join(
                 InfoLightPrice,
                 InfoLightConsume.state_id == InfoLightPrice.state_id
             )
             allAmountMonths = query.all()
             result = list(filter(lambda data: data[0] == stateId, allAmountMonths))[0]
-            print('calc RES', result[1])
             return float(result[1])
     
     def __calculatingWaterPriceConsumer__(self, stateId):
-        state = State.query.filter(State.id == stateId).first()
-        regionId = state.region_id
-        regionPrice = InfoWaterPriceRegion.query.filter(InfoWaterPriceRegion.region_id == regionId).first()
-        mounthCounsumer = InfoWaterConsumer.query.filter(InfoWaterConsumer.state_id == stateId).first()
-        return round(mounthCounsumer.amount * regionPrice.price, 2)
+        with self.__createSession__() as session:
+            query = session.query(
+                State.id,
+                func.round((InfoWaterConsumer.amount / 12) * InfoWaterPriceRegion.price, 2)
+            ).join(
+                InfoWaterConsumer,
+                InfoWaterConsumer.state_id == State.id
+            ).join(
+                InfoWaterPriceRegion,
+                InfoWaterPriceRegion.region_id == State.region_id
+            )
+            allAmountMonths = query.all()
+            result = list(filter(lambda data: data[0] == stateId, allAmountMonths))[0]
+            return float(result[1])
         
     def __getCityCoustLiving__(self, city):
         coustLiving = InfoCoustLiving.query.filter(InfoCoustLiving.state_id == city.state_id).first()
