@@ -46,8 +46,8 @@ class AttributesPoints:
     def getTotal(self):
         pricesLight = list(map(lambda priceLight: priceLight['price'], self.pricesLight))
         pricesWater = list(map(lambda priceWater: priceWater['price'], self.pricesWater))
-        avgPriceLight = ft.reduce(lambda a,b : a+b, pricesLight)
-        avgPriceWater = ft.reduce(lambda a,b : a+b, pricesWater)
+        avgPriceLight = ft.reduce(lambda a,b : a+b, pricesLight)/len(self.pricesLight)
+        avgPriceWater = ft.reduce(lambda a,b : a+b, pricesWater)/len(self.pricesWater)
         return avgPriceLight + avgPriceWater + self.limitCoustLiving
 
     def __costCalculation__(self, costPoints):
