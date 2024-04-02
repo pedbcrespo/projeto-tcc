@@ -35,8 +35,7 @@ class AttributesPoints:
         for key in increase:
             self.attributes[key] += (val - increase.index(key))
         for key in decrease:
-            decreasePoints = decrease.index(key)
-            self.attributes[key] -= decreasePoints
+            self.attributes[key] -= (val - increase.index(key))
             if self.attributes[key] < 1:
                 self.attributes[key] = 1
 
