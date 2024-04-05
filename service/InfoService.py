@@ -14,61 +14,13 @@ from model.InfoInternet import InfoInternet
 from model.InfoCoustLiving import InfoCoustLiving
 from model.InfoSanitation import InfoSanitation
 from model.InfoEnterprise import InfoEnterprise
-from model.Questions import AttributesPoints, questions
-from model.FormResult import FormResult
-from sqlalchemy import desc, create_engine, func
-from sqlalchemy.orm import sessionmaker
-from configuration.config import conn
+from model.Questions import questions
+from sqlalchemy import desc
 import functools as ft
-import pandas as pd
 
 class InfoService:
     def getQuestions(self):
         return questions
-
-    def getRecomendation(self, formResult):
-        print(formResult)
-        listformResultObj = list(map(lambda res: FormResult(res), formResult))
-        attributesPoints = self.__calculateAttributes__(listformResultObj)
-        print('Attributes points:', attributesPoints)
-        listAttributes = sorted(attributesPoints.getList(), key=lambda att: att['value'], reverse=True)
-        sortedAttributes = list(map(lambda att: att['key'], listAttributes))
-        attributesHandleRelated = {
-            'LIVING_QUALITY': self.__getBetterIdh__,
-            'EMPLOYABILITY': self.__getBetterBusinessSAccessibility__,
-            'LEISURE': self.__getBetterEntertainment__,
-            'COST': self.__getBetterCoust__,
-        }
-        attributesKey = {
-            'LIVING_QUALITY': 'idh',
-            'EMPLOYABILITY': 'business_accessibility',
-            'LEISURE' : 'recreation_rate',
-            'COST': 'total'
-        }
-        cities = self.__getCitiesToRecomendation__(attributesPoints)
-        print(formResult)
-        print('================================')
-        print(sortedAttributes)
-        for att in sortedAttributes:
-            print('================================')
-            print('analisando: ', att)
-            cities = attributesHandleRelated[att](cities)
-        print('================================')
-
-        def handleSortedCity(city):
-            listAtt = [city.infoValue[attributesKey[att]] for att in sortedAttributes]
-            return tuple(listAtt)
-        
-        sortedCities = sorted(cities, key=lambda city: handleSortedCity(city))
-
-        infos = []
-        for city in sortedCities:
-            dictCity = city.json()
-            dictCity.update(self.getCityInfo(city.id))
-            dictCity.update(self.getDetailsInfo(city.id))
-            infos.append(dictCity)
-        print(sortedCities, infos[0])
-        return infos
     
     def getCityInfo(self, cityId):
         info = {}
@@ -187,71 +139,6 @@ class InfoService:
         businessAccessibility = amountEnterprises/population
         return {'business_accessibility': round(businessAccessibility*100, 2)}
 
-    def __createSession__(self):
-        engine = create_engine(conn)
-        Session = sessionmaker(bind=engine)
-        return Session()
-
-    def __getCitiesToRecomendation__(self, attributesPoints):
-        cities = City.query.all()
-        with self.__createSession__() as session:
-            query = session.query(
-                City.id.label('city_id'),
-                State.id.label('state_id'),
-                (
-                    func.round(InfoWaterPriceRegion.price * InfoWaterConsumer.amount, 2) +
-                    func.round((InfoLightConsume.amount / 12) * InfoLightPrice.price_kwh, 2) +
-                    (InfoCoustLiving.alimentation + InfoCoustLiving.transport + InfoCoustLiving.health + InfoCoustLiving.hygiene + InfoCoustLiving.recreation + InfoInternet.avg_price)
-                ).label('can_living')
-            ).join(State, State.id == City.state_id
-            ).join(InfoWaterPriceRegion, State.region_id == InfoWaterPriceRegion.region_id
-            ).join(InfoWaterConsumer, InfoWaterConsumer.state_id == State.id
-            ).join(InfoLightPrice, InfoLightPrice.state_id == State.id
-            ).join(InfoLightConsume, InfoLightConsume.state_id == State.id
-            ).join(InfoCoustLiving, InfoCoustLiving.state_id == State.id
-            ).join(InfoInternet, InfoInternet.city_id == City.id)
-            results = query.all()
-            filteredResults = list(filter(lambda result: result[2] <= attributesPoints.getTotal(), results))
-            filteredResultsCityIds = list(map(lambda result: result[0], filteredResults))
-            cities = list(filter(lambda city: city.id in filteredResultsCityIds, cities))
-        return cities
-
-    def __calculateAttributes__(self, listFormResult):
-        attributesPoints = AttributesPoints()
-        totalCostLiving = 0
-        totalLightHours = 0
-        totalLtWater = 0
-
-        for data in listFormResult:
-            attributesPoints.add(data.increase, data.decrease, data.answer)
-
-        for att in listFormResult[0].costLivingAttJson():
-            if att == 'hoursLightEstiamte':
-                totalLightHours += self.__calculateFormResultCostLiving__(listFormResult, att)
-            elif att == 'ltWaterConsume':
-                totalLtWater += self.__calculateFormResultCostLiving__(listFormResult, att)
-            else:
-                totalCostLiving += self.__calculateFormResultCostLiving__(listFormResult, att)
-
-        attributesPoints.pricesLight = self.__calculateClientLightPrice__(totalLightHours)
-        attributesPoints.pricesWater = self.__calculateClientWaterPrice__(totalLtWater)
-        attributesPoints.limitCoustLiving = totalCostLiving
-        return attributesPoints
-
-    def __calculateClientLightPrice__(self, totalHours):
-        statesPrice = InfoLightPrice.query.all()
-        return [{'state_id': statePrice.state_id, 'price':round(totalHours * statePrice.price_kwh, 2)} for statePrice in statesPrice]
-
-    def __calculateClientWaterPrice__(self, totalLtWater):
-        regionPrices = InfoWaterPriceRegion.query.all()
-        return [{'region_id': regionPrice.region_id, 'price': round(regionPrice.price * totalLtWater, 2)} for regionPrice in regionPrices]
-
-    def __calculateFormResultCostLiving__(self, formResult, att):
-        allValues = list(map(lambda res: res.costLivingAttJson()[att], formResult))
-        amountNonZeroesRes = list(filter(lambda res: res.costLivingAttJson()[att] != 0, formResult))
-        total = ft.reduce(lambda a, b: a+ b, allValues)
-        return 0 if len(amountNonZeroesRes) == 0 else total/len(amountNonZeroesRes)
-
     def __getHomePrices__(self, price):
         prices = InfoPrices.query.filter(InfoPrices.avg_price <= price)
         citiesIds = list(map(lambda infoPrice: infoPrice.city_id, prices))
@@ -328,24 +215,3 @@ class InfoService:
         info = infoType.query.filter(infoType.city_id == cityId).first()
         return info.json()
     
-    def __getBetter__(self, cities, methodsComparation, keyComparation, qtd, reverse=True):
-        if cities == None:
-            cities = City.query.all()
-        for city in cities:
-            if not hasattr(city, 'infoValue'):
-                city.infoValue = {}
-            city.infoValue.update(methodsComparation(city.id))
-        cities = sorted(cities, key=lambda city: city.infoValue[keyComparation], reverse=reverse)
-        return cities if len(cities) == qtd else cities[:qtd]
-
-    def __getBetterIdh__(self, cities=None, qtd=10):
-        return self.__getBetter__(cities, self.getIdh, 'idh', qtd)
-    
-    def __getBetterBusinessSAccessibility__(self, cities=None, qtd=10):
-        return self.__getBetter__(cities, self.getProfissionalQualificationRate, 'business_accessibility', qtd)
-    
-    def __getBetterEntertainment__(self, cities=None, qtd=10):
-        return self.__getBetter__(cities, self.getEntertainmentRate, 'recreation_rate', qtd)
-    
-    def __getBetterCoust__(self, cities=None, qtd=10):
-        return self.__getBetter__(cities, self.__getTotalCoust__, 'total', qtd, False)

@@ -54,6 +54,7 @@ class AttributesPoints:
 
     def __str__(self):
         return f"({self.attributes})"
+    
 def generateQuestion(title, increase, decrease=[], subAttributes=[]):
     return  {
         'title': title,
@@ -100,7 +101,7 @@ questions = [
                      ['COST', 'LEISURE'], ['LIVING_QUALITY'],
                      ['transportation', 'recreation', 'health']),
     generateQuestion("Nas suas compras, você compra os preza a qualidade, mesmo que isso signifique pagar mais por eles.", 
-                     ['LIVING_QUALITY', 'LEISURE'],['COST']
+                     ['LIVING_QUALITY', 'LEISURE'],['COST'],
                      ['alimentation', 'hygiene', 'health']),
     generateQuestion("Você ou outras pessoas da sua casa fazem tratamentos médicos que demandam compra de muita medicação.", 
                      ['LIVING_QUALITY'],[],

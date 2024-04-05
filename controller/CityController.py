@@ -5,10 +5,12 @@ from configuration.dev_configuration import BASE_URL
 from service.CityService import CityService
 from service.InfoService import InfoService
 from service.StateService import StateService
+from service.RecomendationService import RecomendationService
 
 cityService = CityService()
 stateService = StateService()
 infoService = InfoService()
+recomendationService = RecomendationService()
 
 class Initial(Resource):
     def get(self):
@@ -41,7 +43,7 @@ class CompleteCityInfo(Resource):
 class Recomendation(Resource):
     def post(self):
         formResult = request.json
-        cities = infoService.getRecomendation(formResult)
+        cities = recomendationService.getRecomendation(formResult)
         return cities
     
 api.add_resource(RedirectToCities, "/")
