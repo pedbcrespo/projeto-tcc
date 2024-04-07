@@ -67,7 +67,6 @@ class RecomendationService:
             dictCity.update(self.infoService.getCityInfo(city.id))
             dictCity.update(self.infoService.getDetailsInfo(city.id))
             infos.append(dictCity)
-        print(sortedCities, infos[0])
         return infos
 
     def __createSession__(self):
@@ -111,16 +110,16 @@ class RecomendationService:
         return cities if len(cities) == qtd else cities[:qtd]
 
     def __getBetterIdh__(self, cities=None, qtd=10):
-        return self.__getBetter__(cities, self.getIdh, 'idh', qtd)
+        return self.__getBetter__(cities, self.infoService.getIdh, 'idh', qtd)
     
     def __getBetterBusinessSAccessibility__(self, cities=None, qtd=10):
-        return self.__getBetter__(cities, self.getProfissionalQualificationRate, 'business_accessibility', qtd)
+        return self.__getBetter__(cities, self.infoService.getProfissionalQualificationRate, 'business_accessibility', qtd)
     
     def __getBetterEntertainment__(self, cities=None, qtd=10):
-        return self.__getBetter__(cities, self.getEntertainmentRate, 'recreation_rate', qtd)
+        return self.__getBetter__(cities, self.infoService.getEntertainmentRate, 'recreation_rate', qtd)
     
     def __getBetterCoust__(self, cities=None, qtd=10):
-        return self.__getBetter__(cities, self.__getTotalCoust__, 'total', qtd, False)
+        return self.__getBetter__(cities, self.infoService.__getTotalCoust__, 'total', qtd, False)
     
     def __getCitiesToRecomendation__(self, attributesPoints):
         cities = City.query.all()
@@ -179,6 +178,8 @@ class RecomendationService:
 
     def __calculateFormResultCostLiving__(self, formResult, att):
         allValues = list(map(lambda res: res.costLivingAttJson()[att], formResult))
+        allValues = list(filter(lambda val: val != None, allValues))
+        print('ALL VALUES', allValues)
         amountNonZeroesRes = list(filter(lambda res: res.costLivingAttJson()[att] != 0, formResult))
-        total = ft.reduce(lambda a, b: a+ b, allValues)
+        total = ft.reduce(lambda a, b: a + b, allValues)
         return 0 if len(amountNonZeroesRes) == 0 else total/len(amountNonZeroesRes)

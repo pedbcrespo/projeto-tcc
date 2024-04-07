@@ -15,7 +15,9 @@ from model.InfoCoustLiving import InfoCoustLiving
 from model.InfoSanitation import InfoSanitation
 from model.InfoEnterprise import InfoEnterprise
 from model.Questions import questions
-from sqlalchemy import desc
+from sqlalchemy import desc, create_engine, func
+from sqlalchemy.orm import sessionmaker
+from configuration.config import conn
 import functools as ft
 
 class InfoService:
@@ -204,6 +206,11 @@ class InfoService:
         ]
         return round(ft.reduce(lambda a, b: a+b, cousts), 2)
     
+    def __createSession__(self):
+        engine = create_engine(conn)
+        Session = sessionmaker(bind=engine)
+        return Session()
+
     def __getTotalCoust__(self, cityId):
         city = City.query.filter(City.id == cityId).first()
         coustLiving = self.__getCityCoustLiving__(city)
