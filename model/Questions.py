@@ -47,20 +47,18 @@ class AttributesPoints:
         pricesWater = list(map(lambda priceWater: priceWater['price'], self.pricesWater))
         avgPriceLight = ft.reduce(lambda a,b : a+b, pricesLight)/len(self.pricesLight)
         avgPriceWater = ft.reduce(lambda a,b : a+b, pricesWater)/len(self.pricesWater)
-        return avgPriceLight + avgPriceWater + self.limitCoustLiving
-
-    def __costCalculation__(self, costPoints):
-        pass
+        return round(avgPriceLight + avgPriceWater + self.limitCoustLiving, 2)
 
     def __str__(self):
         return f"({self.attributes})"
     
-def generateQuestion(title, increase, decrease=[], subAttributes=[]):
+def generateQuestion(title, increase, decrease=[], subAttributes=[], invertedPontuation=False):
     return  {
         'title': title,
         'increase': increase,
         'decrease': decrease,
-        'subAttributes': subAttributes
+        'subAttributes': subAttributes,
+        'invertedPontuation': invertedPontuation,
     }
 
 questions = [

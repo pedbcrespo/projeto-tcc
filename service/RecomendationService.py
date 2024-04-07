@@ -42,9 +42,6 @@ class RecomendationService:
             'COST': 'total'
         }
         cities = self.__getCitiesToRecomendation__(attributesPoints)
-        print(formResult)
-        print('Attributes points:', attributesPoints)
-        print(formResult)
         print('================================')
         print(sortedAttributes)
         for att in sortedAttributes:
@@ -122,7 +119,9 @@ class RecomendationService:
         return self.__getBetter__(cities, self.infoService.__getTotalCoust__, 'total', qtd, False)
     
     def __getCitiesToRecomendation__(self, attributesPoints):
-        cities = City.query.all()
+        print('total attributes', attributesPoints.getTotal())
+        allCities = City.query.all()
+        cities = allCities
         citiesFiltered = self.__filteredCitiesByWaterAndLightPriceConsume__(cities, attributesPoints)
         with self.__createSession__() as session:
             query = session.query(
@@ -141,15 +140,15 @@ class RecomendationService:
             ).join(InfoCoustLiving, InfoCoustLiving.state_id == State.id
             ).join(InfoInternet, InfoInternet.city_id == City.id)
             results = query.all()
-            filteredResults = list(filter(lambda result: result[2] <= attributesPoints.getTotal(), results))
+            filteredResults = list(filter(lambda result: result[2] <= attributesPoints.getTotal()*1.15, results))
             filteredResultsCityIds = list(map(lambda result: result[0], filteredResults))
             cities = list(filter(lambda city: city.id in filteredResultsCityIds, citiesFiltered))
-        return cities
+        return cities if len(cities) >= 0 else allCities
     
     def __filteredCitiesByWaterAndLightPriceConsume__(self, cities, attributesPoints):
         lightPrices = list(map(lambda att: att['price'], attributesPoints.pricesLight))
         waterPrices = list(map(lambda att: att['price'], attributesPoints.pricesWater))
-        handleAvg =lambda numberList: ft.reduce(lambda a, b: a+b, numberList)
+        handleAvg = lambda numberList: ft.reduce(lambda a, b: a+b, numberList)
         avgLight = handleAvg(lightPrices)
         avgWater = handleAvg(waterPrices)
         
@@ -166,7 +165,7 @@ class RecomendationService:
             filteredStates = list(filter(lambda res: res[1] <= avgWater and res[2] <= avgLight, results))
             stateIds = list(map(lambda filteredResult: filteredResult[0], filteredStates))
             filteredCities = list(filter(lambda city: city.state_id in stateIds, cities))
-            return filteredCities
+            return filteredCities if len(filteredCities) >= 0 else cities
 
     def __calculateClientLightPrice__(self, totalHours):
         statesPrice = InfoLightPrice.query.all()
@@ -179,7 +178,6 @@ class RecomendationService:
     def __calculateFormResultCostLiving__(self, formResult, att):
         allValues = list(map(lambda res: res.costLivingAttJson()[att], formResult))
         allValues = list(filter(lambda val: val != None, allValues))
-        print('ALL VALUES', allValues)
         amountNonZeroesRes = list(filter(lambda res: res.costLivingAttJson()[att] != 0, formResult))
         total = ft.reduce(lambda a, b: a + b, allValues)
         return 0 if len(amountNonZeroesRes) == 0 else total/len(amountNonZeroesRes)
