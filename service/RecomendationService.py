@@ -1,5 +1,3 @@
-import json
-import unidecode
 from model.City import City
 from model.State import State
 from model.InfoSecurity import InfoSecurity
