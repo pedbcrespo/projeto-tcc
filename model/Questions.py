@@ -1,6 +1,24 @@
 import functools as ft
 ANSWER_ALTERNATIVES = 5
 
+class Question:
+    def __init__(self, title, increase, decrease=[], subAttributes=[], pontuations={}):
+        self.title = title
+        self.increase = increase
+        self.decrease = decrease
+        self.subAttributes = subAttributes
+        self.pontuations = pontuations
+
+    def json(self):
+        return {
+            'title': self.title,
+            'increase': self.increase,
+            'decrease': self.decrease,
+            'subAttributes': self.subAttributes,
+            'pontuation': self.pontuations
+        }
+
+
 class AttributesPoints:
     def __init__(self):
         self.attributes = {

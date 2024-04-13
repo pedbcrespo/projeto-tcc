@@ -12,7 +12,7 @@ from model.InfoInternet import InfoInternet
 from model.InfoCoustLiving import InfoCoustLiving
 from model.InfoSanitation import InfoSanitation
 from model.InfoEnterprise import InfoEnterprise
-from model.Questions import AttributesPoints
+from model.Questions import Question
 from model.FormResult import FormResult
 from service.InfoService import InfoService
 from sqlalchemy import desc, create_engine, func
@@ -59,16 +59,10 @@ class QuestionService:
 
 
     def __generateQuestion__(self, title, increase, decrease=[], subAttributes=[], pontuations={}):
-        return {
-            "title": title,
-            "increase": increase,
-            "decrease": decrease,
-            "subAttributes": subAttributes,
-            "pontuations": pontuations
-        }
+        return Question(title, increase, decrease, subAttributes, pontuations)
 
     def __calculatePontuation__(self, attribute, isReveted=False):
-        valuesAttributes ={
+        valuesAttributes = {
             'hoursLightEstiamte': self.__getMaxAndMin__(InfoLightConsume.amount),
             'ltWaterConsume': self.__getMaxAndMin__(InfoWaterConsumer.amount),
             'alimentation': self.__getMaxAndMinCostLiving__('alimentation'),
