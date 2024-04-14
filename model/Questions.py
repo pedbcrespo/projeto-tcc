@@ -15,7 +15,7 @@ class Question:
             'increase': self.increase,
             'decrease': self.decrease,
             'subAttributes': self.subAttributes,
-            'pontuation': self.pontuations
+            'pontuations': self.pontuations
         }
 
 

@@ -165,7 +165,8 @@ class QuestionService:
                 ),
         ]
 
-        return livingQualityQuestions + employabilityQuestions + leisureQuestios + costQuestions
+        questions = livingQualityQuestions + employabilityQuestions + leisureQuestios + costQuestions
+        return [question.json() for question in questions]
 
     def __generateQuestion__(self, title, increase, decrease=[], subAttributes=[], pontuations={}):
         return Question(title, increase, decrease, subAttributes, pontuations)
@@ -178,8 +179,8 @@ class QuestionService:
 
     def __calculatePontuation__(self, attribute, isReveted=False):
         valuesAttributes = {
-            'hoursLightEstiamte': self.__getMaxAndMin__(InfoLightConsume.amount),
-            'ltWaterConsume': self.__getMaxAndMin__(InfoWaterConsumer.amount),
+            'hoursLightEstiamte': self.__getMaxAndMinLightConsume__(InfoLightConsume.amount),
+            'ltWaterConsume': self.__getMaxAndMinWaterConsume__(InfoWaterConsumer.amount),
             'alimentation': self.__getMaxAndMinCostLiving__('alimentation'),
             'hygiene': self.__getMaxAndMinCostLiving__('hygiene'),
             'transportation': self.__getMaxAndMinCostLiving__('transportation'),
@@ -199,7 +200,7 @@ class QuestionService:
     def __getMaxAndMinCostLiving__(self, columnName):
         attribute = {
             'alimentation': InfoCoustLiving.alimentation,
-            'transport': InfoCoustLiving.transport,
+            'transportation': InfoCoustLiving.transport,
             'health': InfoCoustLiving.health,
             'hygiene': InfoCoustLiving.hygiene,
             'recreation': InfoCoustLiving.recreation,
@@ -211,16 +212,25 @@ class QuestionService:
             func.min(attribute[columnName]).label('min')
         )   
         result = query.one()
-        return {'max': result[0], 'min': result[1]}
+        return {'max': float(result[0]), 'min': float(result[1])}
 
-    def __getMaxAndMin__(self, attribute):
+    def __getMaxAndMinLightConsume__(self, attribute):
         with self.__createSession__() as session:
             query = session.query(
                 func.max(func.round(attribute / 12, 2)).label('max'),
                 func.min(func.round(attribute / 12, 2)).label('min')
             )
             result = query.one()
-            return {'max': result.max, 'min': result.min}
+            return {'max': float(result.max), 'min': float(result.min)}
+    
+    def __getMaxAndMinWaterConsume__(self, attribute):
+        with self.__createSession__() as session:
+            query = session.query(
+                func.max(func.round(attribute, 2)).label('max'),
+                func.min(func.round(attribute, 2)).label('min')
+            )
+            result = query.one()
+            return {'max': float(result.max), 'min': float(result.min)}
 
 
     def __createSession__(self):
