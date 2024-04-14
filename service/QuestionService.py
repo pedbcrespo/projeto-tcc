@@ -22,31 +22,6 @@ import functools as ft
 
 
 class QuestionService:
-
-    categoryQuestions = [
-        'LIVING_QUALITY',
-        'EMPLOYABILITY',
-        'LEISURE',
-        'COST',
-    ]
-
-    attributesEquilavence = {
-        'LIVING_QUALITY': 'livingQuality',
-        'EMPLOYABILITY': 'employability',
-        'LEISURE': 'leisure',
-        'COST': 'coust',
-    }
-
-    subAttributes = [
-        'hoursLightEstiamte',
-        'ltWaterConsume',
-        'alimentation',
-        'hygiene',
-        'transportation',
-        'health',
-        'recreation'
-    ]
-
     def getQuestions(self):
         livingQualityQuestions = [
             self.__generateQuestion__(
