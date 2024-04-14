@@ -56,7 +56,7 @@ class QuestionService:
                 ),
             self.__generateQuestion__(
                 "Você prefere passar mais tempo no conforto de sua casa.",
-                ['LIVING_QUALITY'], [], ['hoursLightEstiamte', 'ltWaterConsume'],
+                ['LIVING_QUALITY'], ['COST'], ['hoursLightEstiamte', 'ltWaterConsume'],
                 self.__generatePontuations__(['hoursLightEstiamte', 'ltWaterConsume'])
                 ),
             self.__generateQuestion__(
@@ -119,7 +119,43 @@ class QuestionService:
                 ),
         ]
 
-        leiisureQuestios = []
+        leisureQuestios = [
+            self.__generateQuestion__(
+                "Você gosta de objetos de uso domesticos que deixam o ambiente mais moderno.", 
+                ['LEISURE'], ['EMPLOYABILITY'], ['hoursLightEstiamte'],
+                self.__generatePontuations__(['hoursLightEstiamte'])
+                ),
+            self.__generateQuestion__(
+                "Coisas como piscinas ou banheiras de hidromassagem estão na sua lista de desejos.", 
+                ['LEISURE'], ['EMPLOYABILITY'], ['ltWaterConsume'],
+                self.__generatePontuations__(['ltWaterConsume'])
+                ),
+            self.__generateQuestion__(
+                "Você usa muito aplicativos de compras de alimentos, seja de restaurante ou mesmo de compras em supermercados.", 
+                ['LEISURE'], ['EMPLOYABILITY'], ['alimentation'],
+                self.__generatePontuations__(['alimentation'])
+                ),
+            self.__generateQuestion__(
+                "Cuidar de si, não é apenas uma necessidade, mas algo prazeroso e divertido para você.", 
+                ['LEISURE'], ['EMPLOYABILITY'], ['hygiene'],
+                self.__generatePontuations__(['hygiene'])
+                ),
+            self.__generateQuestion__(
+                "Você gosta de sair para conhecer lugares novos.", 
+                ['LEISURE'], ['EMPLOYABILITY'], ['transportation'],
+                self.__generatePontuations__(['transportation'])
+                ),
+            self.__generateQuestion__(
+                "É interessante morar proximo de locais com atividades como yoga, academia, natação ou outras atividades ao ar livre.", 
+                ['LEISURE'], ['EMPLOYABILITY'], ['health'],
+                self.__generatePontuations__(['health'])
+                ),
+            self.__generateQuestion__(
+                "Você prefere morar proximo de cinemas, restaurantes, parques, entre outros.", 
+                ['LEISURE'], ['EMPLOYABILITY'], ['recreation'],
+                self.__generatePontuations__(['recreation'])
+                ),
+        ]
 
         costQuestions = []
 
