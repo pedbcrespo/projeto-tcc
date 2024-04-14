@@ -22,15 +22,6 @@ import functools as ft
 
 
 class QuestionService:
-    subAttributes = [
-        'hoursLightEstiamte',
-        'ltWaterConsume',
-        'alimentation',
-        'hygiene',
-        'transportation',
-        'health',
-        'recreation'
-    ]
 
     categoryQuestions = [
         'LIVING_QUALITY',
@@ -46,12 +37,87 @@ class QuestionService:
         'COST': 'coust',
     }
 
+    subAttributes = [
+        'hoursLightEstiamte',
+        'ltWaterConsume',
+        'alimentation',
+        'hygiene',
+        'transportation',
+        'health',
+        'recreation'
+    ]
+
     def getQuestions(self):
         livingQualityQuestions = [
-            self.__generateQuestion__()
+            self.__generateQuestion__(
+                "Você tem habito de gastar mais com produtos que facilitam sua vida.", 
+                ['LIVING_QUALITY'], ['COST'], ['hoursLightEstiamte', 'ltWaterConsume'],
+                self.__generatePontuations__(['hoursLightEstiamte', 'ltWaterConsume'])
+                ),
+            self.__generateQuestion__(
+                "Você prefere passar mais tempo no conforto de sua casa.",
+                ['LIVING_QUALITY'], [], ['hoursLightEstiamte', 'ltWaterConsume'],
+                self.__generatePontuations__(['hoursLightEstiamte', 'ltWaterConsume'])
+                ),
+            self.__generateQuestion__(
+                "É melhor pagar mais caro com produtos alimentícios de marcas conhecidas do que as variantes mais baratas.",
+                ['LIVING_QUALITY'], ['COST'], ['alimentation'],
+                self.__generatePontuations__(['alimentation'])
+                ),
+            self.__generateQuestion__(
+                "É frequente voce se pegar gastando tempo excessivo com cuidados pessoais.",
+                ['LIVING_QUALITY'], ['COST'], ['hygiene', 'hoursLightEstiamte', 'ltWaterConsume'],
+                self.__generatePontuations__(['hygiene', 'hoursLightEstiamte', 'ltWaterConsume'])
+                ),
+            self.__generateQuestion__(
+                "Você prefere morar mais distante do centro por conta da tranquilidade.",
+                ['LIVING_QUALITY'], ['COST'], ['transportation'],
+                self.__generatePontuations__(['transportation'])
+                ),
+            self.__generateQuestion__(
+                "É de sua preferencia, ter variedade de clinicas, hospitais e farmacias nas proximidades.",
+                ['LIVING_QUALITY'], ['COST'], ['transportation', 'health'],
+                self.__generatePontuations__(['transportation', 'health'])
+                ),
+            self.__generateQuestion__(
+                "É interessante para você que haja atividade interessantes para ocupar o tempo o mais proximo o possivel.",
+                ['LIVING_QUALITY'], ['COST'], ['recreation'],
+                self.__generatePontuations__(['recreation'])
+                ),
         ]
 
-        employabilityQuestions = []
+        employabilityQuestions = [
+            self.__generateQuestion__(
+                "Você pode, consegue e prioriza o home office.", 
+                ['EMPLOYABILITY'], ['LEISURE'], ['hoursLightEstiamte', 'ltWaterConsume'],
+                self.__generatePontuations__(['hoursLightEstiamte', 'ltWaterConsume'])
+                ),
+            self.__generateQuestion__(
+                "Você gosta de trabalhos com maiores horarios de almoço.", 
+                ['EMPLOYABILITY'], ['LEISURE'], ['alimentation'],
+                self.__generatePontuations__(['alimentation'])
+                ),
+            self.__generateQuestion__(
+                "É comum, ao voltar do trabalho, você se ve mais sujo que o esperado.", 
+                ['EMPLOYABILITY'], ['LEISURE'], ['hygiene'],
+                self.__generatePontuations__(['hygiene'])
+                ),
+            self.__generateQuestion__(
+                "Não é incomodo para você que o trabalho seja distante de onde mora.", 
+                ['EMPLOYABILITY'], ['LEISURE'], ['transportation'],
+                self.__generatePontuations__(['transportation'])
+                ),
+            self.__generateQuestion__(
+                "Você prioriza trabalhos que forneçam melhores planos de saúde.", 
+                ['EMPLOYABILITY'], ['LEISURE'], ['health'],
+                self.__generatePontuations__(['health'], True)
+                ),
+            self.__generateQuestion__(
+                "É interessante que seu trabalho seja proximo de locais interessantes para se divertir.", 
+                ['EMPLOYABILITY'], ['LEISURE'], ['recreation'],
+                self.__generatePontuations__(['recreation'])
+                ),
+        ]
 
         leiisureQuestios = []
 
@@ -60,6 +126,12 @@ class QuestionService:
 
     def __generateQuestion__(self, title, increase, decrease=[], subAttributes=[], pontuations={}):
         return Question(title, increase, decrease, subAttributes, pontuations)
+
+    def __generatePontuations__(self, subAttributes, isReverted=False):
+        pontuation = {}
+        for att in subAttributes:
+            pontuation[att] = self.__calculatePontuation__(att, isReverted)
+        return pontuation
 
     def __calculatePontuation__(self, attribute, isReveted=False):
         valuesAttributes = {
