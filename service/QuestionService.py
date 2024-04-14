@@ -190,6 +190,7 @@ class QuestionService:
                 ),
         ]
 
+        return livingQualityQuestions + employabilityQuestions + leisureQuestios + costQuestions
 
     def __generateQuestion__(self, title, increase, decrease=[], subAttributes=[], pontuations={}):
         return Question(title, increase, decrease, subAttributes, pontuations)
