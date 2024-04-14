@@ -157,7 +157,38 @@ class QuestionService:
                 ),
         ]
 
-        costQuestions = []
+        costQuestions = [
+            self.__generateQuestion__(
+                "Você se considera uma pessoa regrada quanto ao consumo de água e luz.", 
+                ['COST'], ['LIVING_QUALITY'], ['hoursLightEstiamte', 'ltWaterConsume'],
+                self.__generatePontuations__(['hoursLightEstiamte', 'ltWaterConsume'], True)
+                ),
+            self.__generateQuestion__(
+                "Para você, é melhor um almoço barato do que chique.", 
+                ['COST'], ['LIVING_QUALITY'], ['alimentation'],
+                self.__generatePontuations__(['alimentation'], True)
+                ),
+            self.__generateQuestion__(
+                "Higiene pessoal é uma necessidade e apenas isso.", 
+                ['COST'], ['LIVING_QUALITY'], ['hygiene'],
+                self.__generatePontuations__(['hygiene'], True)
+                ),
+            self.__generateQuestion__(
+                "Você, sempre que possivel, prefere meios alternativos para se locomover.", 
+                ['COST'], ['LIVING_QUALITY'], ['transportation'],
+                self.__generatePontuations__(['transportation'], True)
+                ),
+            self.__generateQuestion__(
+                "A saúde depente unica e exclusivamente da forma que você vive.", 
+                ['COST'], ['LIVING_QUALITY'], ['health'],
+                self.__generatePontuations__(['health'], True)
+                ),
+            self.__generateQuestion__(
+                "Você concorda com a frase de uma música do Charlie Brown Jr: ``Muita gente se diverte com o que tem``.", 
+                ['COST'], ['LIVING_QUALITY'], ['recreation'],
+                self.__generatePontuations__(['recreation'], True)
+                ),
+        ]
 
 
     def __generateQuestion__(self, title, increase, decrease=[], subAttributes=[], pontuations={}):
