@@ -1,24 +1,10 @@
-from model.City import City
-from model.State import State
-from model.InfoSecurity import InfoSecurity
-from model.InfoSchools import InfoSchools
-from model.InfoGeneral import InfoGeneral
-from model.InfoPrices import InfoPrices
 from model.InfoLightConsume import InfoLightConsume
-from model.InfoLightPrice import InfoLightPrice
 from model.InfoWaterConsumer import InfoWaterConsumer
-from model.InfoWaterPriceRegion import InfoWaterPriceRegion
-from model.InfoInternet import InfoInternet
 from model.InfoCoustLiving import InfoCoustLiving
-from model.InfoSanitation import InfoSanitation
-from model.InfoEnterprise import InfoEnterprise
 from model.Questions import Question
-from model.FormResult import FormResult
-from service.InfoService import InfoService
-from sqlalchemy import desc, create_engine, func
+from sqlalchemy import create_engine, func
 from sqlalchemy.orm import sessionmaker
 from configuration.config import conn
-import functools as ft
 
 
 class QuestionService:
