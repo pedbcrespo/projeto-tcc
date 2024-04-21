@@ -1,27 +1,24 @@
 class FormResult:
     def __init__(self, formResult):
-        self.title = formResult['title']
-        self.increase = formResult['increase']
-        self.decrease = formResult['decrease']
-        self.answer = formResult['answer']
-        self.hoursLightEstiamte = formResult['hoursLightEstiamte']
-        self.ltWaterConsume = formResult['ltWaterConsume']
-        self.alimentation = formResult['alimentation']
-        self.hygiene = formResult['hygiene']
-        self.transportation = formResult['transportation']
-        self.health = formResult['health']
-        self.recreation = formResult['recreation']
+        self.title : str = formResult['title']
+        self.increase : list = formResult['increase']
+        self.decrease : list = formResult['decrease']
+        self.answer : int = formResult['answer']
+        self.subAttributes : list = formResult['subAttributes']
+        self.pontuations : dict = formResult['pontuations']
 
-    def costLivingAttJson(self):
-        return {
-            'hoursLightEstiamte': self.hoursLightEstiamte,
-            'ltWaterConsume': self.ltWaterConsume,
-            'alimentation': self.alimentation,
-            'hygiene': self.hygiene,
-            'transportation': self.transportation,
-            'health': self.health,
-            'recreation': self.recreation
-        }
+    def getPontuation(self) -> dict:
+        pontuations = self.pontuations
+        for key in self.pontuations:
+            pontuations[key] = self.pontuations[key][self.answer]
+        return pontuations
     
-    def __str__(self):
-        return f"({self.title}, {self.increase}, {self.decrease}, {self.answer}, {self.hoursLightEstiamte}, {self.ltWaterConsume}, {self.alimentation}, {self.hygiene}, {self.health}, {self.transportation})"
+    def json(self) -> dict:
+        return {
+            "title": self.title,
+            "increase": self.increase,
+            "decrease": self.decrease,
+            "pontuations": self.getPontuation(),
+        }
+    def __str__(self) -> str:
+        return f"({self.title}, {self.increase}, {self.decrease}, {self.answer}, {self.getPontuation()})"
