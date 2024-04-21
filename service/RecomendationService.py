@@ -146,7 +146,13 @@ class RecomendationService:
             ).join(InfoCoustLiving, InfoCoustLiving.state_id == State.id
             ).join(InfoInternet, InfoInternet.city_id == City.id)
             results = query.all()
-            filteredResults = list(filter(lambda result: result[2] <= attributesPoints.getTotal()*1.15, results))
+
+            def filterByStateTotal(result, attributesPoints):
+                totalCoustPrice = result[2]
+                state = State.query.filter(State.id == result[1]).first()
+                return totalCoustPrice <= attributesPoints.getTotal(state)
+
+            filteredResults = list(filter(lambda result: filterByStateTotal(result, attributesPoints), results))
             filteredResultsCityIds = list(map(lambda result: result[0], filteredResults))
             cities = list(filter(lambda city: city.id in filteredResultsCityIds, citiesFiltered))
         return cities if len(cities) >= 0 else allCities
@@ -154,19 +160,28 @@ class RecomendationService:
     def __filteredCitiesByWaterAndLightConsume__(self, cities: List[City], attributesPoints: AttributesPoints) -> List[City]:
         avgLightConsume = attributesPoints.subAttributes['hoursLightEstiamte']
         avgWaterConsume = attributesPoints.subAttributes['ltWaterConsume']
+        filteredCities = []
         with self.__createSession__() as session:
             query = session.query(
                 State.id.label('state_id'),
                 InfoWaterConsumer.amount.label('water_consume'),
                 func.round((InfoLightConsume.amount / 12), 2).label('light_consume'),
             ).join(InfoWaterConsumer, InfoWaterConsumer.state_id == State.id
-            ).join(InfoLightPrice, InfoLightPrice.state_id == State.id
             ).join(InfoLightConsume, InfoLightConsume.state_id == State.id)
             results = query.all()
             statesFilteredByConsume = list(filter(lambda res: res[1] <= avgWaterConsume * 1.1 and res[2] <= avgLightConsume * 1.1, results))
             stateIds = list(map(lambda filteredResult: filteredResult[0], statesFilteredByConsume))
             filteredCities = list(filter(lambda city: city.state_id in stateIds, cities))
-            return filteredCities if len(filteredCities) >= 0 else cities
+
+        states = State.query.filter(State.id in list(map(lambda city: city.state_id, filteredCities))).all()
+        lightPrices = InfoLightPrice.query.filter(InfoLightPrice.state_id in list(map(lambda st: st.id, states)))
+        waterPrices = InfoWaterPriceRegion.query.filter(InfoWaterPriceRegion.region_id in list(map(lambda st: st.region_id, states)))
+
+        # AQUI CALCULO O PRECO DA LUZ E DA AGUA POR ESTADO
+        attributesPoints.pricesLight = [{'state_id': lightPrice.state_id,'value': avgLightConsume * lightPrice.price_kwh} for lightPrice in lightPrices]
+        attributesPoints.pricesWater = [{'region_id': waterPrice.region_id, 'value': avgWaterConsume * waterPrice.price} for waterPrice in waterPrices]
+
+        return filteredCities if len(filteredCities) >= 0 else cities
 
     def __calculateClientLightPrice__(self, totalHours):
         statesPrice = InfoLightPrice.query.all()

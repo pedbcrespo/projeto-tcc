@@ -1,4 +1,5 @@
 import functools as ft
+from State import State
 ANSWER_ALTERNATIVES = 5
 
 class Question:
@@ -30,7 +31,7 @@ class AttributesPoints:
 
         self.subAttributes = [
             {'hoursLightEstiamte': 0},
-            {'ltWaterConsume': 0},
+            {'ltwaterConsume': 0},
             {'alimentation': 0},
             {'hygiene': 0},
             {'transportation': 0},
@@ -51,12 +52,13 @@ class AttributesPoints:
     def getOrdenationAttributeList(self) -> list:
         return [{"key": attribute['key'], "value": self.attributes[attribute]['pontuation']} for attribute in self.attributes]
 
-    def getTotal(self) -> float:
-        pricesLight = list(map(lambda priceLight: priceLight['price'], self.pricesLight))
-        pricesWater = list(map(lambda priceWater: priceWater['price'], self.pricesWater))
-        avgPriceLight = ft.reduce(lambda a,b : a+b, pricesLight)/len(self.pricesLight)
-        avgPriceWater = ft.reduce(lambda a,b : a+b, pricesWater)/len(self.pricesWater)
-        return round(avgPriceLight + avgPriceWater + self.limitCoustLiving, 2)
+    def getTotal(self, state: State ) -> float:
+        currentLightPrice = list(filter(lambda lightPrice: lightPrice['state_id'] == state.id))
+        currentWaterPrice = list(filter(lambda waterPrice: waterPrice['region_id'] == state.region_id))
+        total = currentLightPrice + currentWaterPrice
+        for key in self.subAttributes:
+            total += self.subAttributes[key]
+        return round(total, 2)
 
     def __str__(self) -> str:
         return f"({self.attributes})"
