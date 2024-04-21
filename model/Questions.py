@@ -1,5 +1,5 @@
 import functools as ft
-from State import State
+from model.State import State
 ANSWER_ALTERNATIVES = 5
 
 class Question:
@@ -29,28 +29,30 @@ class AttributesPoints:
             'COST': {'pontuation': 1, 'key': 'coust'},
         }
 
-        self.subAttributes = [
-            {'hoursLightEstiamte': 0},
-            {'ltwaterConsume': 0},
-            {'alimentation': 0},
-            {'hygiene': 0},
-            {'transportation': 0},
-            {'health': 0},
-            {'recreation': 0}
-        ]
+        self.subAttributes = {
+            'hoursLightEstiamte': 0,
+            'ltwaterConsume': 0,
+            'alimentation': 0,
+            'hygiene': 0,
+            'transportation': 0,
+            'health': 0,
+            'recreation': 0
+        }
 
         for key in ordenationAttributes:
             self.attributes[key]['pontuation'] = ordenationAttributes[key]
 
         for key in generalPontuation:
-            self.subAttributes[key] = generalPontuation[key]['avg']
+            avg = generalPontuation[key]['avg']
+            print(avg)
+            self.subAttributes[key] = avg
 
         self.pricesLight = []
         self.pricesWater = []
         self.limitCoustLiving = None
 
     def getOrdenationAttributeList(self) -> list:
-        return [{"key": attribute['key'], "value": self.attributes[attribute]['pontuation']} for attribute in self.attributes]
+        return [{"key": self.attributes[attribute]['key'], "value": self.attributes[attribute]['pontuation']} for attribute in self.attributes]
 
     def getTotal(self, state: State ) -> float:
         currentLightPrice = list(filter(lambda lightPrice: lightPrice['state_id'] == state.id))

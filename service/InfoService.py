@@ -14,16 +14,12 @@ from model.InfoInternet import InfoInternet
 from model.InfoCoustLiving import InfoCoustLiving
 from model.InfoSanitation import InfoSanitation
 from model.InfoEnterprise import InfoEnterprise
-from model.Questions import questions
 from sqlalchemy import desc, create_engine, func
 from sqlalchemy.orm import sessionmaker
 from configuration.config import conn
 import functools as ft
 
-class InfoService:
-    def getQuestions(self):
-        return questions
-    
+class InfoService:   
     def getCityInfo(self, cityId):
         info = {}
         info.update(self.getGeneralInfo(cityId))

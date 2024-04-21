@@ -6,11 +6,11 @@ class FormResult:
         self.answer : int = formResult['answer']
         self.subAttributes : list = formResult['subAttributes']
         self.pontuations : dict = formResult['pontuations']
-
     def getPontuation(self) -> dict:
-        pontuations = self.pontuations
+        pontuations = {}
         for key in self.pontuations:
-            pontuations[key] = self.pontuations[key][self.answer]
+            pos = self.answer - 1
+            pontuations.update({key: self.pontuations[key][pos]})
         return pontuations
     
     def json(self) -> dict:
