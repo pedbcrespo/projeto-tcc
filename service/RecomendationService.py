@@ -8,12 +8,13 @@ from model.InfoInternet import InfoInternet
 from model.InfoCoustLiving import InfoCoustLiving
 from model.Questions import AttributesPoints
 from model.FormResult import FormResult
+from model.attributes import Attributes
 from service.InfoService import InfoService
 from sqlalchemy import desc, create_engine, func
 from sqlalchemy.orm import sessionmaker
 from configuration.config import conn
 import functools as ft
-from typing import List
+from typing import List, Dict
 
 class RecomendationService:
     infoService = InfoService()
@@ -23,16 +24,16 @@ class RecomendationService:
         sortedListAttributes = sorted(attributePoints.getOrdenationAttributeList(), key=lambda att: att['value'], reverse=True)
         listAttributeKeys = list(map(lambda att: att['key'], sortedListAttributes))
         attributesHandleRelated = {
-            'LIVING_QUALITY': self.__getBetterIdh__,
-            'EMPLOYABILITY': self.__getBetterBusinessSAccessibility__,
-            'LEISURE': self.__getBetterEntertainment__,
-            'COST': self.__getBetterCoust__,
+            Attributes.LIVING_QUALITY: self.__getBetterIdh__,
+            Attributes.EMPLOYABILITY: self.__getBetterBusinessSAccessibility__,
+            Attributes.LEISURE: self.__getBetterEntertainment__,
+            Attributes.COST: self.__getBetterCoust__,
         }
         attributesKey = {
-            'LIVING_QUALITY': 'idh',
-            'EMPLOYABILITY': 'business_accessibility',
-            'LEISURE' : 'recreation_rate',
-            'COST': 'total'
+            Attributes.LIVING_QUALITY: 'idh',
+            Attributes.EMPLOYABILITY: 'business_accessibility',
+            Attributes.LEISURE : 'recreation_rate',
+            Attributes.COST: 'total'
         }
         cities = self.__getCitiesToRecomendation__(attributePoints)
         print('================================')
@@ -65,34 +66,44 @@ class RecomendationService:
         return Session()
 
     def __calculateAttributes__(self, listFormResult: List[FormResult]) -> AttributesPoints:
-        generalPontuation = {}
-        ordenationAttributes = {}
+        generalPontuation : Dict[str, Dict] = {
+            Attributes.HOURS_LIGHT_ESTIMATE: {'total': 0, 'count': 0},
+            Attributes.LT_WATER_CONSUME: {'total': 0, 'count': 0},
+            Attributes.ALIMENTATION: {'total': 0, 'count': 0},
+            Attributes.HYGIENE: {'total': 0, 'count': 0},
+            Attributes.TRANSPORTATION: {'total': 0, 'count': 0},
+            Attributes.HEALTH: {'total': 0, 'count': 0},
+            Attributes.RECREATION: {'total': 0, 'count': 0}
+        }
+        ordenationAttributes : Dict[str, int] = {
+            Attributes.LIVING_QUALITY: 0,
+            Attributes.EMPLOYABILITY: 0,
+            Attributes.LEISURE: 0,
+            Attributes.COST: 0,
+        }
         for formatResult in listFormResult: 
             for key in formatResult.increase:
-                if key not in ordenationAttributes:
-                    ordenationAttributes[key] = 0
                 ordenationAttributes[key] += formatResult.answer
         
             for key in formatResult.decrease:
-                if key not in ordenationAttributes:
-                    ordenationAttributes[key] = 0
                 ordenationAttributes[key] -= formatResult.answer
                 if ordenationAttributes[key] < 0:
                     ordenationAttributes[key] = 0
 
-            resultJson = formatResult.json()
             for key in formatResult.pontuations:
-                if key not in generalPontuation:
-                    generalPontuation[key] = {'total': 0, 'count': 0}
-                generalPontuation[key]['total'] += resultJson['pontuations'][key]
+                generalPontuation[key]['total'] += formatResult.getPontuation(key)
                 generalPontuation[key]['count'] += 1
         
         for key in generalPontuation:
             total = generalPontuation[key]['total']
             count = generalPontuation[key]['count']
             generalPontuation[key]['avg'] = round(total/count, 2)
-
-        return AttributesPoints(ordenationAttributes, generalPontuation)
+        print(generalPontuation)
+        allInfoLightPrice = InfoLightPrice.query.all()
+        allInfoWaterPrice = InfoWaterPriceRegion.query.all()
+        lightPrices = list(map(lambda lightPrice: lightPrice.price_kwh , allInfoLightPrice))
+        waterPrices = list(map(lambda waterPrice: waterPrice.price , allInfoWaterPrice))
+        return AttributesPoints(ordenationAttributes, generalPontuation, lightPrices, waterPrices)
     
     def __getBetter__(self, cities, methodsComparation, keyComparation, qtd, reverse=True):
         if cities == None:
@@ -117,12 +128,11 @@ class RecomendationService:
         return self.__getBetter__(cities, self.infoService.__getTotalCoust__, 'total', qtd, False)
     
     def __getCitiesToRecomendation__(self, attributesPoints: AttributesPoints) -> List[City]:
-        print('total attributes', attributesPoints.getTotal())
         allCities = City.query.all()
         cities = allCities
         citiesFiltered = self.__filteredCitiesByWaterAndLightConsume__(cities, attributesPoints)
-        avgWaterConsume = attributesPoints.subAttributes['ltWaterConsume']
-        avgLightConsume = attributesPoints.subAttributes['hoursLightEstiamte']
+        avgWaterConsume = attributesPoints.subAttributes[Attributes.LT_WATER_CONSUME]
+        avgLightConsume = attributesPoints.subAttributes[Attributes.HOURS_LIGHT_ESTIMATE]
         with self.__createSession__() as session:
             query = session.query(
                 City.id.label('city_id'),
@@ -152,8 +162,8 @@ class RecomendationService:
         return cities if len(cities) >= 0 else allCities
     
     def __filteredCitiesByWaterAndLightConsume__(self, cities: List[City], attributesPoints: AttributesPoints) -> List[City]:
-        avgLightConsume = attributesPoints.subAttributes['hoursLightEstiamte']
-        avgWaterConsume = attributesPoints.subAttributes['ltWaterConsume']
+        avgLightConsume = attributesPoints.subAttributes[Attributes.HOURS_LIGHT_ESTIMATE]
+        avgWaterConsume = attributesPoints.subAttributes[Attributes.LT_WATER_CONSUME]
         filteredCities = []
         with self.__createSession__() as session:
             query = session.query(
@@ -166,14 +176,6 @@ class RecomendationService:
             statesFilteredByConsume = list(filter(lambda res: res[1] <= avgWaterConsume * 1.1 and res[2] <= avgLightConsume * 1.1, results))
             stateIds = list(map(lambda filteredResult: filteredResult[0], statesFilteredByConsume))
             filteredCities = list(filter(lambda city: city.state_id in stateIds, cities))
-
-        states = State.query.filter(State.id in list(map(lambda city: city.state_id, filteredCities))).all()
-        lightPrices = InfoLightPrice.query.filter(InfoLightPrice.state_id in list(map(lambda st: st.id, states)))
-        waterPrices = InfoWaterPriceRegion.query.filter(InfoWaterPriceRegion.region_id in list(map(lambda st: st.region_id, states)))
-
-        # AQUI CALCULO O PRECO DA LUZ E DA AGUA POR ESTADO
-        attributesPoints.pricesLight = [{'state_id': lightPrice.state_id,'value': avgLightConsume * lightPrice.price_kwh} for lightPrice in lightPrices]
-        attributesPoints.pricesWater = [{'region_id': waterPrice.region_id, 'value': avgWaterConsume * waterPrice.price} for waterPrice in waterPrices]
 
         return filteredCities if len(filteredCities) >= 0 else cities
 

@@ -2,6 +2,7 @@ from model.InfoLightConsume import InfoLightConsume
 from model.InfoWaterConsumer import InfoWaterConsumer
 from model.InfoCoustLiving import InfoCoustLiving
 from model.Questions import Question
+from model.attributes import Attributes
 from sqlalchemy import create_engine, func
 from sqlalchemy.orm import sessionmaker
 from configuration.config import conn
@@ -12,142 +13,142 @@ class QuestionService:
         livingQualityQuestions = [
             self.__generateQuestion__(
                 "Você tem habito de gastar mais com produtos que facilitam sua vida.", 
-                ['LIVING_QUALITY'], ['COST'], ['hoursLightEstiamte', 'ltWaterConsume'],
-                self.generatePontuations(['hoursLightEstiamte', 'ltWaterConsume'])
+                [Attributes.LIVING_QUALITY], [Attributes.COST], [Attributes.HOURS_LIGHT_ESTIMATE, Attributes.LT_WATER_CONSUME],
+                self.generatePontuations([Attributes.HOURS_LIGHT_ESTIMATE, Attributes.LT_WATER_CONSUME])
                 ),
             self.__generateQuestion__(
                 "Você prefere passar mais tempo no conforto de sua casa.",
-                ['LIVING_QUALITY'], ['COST'], ['hoursLightEstiamte', 'ltWaterConsume'],
-                self.generatePontuations(['hoursLightEstiamte', 'ltWaterConsume'])
+                [Attributes.LIVING_QUALITY], [Attributes.COST], [Attributes.HOURS_LIGHT_ESTIMATE, Attributes.LT_WATER_CONSUME],
+                self.generatePontuations([Attributes.HOURS_LIGHT_ESTIMATE, Attributes.LT_WATER_CONSUME])
                 ),
             self.__generateQuestion__(
                 "É melhor pagar mais caro com produtos alimentícios de marcas conhecidas do que as variantes mais baratas.",
-                ['LIVING_QUALITY'], ['COST'], ['alimentation'],
-                self.generatePontuations(['alimentation'])
+                [Attributes.LIVING_QUALITY], [Attributes.COST], [Attributes.ALIMENTATION],
+                self.generatePontuations([Attributes.ALIMENTATION])
                 ),
             self.__generateQuestion__(
                 "É frequente voce se pegar gastando tempo excessivo com cuidados pessoais.",
-                ['LIVING_QUALITY'], ['COST'], ['hygiene', 'hoursLightEstiamte', 'ltWaterConsume'],
-                self.generatePontuations(['hygiene', 'hoursLightEstiamte', 'ltWaterConsume'])
+                [Attributes.LIVING_QUALITY], [Attributes.COST], [Attributes.HYGIENE, Attributes.HOURS_LIGHT_ESTIMATE, Attributes.LT_WATER_CONSUME],
+                self.generatePontuations([Attributes.HYGIENE, Attributes.HOURS_LIGHT_ESTIMATE, Attributes.LT_WATER_CONSUME])
                 ),
             self.__generateQuestion__(
                 "Você prefere morar mais distante do centro por conta da tranquilidade.",
-                ['LIVING_QUALITY'], ['COST'], ['transportation'],
-                self.generatePontuations(['transportation'])
+                [Attributes.LIVING_QUALITY], [Attributes.COST], [Attributes.TRANSPORTATION],
+                self.generatePontuations([Attributes.TRANSPORTATION])
                 ),
             self.__generateQuestion__(
                 "É de sua preferencia, ter variedade de clinicas, hospitais e farmacias nas proximidades.",
-                ['LIVING_QUALITY'], ['COST'], ['transportation', 'health'],
-                self.generatePontuations(['transportation', 'health'])
+                [Attributes.LIVING_QUALITY], [Attributes.COST], [Attributes.TRANSPORTATION, Attributes.HEALTH],
+                self.generatePontuations([Attributes.TRANSPORTATION, Attributes.HEALTH])
                 ),
             self.__generateQuestion__(
                 "É interessante para você que haja atividade interessantes para ocupar o tempo o mais proximo o possivel.",
-                ['LIVING_QUALITY'], ['COST'], ['recreation'],
-                self.generatePontuations(['recreation'])
+                [Attributes.LIVING_QUALITY], [Attributes.COST], [Attributes.RECREATION],
+                self.generatePontuations([Attributes.RECREATION])
                 ),
         ]
 
         employabilityQuestions = [
             self.__generateQuestion__(
                 "Você pode, consegue e prioriza o home office.", 
-                ['EMPLOYABILITY'], ['LEISURE'], ['hoursLightEstiamte', 'ltWaterConsume'],
-                self.generatePontuations(['hoursLightEstiamte', 'ltWaterConsume'])
+                [Attributes.EMPLOYABILITY], [Attributes.LEISURE], [Attributes.HOURS_LIGHT_ESTIMATE, Attributes.LT_WATER_CONSUME],
+                self.generatePontuations([Attributes.HOURS_LIGHT_ESTIMATE, Attributes.LT_WATER_CONSUME])
                 ),
             self.__generateQuestion__(
                 "Você gosta de trabalhos com maiores horarios de almoço.", 
-                ['EMPLOYABILITY'], ['LEISURE'], ['alimentation'],
-                self.generatePontuations(['alimentation'])
+                [Attributes.EMPLOYABILITY], [Attributes.LEISURE], [Attributes.ALIMENTATION],
+                self.generatePontuations([Attributes.ALIMENTATION])
                 ),
             self.__generateQuestion__(
                 "É comum, ao voltar do trabalho, você se ve mais sujo que o esperado.", 
-                ['EMPLOYABILITY'], ['LEISURE'], ['hygiene'],
-                self.generatePontuations(['hygiene'])
+                [Attributes.EMPLOYABILITY], [Attributes.LEISURE], [Attributes.HYGIENE],
+                self.generatePontuations([Attributes.HYGIENE])
                 ),
             self.__generateQuestion__(
                 "Não é incomodo para você que o trabalho seja distante de onde mora.", 
-                ['EMPLOYABILITY'], ['LEISURE'], ['transportation'],
-                self.generatePontuations(['transportation'])
+                [Attributes.EMPLOYABILITY], [Attributes.LEISURE], [Attributes.TRANSPORTATION],
+                self.generatePontuations([Attributes.TRANSPORTATION])
                 ),
             self.__generateQuestion__(
                 "Você prioriza trabalhos que forneçam melhores planos de saúde.", 
-                ['EMPLOYABILITY'], ['LEISURE'], ['health'],
-                self.generatePontuations(['health'], True)
+                [Attributes.EMPLOYABILITY], [Attributes.LEISURE], [Attributes.HEALTH],
+                self.generatePontuations([Attributes.HEALTH], True)
                 ),
             self.__generateQuestion__(
                 "É interessante que seu trabalho seja proximo de locais interessantes para se divertir.", 
-                ['EMPLOYABILITY'], ['LEISURE'], ['recreation'],
-                self.generatePontuations(['recreation'])
+                [Attributes.EMPLOYABILITY], [Attributes.LEISURE], [Attributes.RECREATION],
+                self.generatePontuations([Attributes.RECREATION])
                 ),
         ]
 
         leisureQuestios = [
             self.__generateQuestion__(
                 "Você gosta de objetos de uso domesticos que deixam o ambiente mais moderno.", 
-                ['LEISURE'], ['EMPLOYABILITY'], ['hoursLightEstiamte'],
-                self.generatePontuations(['hoursLightEstiamte'])
+                [Attributes.LEISURE], [Attributes.EMPLOYABILITY], [Attributes.HOURS_LIGHT_ESTIMATE],
+                self.generatePontuations([Attributes.HOURS_LIGHT_ESTIMATE])
                 ),
             self.__generateQuestion__(
                 "Coisas como piscinas ou banheiras de hidromassagem estão na sua lista de desejos.", 
-                ['LEISURE'], ['EMPLOYABILITY'], ['ltWaterConsume'],
-                self.generatePontuations(['ltWaterConsume'])
+                [Attributes.LEISURE], [Attributes.EMPLOYABILITY], [Attributes.LT_WATER_CONSUME],
+                self.generatePontuations([Attributes.LT_WATER_CONSUME])
                 ),
             self.__generateQuestion__(
                 "Você usa muito aplicativos de compras de alimentos, seja de restaurante ou mesmo de compras em supermercados.", 
-                ['LEISURE'], ['EMPLOYABILITY'], ['alimentation'],
-                self.generatePontuations(['alimentation'])
+                [Attributes.LEISURE], [Attributes.EMPLOYABILITY], [Attributes.ALIMENTATION],
+                self.generatePontuations([Attributes.ALIMENTATION])
                 ),
             self.__generateQuestion__(
                 "Cuidar de si, não é apenas uma necessidade, mas algo prazeroso e divertido para você.", 
-                ['LEISURE'], ['EMPLOYABILITY'], ['hygiene'],
-                self.generatePontuations(['hygiene'])
+                [Attributes.LEISURE], [Attributes.EMPLOYABILITY], [Attributes.HYGIENE],
+                self.generatePontuations([Attributes.HYGIENE])
                 ),
             self.__generateQuestion__(
                 "Você gosta de sair para conhecer lugares novos.", 
-                ['LEISURE'], ['EMPLOYABILITY'], ['transportation'],
-                self.generatePontuations(['transportation'])
+                [Attributes.LEISURE], [Attributes.EMPLOYABILITY], [Attributes.TRANSPORTATION],
+                self.generatePontuations([Attributes.TRANSPORTATION])
                 ),
             self.__generateQuestion__(
                 "É interessante morar proximo de locais com atividades como yoga, academia, natação ou outras atividades ao ar livre.", 
-                ['LEISURE'], ['EMPLOYABILITY'], ['health'],
-                self.generatePontuations(['health'])
+                [Attributes.LEISURE], [Attributes.EMPLOYABILITY], [Attributes.HEALTH],
+                self.generatePontuations([Attributes.HEALTH])
                 ),
             self.__generateQuestion__(
                 "Você prefere morar proximo de cinemas, restaurantes, parques, entre outros.", 
-                ['LEISURE'], ['EMPLOYABILITY'], ['recreation'],
-                self.generatePontuations(['recreation'])
+                [Attributes.LEISURE], [Attributes.EMPLOYABILITY], [Attributes.RECREATION],
+                self.generatePontuations([Attributes.RECREATION])
                 ),
         ]
 
         costQuestions = [
             self.__generateQuestion__(
                 "Você se considera uma pessoa regrada quanto ao consumo de água e luz.", 
-                ['COST'], ['LIVING_QUALITY'], ['hoursLightEstiamte', 'ltWaterConsume'],
-                self.generatePontuations(['hoursLightEstiamte', 'ltWaterConsume'], True)
+                [Attributes.COST], [Attributes.LIVING_QUALITY], [Attributes.HOURS_LIGHT_ESTIMATE, Attributes.LT_WATER_CONSUME],
+                self.generatePontuations([Attributes.HOURS_LIGHT_ESTIMATE, Attributes.LT_WATER_CONSUME], True)
                 ),
             self.__generateQuestion__(
                 "Para você, é melhor um almoço barato do que chique.", 
-                ['COST'], ['LIVING_QUALITY'], ['alimentation'],
-                self.generatePontuations(['alimentation'], True)
+                [Attributes.COST], [Attributes.LIVING_QUALITY], [Attributes.ALIMENTATION],
+                self.generatePontuations([Attributes.ALIMENTATION], True)
                 ),
             self.__generateQuestion__(
                 "Higiene pessoal é uma necessidade e apenas isso.", 
-                ['COST'], ['LIVING_QUALITY'], ['hygiene'],
-                self.generatePontuations(['hygiene'], True)
+                [Attributes.COST], [Attributes.LIVING_QUALITY], [Attributes.HYGIENE],
+                self.generatePontuations([Attributes.HYGIENE], True)
                 ),
             self.__generateQuestion__(
                 "Você, sempre que possivel, prefere meios alternativos para se locomover.", 
-                ['COST'], ['LIVING_QUALITY'], ['transportation'],
-                self.generatePontuations(['transportation'], True)
+                [Attributes.COST], [Attributes.LIVING_QUALITY], [Attributes.TRANSPORTATION],
+                self.generatePontuations([Attributes.TRANSPORTATION], True)
                 ),
             self.__generateQuestion__(
                 "A saúde depente unica e exclusivamente da forma que você vive.", 
-                ['COST'], ['LIVING_QUALITY'], ['health'],
-                self.generatePontuations(['health'], True)
+                [Attributes.COST], [Attributes.LIVING_QUALITY], [Attributes.HEALTH],
+                self.generatePontuations([Attributes.HEALTH], True)
                 ),
             self.__generateQuestion__(
                 "Você concorda com a frase de uma música do Charlie Brown Jr: ``Muita gente se diverte com o que tem``.", 
-                ['COST'], ['LIVING_QUALITY'], ['recreation'],
-                self.generatePontuations(['recreation'], True)
+                [Attributes.COST], [Attributes.LIVING_QUALITY], [Attributes.RECREATION],
+                self.generatePontuations([Attributes.RECREATION], True)
                 ),
         ]
 
@@ -165,13 +166,13 @@ class QuestionService:
 
     def __calculatePontuation__(self, attribute, isReveted=False):
         valuesAttributes = {
-            'hoursLightEstiamte': self.__getMaxAndMinLightConsume__(InfoLightConsume.amount),
-            'ltWaterConsume': self.__getMaxAndMinWaterConsume__(InfoWaterConsumer.amount),
-            'alimentation': self.__getMaxAndMinCostLiving__('alimentation'),
-            'hygiene': self.__getMaxAndMinCostLiving__('hygiene'),
-            'transportation': self.__getMaxAndMinCostLiving__('transportation'),
-            'health': self.__getMaxAndMinCostLiving__('health'),
-            'recreation': self.__getMaxAndMinCostLiving__('recreation')
+            Attributes.HOURS_LIGHT_ESTIMATE: self.__getMaxAndMinLightConsume__(InfoLightConsume.amount),
+            Attributes.LT_WATER_CONSUME: self.__getMaxAndMinWaterConsume__(InfoWaterConsumer.amount),
+            Attributes.ALIMENTATION: self.__getMaxAndMinCostLiving__(Attributes.ALIMENTATION),
+            Attributes.HYGIENE: self.__getMaxAndMinCostLiving__(Attributes.HYGIENE),
+            Attributes.TRANSPORTATION: self.__getMaxAndMinCostLiving__(Attributes.TRANSPORTATION),
+            Attributes.HEALTH: self.__getMaxAndMinCostLiving__(Attributes.HEALTH),
+            Attributes.RECREATION: self.__getMaxAndMinCostLiving__(Attributes.RECREATION)
         }
 
         maxAndMin = valuesAttributes[attribute]
@@ -185,11 +186,11 @@ class QuestionService:
 
     def __getMaxAndMinCostLiving__(self, columnName):
         attribute = {
-            'alimentation': InfoCoustLiving.alimentation,
-            'transportation': InfoCoustLiving.transport,
-            'health': InfoCoustLiving.health,
-            'hygiene': InfoCoustLiving.hygiene,
-            'recreation': InfoCoustLiving.recreation,
+            Attributes.ALIMENTATION: InfoCoustLiving.alimentation,
+            Attributes.TRANSPORTATION: InfoCoustLiving.transport,
+            Attributes.HEALTH: InfoCoustLiving.health,
+            Attributes.HYGIENE: InfoCoustLiving.hygiene,
+            Attributes.RECREATION: InfoCoustLiving.recreation,
         }
 
         with self.__createSession__() as session:
