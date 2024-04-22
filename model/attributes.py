@@ -1,6 +1,6 @@
 class Attributes:
     HOURS_LIGHT_ESTIMATE = 'hoursLightEstiamte'
-    LT_WATER_CONSUME = 'ltwaterConsume'
+    LT_WATER_CONSUME = 'ltWaterConsume'
     ALIMENTATION = 'alimentation'
     HYGIENE = 'hygiene'
     TRANSPORTATION = 'transportation'
