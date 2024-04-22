@@ -6,7 +6,7 @@ from model.attributes import Attributes
 from sqlalchemy import create_engine, func
 from sqlalchemy.orm import sessionmaker
 from configuration.config import conn
-
+from typing import List
 
 class QuestionService:
     def getQuestions(self):
@@ -164,7 +164,7 @@ class QuestionService:
             pontuation[att] = self.__calculatePontuation__(att, isReverted)
         return pontuation
 
-    def __calculatePontuation__(self, attribute, isReveted=False):
+    def __calculatePontuation__(self, attribute:str, isReveted:bool=False) -> List[int]:
         valuesAttributes = {
             Attributes.HOURS_LIGHT_ESTIMATE: self.__getMaxAndMinLightConsume__(InfoLightConsume.amount),
             Attributes.LT_WATER_CONSUME: self.__getMaxAndMinWaterConsume__(InfoWaterConsumer.amount),
@@ -181,7 +181,10 @@ class QuestionService:
         avgMin = round((avg + maxAndMin['min']) / 2, 2)
 
         pontuation = [maxAndMin['min'], avgMin, avg, avgMax, maxAndMin['max']]
-        return pontuation if not isReveted else pontuation.reverse()
+        if isReveted:
+            pontuation.reverse()
+        print('PONTUATIONS CALCULATED', pontuation)
+        return pontuation
 
 
     def __getMaxAndMinCostLiving__(self, columnName):

@@ -20,6 +20,11 @@ class RecomendationService:
     infoService = InfoService()
     def getRecomendation(self, formResult):
         listformResultObj = list(map(lambda res: FormResult(res), formResult))
+        for t in listformResultObj:
+            print(t)
+        print('================================')
+        print('================================')
+        print('================================')
         attributePoints = self.__calculateAttributes__(listformResultObj)
         sortedListAttributes = sorted(attributePoints.getOrdenationAttributeList(), key=lambda att: att['value'], reverse=True)
         listAttributeKeys = list(map(lambda att: att['key'], sortedListAttributes))
@@ -97,7 +102,9 @@ class RecomendationService:
         for key in generalPontuation:
             total = generalPontuation[key]['total']
             count = generalPontuation[key]['count']
-            generalPontuation[key]['avg'] = round(total/count, 2)
+            print(key, generalPontuation[key])
+            print('===================================')
+            generalPontuation[key]['avg'] = 0 if count == 0 else round(total/count, 2)
         print(generalPontuation)
         allInfoLightPrice = InfoLightPrice.query.all()
         allInfoWaterPrice = InfoWaterPriceRegion.query.all()
