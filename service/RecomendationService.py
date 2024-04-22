@@ -72,13 +72,13 @@ class RecomendationService:
 
     def __calculateAttributes__(self, listFormResult: List[FormResult]) -> AttributesPoints:
         generalPontuation : Dict[str, Dict] = {
-            Attributes.HOURS_LIGHT_ESTIMATE: {'total': 0, 'count': 0},
-            Attributes.LT_WATER_CONSUME: {'total': 0, 'count': 0},
-            Attributes.ALIMENTATION: {'total': 0, 'count': 0},
-            Attributes.HYGIENE: {'total': 0, 'count': 0},
-            Attributes.TRANSPORTATION: {'total': 0, 'count': 0},
-            Attributes.HEALTH: {'total': 0, 'count': 0},
-            Attributes.RECREATION: {'total': 0, 'count': 0}
+            Attributes.HOURS_LIGHT_ESTIMATE: {'total': 0, 'count': 0, 'avg': 0},
+            Attributes.LT_WATER_CONSUME: {'total': 0, 'count': 0, 'avg': 0},
+            Attributes.ALIMENTATION: {'total': 0, 'count': 0, 'avg': 0},
+            Attributes.HYGIENE: {'total': 0, 'count': 0, 'avg': 0},
+            Attributes.TRANSPORTATION: {'total': 0, 'count': 0, 'avg': 0},
+            Attributes.HEALTH: {'total': 0, 'count': 0, 'avg': 0},
+            Attributes.RECREATION: {'total': 0, 'count': 0, 'avg': 0}
         }
         ordenationAttributes : Dict[str, int] = {
             Attributes.LIVING_QUALITY: 0,
