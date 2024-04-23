@@ -183,7 +183,6 @@ class QuestionService:
         pontuation = [maxAndMin['min'], avgMin, avg, avgMax, maxAndMin['max']]
         if isReveted:
             pontuation.reverse()
-        print('PONTUATIONS CALCULATED', pontuation)
         return pontuation
 
 

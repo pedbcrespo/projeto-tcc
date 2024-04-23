@@ -51,10 +51,12 @@ class RecomendationService:
         sortedCities = sorted(cities, key=lambda city: handleSortedCity(city))
         return self.__handleInfo__(sortedCities)
 
-    def __handleInfo__(self, sortedCities):
+    def __handleInfo__(self, sortedCities: List[City]) -> dict:
         infos = []
+        states = State.query.all()
         for city in sortedCities:
-            dictCity = city.json()
+            state = list(filter(lambda st: st.id == city.state_id, states))[0]
+            dictCity = city.json(state)
             dictCity.update(self.infoService.getCityInfo(city.id))
             dictCity.update(self.infoService.getDetailsInfo(city.id))
             infos.append(dictCity)
@@ -155,6 +157,9 @@ class RecomendationService:
                 totalCoustPrice = result[2]
                 state = State.query.filter(State.id == result[1]).first()
                 return totalCoustPrice <= attributesPoints.getTotal(state)
+            print('=================================')
+            print('TOTAL:', [(attributesPoints.getTotal(state), state.name) for state in State.query.all()])
+            print('=================================')
 
             filteredResults = list(filter(lambda result: filterByStateTotal(result, attributesPoints), results))
             filteredResultsCityIds = list(map(lambda result: result[0], filteredResults))

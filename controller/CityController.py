@@ -31,7 +31,6 @@ class CityIndividualController(Resource):
 class InfoCityController(Resource):
     def get(self, city_id):
         info = infoService.getCityInfo(city_id)
-        info.update(infoService.getDetailsInfo(city_id))
         return info
     
 class CompleteCityInfo(Resource):
