@@ -38,11 +38,20 @@ def pricesInformations(states):
         sameStates = list(filter(lambda x: x['city']['state_id'] == val['city']['state_id'], infos))
         values = list(filter(lambda x: x['price'] != None, sameStates))
         numbers = list(map(lambda x: x['price'], values))
+        maxs = list(map(lambda x: x['max_price'], values))
+        mins = list(map(lambda x: x['min_price'], values))
+        reduce = lambda arr: ft.reduce(lambda a, b: a+b, arr)
         if numbers == []:
             return None
-        sum = ft.reduce(lambda a, b: a+b, numbers)
+        sum = reduce(numbers)
+        sumMax = reduce(maxs)
+        sumMin = reduce(mins)
         avg = round(sum/len(numbers), 2)
+        sumMax = round(sumMax/len(maxs),2)
+        sumMin = round(sumMin/len(mins),2)
         val['price'] = avg
+        val['max_price'] = sumMax
+        val['min_price'] = sumMin
         return val
         
                 
@@ -52,8 +61,8 @@ def pricesInformations(states):
         cities = db.getStatesCity(state['abbreviation'])
         for city in cities:
             print(f"COLETANDO DADOS DOS PRECOS :: {state['abbreviation']} :: {city['name']}")
-            avgHomePrices = rpaPrices.execute(state, city)
-            infos.append({'city': city, 'price': avgHomePrices})  
+            avgHomePrices, maxPrice, minPrice = rpaPrices.execute(state, city)
+            infos.append({'city': city, 'price': avgHomePrices, 'max_price': maxPrice, 'min_price': minPrice})  
     
     infos = list(map(lambda val: fixNone(val, infos), infos))
     try:
@@ -127,8 +136,8 @@ def execute(abbreviations=None):
         states = db.getStates()
     else:
         states = [db.getState(abbreviation) for abbreviation in abbreviations]
-    schoolsInformations(states)
-    # pricesInformations(states)
+    pricesInformations(states)
+    # schoolsInformations(states)
     # securityInformations(states)
     # internetInformation(states)
     return True

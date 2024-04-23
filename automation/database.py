@@ -68,8 +68,8 @@ def saveSecurityInfo(infos):
     return True
     
 def savePricesInfo(infos):
-    infoQuery = list(map(lambda x: f"({x['city']['id']}, {x['price']})", infos))
-    query = f'INSERT INTO info_prices (city_id, avg_price) VALUES {",".join(infoQuery)}'
+    infoQuery = list(map(lambda x: f"({x['city']['id']}, {x['price']}, {x['max_price']}, {x['min_price']})", infos))
+    query = f'INSERT INTO info_prices (city_id, avg_price, max_price, min_price) VALUES {",".join(infoQuery)}'
     executeWrite(query)
     return True
 

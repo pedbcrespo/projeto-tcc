@@ -23,21 +23,25 @@ class VivaReal(Site):
         self.cityName = unidecode(cityName).lower().replace(' ','-')
         self.url = f"https://www.vivareal.com.br/venda/{self.abbreviation}/{self.cityName}"
     
-    def process(self):
+    def process(self) -> tuple:
         print(self.url)
         driver.get(self.url)
         prices = []
         avg = None
+        maxValue = None
+        minValue = None
         try:
             listPropertyCardValues = driver.find_elements(By.CLASS_NAME, 'property-card__values')
             for select in listPropertyCardValues:
                 if select.text.count('R$') == 1:
                     prices.append(self.handlePrices(select.text))
+            maxValue = max(prices)
+            minValue = min(prices)
             avg = round(ft.reduce(lambda a,b: a+b, prices)/len(prices), 2)
             print('-------SUCESSO------', avg)
         except:
             print('-------FALHA------', avg)
-        return avg
+        return avg, maxValue, minValue
             
 class ZapiMoveis(Site):
     def __init__(self, abbreviation, cityName):
@@ -50,21 +54,25 @@ class ZapiMoveis(Site):
         number = int(strNumber.replace('R$','').replace('.',''))
         return number
     
-    def process(self):
+    def process(self) -> tuple:
         print(self.url)
         prices = []
         avg = None
+        maxValue = None
+        minValue = None
         try:
             driver.get(self.url)
             divsListingPrice = driver.find_elements(By.CLASS_NAME, 'listing-price')
             for elem in divsListingPrice:
                 if elem.text.count('R$') == 1:
                     prices.append(self.handlePrices(elem.text))
+            maxValue = max(prices)
+            minValue = min(prices)
             avg = round(ft.reduce(lambda a,b: a+b, prices)/len(prices), 2)
-            print('-------SUCESSO------', avg)
+            print('-------SUCESSO------', avg, maxValue, minValue)
         except:
-            print('-------FALHA------', avg)
-        return avg
+            print('-------FALHA------', avg, maxValue, minValue)
+        return avg, maxValue, minValue
 
         
 class ImovelWeb(Site):
@@ -79,13 +87,13 @@ def link(state, city):
     name = unidecode(city['name']).lower().replace(' ','-')
     return f"{sigla}+{name}"
 
-def getPrices(sites, state, city):
+def getPrices(sites, state, city) -> tuple:
     resultado = None
     for link in sites:
-        time.sleep(3)
+        time.sleep(5)
         site = link(state['abbreviation'], city['name'])
         resultado = site.process()
-        if resultado != None:
+        if None in resultado:
             break
     return resultado
 
@@ -94,7 +102,7 @@ class RpaPrices:
         self.linksList = [VivaReal, ZapiMoveis]
         print('RPA Precos iniciado')
         
-    def execute(self, state, city):
+    def execute(self, state, city) -> tuple:
         return getPrices(self.linksList, state, city)
 
 if __name__ == '__main__':
