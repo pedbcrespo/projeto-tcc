@@ -11,10 +11,7 @@ class FormResult:
         self.pontuations : Dict[str, list] = formResult['pontuations']
     
     def getPontuation(self, key: str) -> int:
-        print('GET PONTUATION', key)
-        print(self.pontuations[key])
         pos : int = self.answer - 1
-        print("POS", pos)
         pontuation : int = self.pontuations[key][pos]
         return pontuation
     
