@@ -24,10 +24,10 @@ class Question:
 class AttributesPoints:
     def __init__(self, ordenationAttributes:Dict[str, int], generalPontuation:Dict[str, Dict], lightPrices: List[float], waterPrices: List[float]):
         self.attributes = {
-            Attributes.LIVING_QUALITY: {'pontuation': 1, 'key': 'livingQuality'},
-            Attributes.EMPLOYABILITY: {'pontuation': 1, 'key': 'employability'},
-            Attributes.LEISURE: {'pontuation': 1, 'key': 'leisure'},
-            Attributes.COST: {'pontuation': 1, 'key': 'coust'},
+            Attributes.LIVING_QUALITY: {'pontuation': 1, 'key': Attributes.LIVING_QUALITY},
+            Attributes.EMPLOYABILITY: {'pontuation': 1, 'key': Attributes.EMPLOYABILITY},
+            Attributes.LEISURE: {'pontuation': 1, 'key': Attributes.LEISURE},
+            Attributes.COST: {'pontuation': 1, 'key': Attributes.COST},
         }
 
         self.subAttributes = {
@@ -45,7 +45,6 @@ class AttributesPoints:
 
         for key in generalPontuation:
             avg = generalPontuation[key]['avg']
-            print(avg)
             self.subAttributes[key] = avg
 
         self.pricesLight = lightPrices
@@ -58,12 +57,9 @@ class AttributesPoints:
     def getTotal(self, state: State ) -> float:
         currentLightPrice = list(filter(lambda lightPrice: lightPrice['state_id'] == state.id, self.pricesLight))
         currentWaterPrice = list(filter(lambda waterPrice: waterPrice['region_id'] == state.region_id, self.pricesWater))
-        
-        print('lightPrice', self.pricesLight)
-        print('waterPrice', self.pricesWater)
 
         price = lambda listValue: 0 if len(listValue) == 0 else listValue[0]
-        total = price(currentLightPrice) + price(currentWaterPrice)
+        total = price(currentLightPrice)['value'] + price(currentWaterPrice)['value']
         for key in self.subAttributes:
             total += self.subAttributes[key]
         return round(total, 2)
