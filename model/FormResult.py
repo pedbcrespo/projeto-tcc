@@ -2,7 +2,6 @@ from typing import Dict
 
 class FormResult:
     def __init__(self, formResult):
-        print("FORM RESULT", formResult['pontuations'])
         self.title : str = formResult['title']
         self.increase : list = formResult['increase']
         self.decrease : list = formResult['decrease']
