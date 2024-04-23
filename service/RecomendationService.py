@@ -100,7 +100,10 @@ class RecomendationService:
             total = generalPontuation[key]['total']
             count = generalPontuation[key]['count']
             generalPontuation[key]['avg'] = 0 if count == 0 else round(total/count, 2)
-        print(generalPontuation)
+        print('ATRIBUTOS', ordenationAttributes)
+        print('====================================')
+        print('SUB ATRIBUTOS', generalPontuation)
+        print('====================================')
         allInfoLightPrice = InfoLightPrice.query.all()
         allInfoWaterPrice = InfoWaterPriceRegion.query.all()
         lightPrices = list(map(lambda lightPrice: { 'state_id': lightPrice.state_id, 'value': lightPrice.price_kwh } , allInfoLightPrice))
