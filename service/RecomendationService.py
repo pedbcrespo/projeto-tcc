@@ -49,7 +49,8 @@ class RecomendationService:
             return tuple(listAtt)
         
         sortedCities = sorted(cities, key=lambda city: handleSortedCity(city))
-        return self.__handleInfo__(sortedCities)
+        topSortedCities = sortedCities if len(sortedCities) < 10 else sortedCities[:10]
+        return self.__handleInfo__(topSortedCities)
 
     def __handleInfo__(self, sortedCities: List[City]) -> dict:
         infos = []
