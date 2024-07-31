@@ -34,6 +34,17 @@
         "health": Integer,
         "recreation": Integer,
     }
+## Forma de enviar as respostas:
+    * FormResult: {
+        title : String
+        increase : Array<String>
+        decrease : Array<String>
+        answer : Number
+        subAttributes : Array
+        pontuations : Record<string, array>
+    }
+    
+    Em resumo, o ideal é pegar a questao e adicionar a resposta, em seguida enviar a lista de questões como parametro na requisição da recomendação.
     
 ## Fontes das buscas dos dados:
     * Cidades e Estados: https://servicodados.ibge.gov.br/api/docs/localidades#api-Subdistritos-municipiosMunicipioSubdistritosGet
