@@ -1,0 +1,15 @@
+<div>
+    <h1>Backend no Ar!</h1>
+    <p>O Serviço faz parte do Projeto de Conclusão de Curso da Universidade Federal Fluminense do Polo de Rio das Ostras.<br/>O projeto viza fornecer um questionario 
+        a respeito das preferencias do usuario e com base nelas, recomenda uma lista de ate 10 cidades para se viver.<br/>
+        O projeto foi implementado principalmente usando o framework Flask para o backend e MySQL como ferramenta para o Banco de Dados.
+    </p>
+    <h3>Endpoints disponiveis</h3>
+    <ul>
+        <li><strong>Ver as questões</strong>: "/info-api/questions"</li>
+        <li><strong>Ver as cidades (Dados Gerais)</strong>: "/info-api/cities"</li>
+        <li><strong>Ver as cidades de determinado Estado (Dados Gerais)</strong>: "/info-api/state/[uf]"</li>
+        <li><strong>Ver informações mais detalhadas da cidade</strong>: "/info-api/city/info/[cityId]"</li>
+        <li><strong>Gera a recomendação de cidades -> necessario enviar um objeto na requisição</strong>: "/info-api/city/recomendation"</li>
+    </ul>
+</div>
