@@ -1,5 +1,5 @@
 from flask_restful import Resource
-from flask import redirect, request
+from flask import redirect, request, render_template, make_response
 from configuration.config import api
 from configuration.dev_configuration import BASE_URL
 from service.CityService import CityService
@@ -14,7 +14,7 @@ recomendationService = RecomendationService()
 
 class Initial(Resource):
     def get(self):
-        return "API TCC"
+        return make_response(render_template('index.html'))
 
 class RedirectToCities(Resource):
     def get(self):
