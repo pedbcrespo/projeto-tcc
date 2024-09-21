@@ -41,7 +41,7 @@ class InfoService:
             generalInfo = self.__getInfo__(cityId, InfoGeneral)
         except:
             generalInfo = {'demographic_density': 0, 'population': 0}
-        return {'demographic_density': generalInfo['demographic_density'], 'population': generalInfo['population']}
+        return {'demographic_density': generalInfo['demographic_density'], 'population': generalInfo['population'], 'city_id': cityId}
 
     def getSecurityInfo(self, cityId):
         try:
@@ -136,7 +136,7 @@ class InfoService:
         entertaimentEnterprises = self.getEntertaimentEnterprises(cityId)
         cityGeneralInfo = InfoGeneral.query.filter(InfoGeneral.city_id == cityId).first()
         proportionEntertaimentEnterprisesPopulation = (len(entertaimentEnterprises) / cityGeneralInfo.population) * 1000
-        return {'recreation_rate': round(proportionEntertaimentEnterprisesPopulation, 2)}
+        return {'recreation_rate': round(proportionEntertaimentEnterprisesPopulation, 2), 'amount_entertaiment_enterprises': len(entertaimentEnterprises)}
 
     def getProfissionalQualificationRate(self, cityId):
         general = InfoGeneral.query.filter(InfoGeneral.city_id == cityId).first()
