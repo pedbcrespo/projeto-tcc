@@ -89,7 +89,7 @@ class RecomendationService:
                 ordenationAttributes[key] += formatResult.answer
         
             for key in formatResult.decrease:
-                ordenationAttributes[key] -= formatResult.answer
+                ordenationAttributes[key] -= int(formatResult.answer/2)
                 if ordenationAttributes[key] < 0:
                     ordenationAttributes[key] = 0
 
