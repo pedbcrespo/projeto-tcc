@@ -102,7 +102,7 @@ class RecomendationService:
         print('====================================')
         print('|ATRIBUTOS|>')
         for key in getOrdenationAttributeNames():
-            print(key, ordenationAttributes[key])
+            print(key if key != Attributes.COST else 'COUST', ordenationAttributes[key])
         print('====================================')
         print('|SUB ATRIBUTOS|>')
         for key in getGeneralPontuation():

@@ -14,7 +14,7 @@ from model.InfoInternet import InfoInternet
 from model.InfoCoustLiving import InfoCoustLiving
 from model.InfoSanitation import InfoSanitation
 from model.InfoEnterprise import InfoEnterprise
-from sqlalchemy import desc, create_engine, func
+from sqlalchemy import desc, create_engine, func, or_
 from sqlalchemy.orm import sessionmaker
 from configuration.config import conn
 import functools as ft
@@ -104,28 +104,39 @@ class InfoService:
         sanitationRate = self.getSanitationInfo(cityId)['sanitation_rate']
         idh = (sanitationRate + securityRate + scholarityRate)/3
         return {'idh': round(idh, 3), 'scholarity_rate': round(scholarityRate, 2), 'securityRate': securityRate, 'sanitationRate': sanitationRate}
-    
+
+    def getEntertaimentEnterprises(self, cityId):
+        terms = [
+            'restaurante', 
+            'lanchonete',
+            'Lanchonetes',
+            'cinema', 
+            'bares', 
+            'condicionamento fisico', 
+            'passeio', 
+            'recreação', 
+            'lazer', 
+            'turistico',
+            'diversão',
+            'parques',
+            'esportes',
+            'jogos',
+            'recreativos'
+        ]
+        filters = [InfoEnterprise.type_description.ilike(f'%{term}%') for term in terms]
+        result = (
+            InfoEnterprise.query
+            .filter(InfoEnterprise.city_id == cityId)
+            .filter(or_(*filters))
+            .all()
+        )
+        return result
+
     def getEntertainmentRate(self, cityId):
-        def isEntertainmentEnterprise(enterprise):
-            entertaimentWords = ['restaurante', 'lanchonete', 'cinema', 'bares', 'condicionamento fisico', 'passeio', 'turistico']
-            type_description = unidecode.unidecode(enterprise.type_description).lower()
-            for word in entertaimentWords:
-                if word in type_description:
-                    return True
-            return False
-        
-        enterprises = InfoEnterprise.query.filter(InfoEnterprise.city_id == cityId).all()
-        filteredEnterprises = list(filter(lambda enterprise: isEntertainmentEnterprise(enterprise), enterprises))
-
-        if not filteredEnterprises:
-            return {'recreation_rate': 0}
-
-        amountsEnterprises = list(map(lambda enterprise: enterprise.amount, filteredEnterprises))
-        amountEntertaimentEnterprises = ft.reduce(lambda a, b: a+b, amountsEnterprises)
-        enterprisesAmounts = list(map(lambda enterprise: enterprise.amount, enterprises))
-        totalAmount = ft.reduce(lambda a, b: a+b, enterprisesAmounts)
-        amount = amountEntertaimentEnterprises / totalAmount
-        return {'recreation_rate': round(amount*100, 2)}
+        entertaimentEnterprises = self.getEntertaimentEnterprises(cityId)
+        cityGeneralInfo = InfoGeneral.query.filter(InfoGeneral.city_id == cityId).first()
+        proportionEntertaimentEnterprisesPopulation = (len(entertaimentEnterprises) / cityGeneralInfo.population) * 1000
+        return {'recreation_rate': round(proportionEntertaimentEnterprisesPopulation, 2)}
 
     def getProfissionalQualificationRate(self, cityId):
         general = InfoGeneral.query.filter(InfoGeneral.city_id == cityId).first()
