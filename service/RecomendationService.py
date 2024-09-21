@@ -8,7 +8,7 @@ from model.InfoInternet import InfoInternet
 from model.InfoCoustLiving import InfoCoustLiving
 from model.Questions import AttributesPoints
 from model.FormResult import FormResult
-from model.attributes import Attributes
+from model.attributes import Attributes, getOrdenationAttributeNames, getGeneralPontuation
 from service.InfoService import InfoService
 from sqlalchemy import desc, create_engine, func
 from sqlalchemy.orm import sessionmaker
@@ -38,11 +38,9 @@ class RecomendationService:
         cities = self.__getCitiesToRecomendation__(attributePoints)
         print('================================')
         print(listAttributeKeys)
-        for att in listAttributeKeys:
-            print('================================')
-            print('analisando:', att)
-            cities = attributesHandleRelated[att](cities)
         print('================================')
+        for att in listAttributeKeys:
+            cities = attributesHandleRelated[att](cities)
 
         def handleSortedCity(city):
             listAtt = [city.infoValue[attributesKey[att]] for att in listAttributeKeys]
@@ -101,9 +99,14 @@ class RecomendationService:
             total = generalPontuation[key]['total']
             count = generalPontuation[key]['count']
             generalPontuation[key]['avg'] = 0 if count == 0 else round(total/count, 2)
-        print('ATRIBUTOS', ordenationAttributes)
         print('====================================')
-        print('SUB ATRIBUTOS', generalPontuation)
+        print('|ATRIBUTOS|>')
+        for key in getOrdenationAttributeNames():
+            print(key, ordenationAttributes[key])
+        print('====================================')
+        print('|SUB ATRIBUTOS|>')
+        for key in getGeneralPontuation():
+            print(key, generalPontuation[key])
         print('====================================')
         allInfoLightPrice = InfoLightPrice.query.all()
         allInfoWaterPrice = InfoWaterPriceRegion.query.all()
@@ -162,7 +165,9 @@ class RecomendationService:
                 state = State.query.filter(State.id == result[1]).first()
                 return totalCoustPrice <= attributesPoints.getTotal(state)
             print('=================================')
-            print('TOTAL:', [(attributesPoints.getTotal(state), state.name) for state in State.query.all()])
+            print('|TOTAL|>')
+            for total in [(attributesPoints.getTotal(state), state.name) for state in State.query.all()]:
+                print(total)
             print('=================================')
 
             filteredResults = list(filter(lambda result: filterByStateTotal(result, attributesPoints), results))
