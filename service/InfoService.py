@@ -105,7 +105,23 @@ class InfoService:
         idh = (sanitationRate + securityRate + scholarityRate)/3
         return {'idh': round(idh, 3), 'scholarity_rate': round(scholarityRate, 2), 'securityRate': securityRate, 'sanitationRate': sanitationRate}
 
-    def getEntertaimentEnterprises(self, cityId):
+    def getEntertainmentRate(self, cityId):
+        entertaimentEnterprises = self.__getEntertaimentEnterprises__(cityId)
+        cityGeneralInfo = InfoGeneral.query.filter(InfoGeneral.city_id == cityId).first()
+        proportionEntertaimentEnterprisesPopulation = (len(entertaimentEnterprises) / cityGeneralInfo.population) * 1000
+        return {'recreation_rate': round(proportionEntertaimentEnterprisesPopulation, 2), 'amount_entertaiment_enterprises': len(entertaimentEnterprises)}
+
+    def getProfissionalQualificationRate(self, cityId):
+        general = InfoGeneral.query.filter(InfoGeneral.city_id == cityId).first()
+        population = general.population
+        enterprises = InfoEnterprise.query.filter(InfoEnterprise.city_id == cityId).all()
+        if not enterprises:
+            return {'business_accessibility': 0}
+        amountEnterprises = ft.reduce(lambda a,b: a+b, list(map(lambda enterprise: enterprise.amount, enterprises)))
+        businessAccessibility = amountEnterprises/population
+        return {'business_accessibility': round(businessAccessibility*1000, 2)}
+
+    def __getEntertaimentEnterprises__(self, cityId):
         terms = [
             'restaurante', 
             'lanchonete',
@@ -131,22 +147,6 @@ class InfoService:
             .all()
         )
         return result
-
-    def getEntertainmentRate(self, cityId):
-        entertaimentEnterprises = self.getEntertaimentEnterprises(cityId)
-        cityGeneralInfo = InfoGeneral.query.filter(InfoGeneral.city_id == cityId).first()
-        proportionEntertaimentEnterprisesPopulation = (len(entertaimentEnterprises) / cityGeneralInfo.population) * 1000
-        return {'recreation_rate': round(proportionEntertaimentEnterprisesPopulation, 2), 'amount_entertaiment_enterprises': len(entertaimentEnterprises)}
-
-    def getProfissionalQualificationRate(self, cityId):
-        general = InfoGeneral.query.filter(InfoGeneral.city_id == cityId).first()
-        population = general.population
-        enterprises = InfoEnterprise.query.filter(InfoEnterprise.city_id == cityId).all()
-        if not enterprises:
-            return {'business_accessibility': 0}
-        amountEnterprises = ft.reduce(lambda a,b: a+b, list(map(lambda enterprise: enterprise.amount, enterprises)))
-        businessAccessibility = amountEnterprises/population
-        return {'business_accessibility': round(businessAccessibility*100, 2)}
 
     def __getHomePrices__(self, price):
         prices = InfoPrices.query.filter(InfoPrices.avg_price <= price)
