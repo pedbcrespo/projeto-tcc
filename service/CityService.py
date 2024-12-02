@@ -14,7 +14,11 @@ class CityService:
     def getAllCities(self):
         infoService = InfoService() 
         cities = City.query.all()
-        jsonCities = [city.json() for city in cities]
+        jsonCities = []
+        for city in cities:
+            state = State.query.filter(State.id == city.state_id).first()
+            jsonCities.append(city.json(state))
+
         for city in jsonCities:
             info = infoService.getCityInfo(city['id'])
             city.update(info)
@@ -22,11 +26,11 @@ class CityService:
     
     def getCities(self, uf):
         infoService = InfoService() 
-        state = State.query.filter(State.abbreviation == uf).first()
+        state = State.query.filter(State.abbreviation == uf.upper()).first()
         cities = City.query.filter(City.state_id == state.id).all()
         jsonCities = []
         for city in cities:
-            jsonCity = city.json()
+            jsonCity = city.json(state)
             jsonCity.update(infoService.getDetailsInfo(city.id))
             jsonCities.append(jsonCity)
         return jsonCities 

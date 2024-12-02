@@ -15,5 +15,7 @@ class City(orm.Model):
     def __repr__(self):
         return f"({self.id}, {self.name}, {self.state_id})"
     
-    def json(self, State: State):
-        return {'id': self.id, 'name': f"{self.name} - {State.abbreviation}", 'state_id':self.state_id, 'ibge_id': self.ibge_id}
+    def json(self, State: State = None):
+        result = {'id': self.id, 'state_id':self.state_id, 'ibge_id': self.ibge_id}
+        result['name'] = f"{self.name} - {State.abbreviation}" if State else self.name
+        return result
